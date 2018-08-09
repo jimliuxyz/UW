@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using UW.JsonRpc;
+using UW.JWT;
 
 namespace UWBackend
 {
@@ -27,6 +29,39 @@ namespace UWBackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
+
+            var jwtSettings = new JwtSettings();
+            Configuration.Bind("JwtSettings", jwtSettings);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                // options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                // {
+                //     ValidIssuer = jwtSettings.Issuer,
+                //     ValidAudience = jwtSettings.Audience,
+                //     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                //     ValidateIssuer = true,
+                //     ValidateAudience = true,
+                //     ValidateIssuerSigningKey = true,
+                //     RequireExpirationTime = false,
+                // };
+                options.SecurityTokenValidators.Clear();
+                options.SecurityTokenValidators.Add(new ApiTokenValidator());
+                options.Events = new JwtBearerEvents(){
+                    OnMessageReceived = context => {
+                        var token = context.Request.Headers["myToken"];
+                        context.Token = token.FirstOrDefault();
+                        return Task.CompletedTask;
+                    }
+                };
+            });
 
             services.AddJsonRpc(config=>{
                 config.ShowServerExceptions = true;
