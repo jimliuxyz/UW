@@ -10,8 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using UW.JsonRpc;
 
-namespace uwbackend
+namespace UWBackend
 {
     public class Startup
     {
@@ -26,10 +27,14 @@ namespace uwbackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddJsonRpc(config=>{
+                config.ShowServerExceptions = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -40,8 +45,19 @@ namespace uwbackend
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
+            // app.UseHttpsRedirection();
+            // app.UseMvc();
+
+            // app.UseAuthentication();
+
+			app.Map("/api", rpcApp =>
+			{
+				rpcApp
+				.UseManualJsonRpc(builder =>
+				{
+					builder.RegisterController<RpcMath>("math");
+				});
+			});
         }
     }
 }
