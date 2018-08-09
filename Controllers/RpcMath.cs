@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EdjCase.JsonRpc.Router.Abstractions;
 using EdjCase.JsonRpc.Router;
+using Microsoft.AspNetCore.Http;
+using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace UW.JsonRpc
 {
+    [Authorize]
     public class RpcMath : RpcController
     {
+        private IHttpContextAccessor _accessor;
+        public RpcMath(IHttpContextAccessor accessor){
+            _accessor = accessor;
+        }
         public IRpcMethodResult MethodResult(int a, int b)
         {
-            
             // return this.Ok("Test");
             return this.Ok(new
             {
-                ans = a+b
+                ans = a+b,
+                phoneno = _accessor.HttpContext.User.Identity.Name
             });
         }
 
@@ -27,7 +35,6 @@ namespace UW.JsonRpc
         {
             return await Task.Run(() => a + b);
         }
-
 
         public int AddArray(int[] a)
         {

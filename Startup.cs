@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using UW.JsonRpc;
 using UW.JWT;
 
-namespace UWBackend
+namespace UW
 {
     public class Startup
     {
@@ -28,7 +33,10 @@ namespace UWBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
 
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
 
@@ -54,16 +62,17 @@ namespace UWBackend
                 // };
                 options.SecurityTokenValidators.Clear();
                 options.SecurityTokenValidators.Add(new ApiTokenValidator());
-                options.Events = new JwtBearerEvents(){
-                    OnMessageReceived = context => {
-                        var token = context.Request.Headers["myToken"];
-                        context.Token = token.FirstOrDefault();
-                        return Task.CompletedTask;
-                    }
-                };
+                // options.Events = new JwtBearerEvents(){
+                //     OnMessageReceived = context => {
+                //         var token = context.Request.Headers["myToken"];
+                //         context.Token = token.FirstOrDefault();
+                //         return Task.CompletedTask;
+                //     }
+                // };
             });
 
-            services.AddJsonRpc(config=>{
+            services.AddJsonRpc(config =>
+            {
                 config.ShowServerExceptions = true;
             });
         }
@@ -80,20 +89,20 @@ namespace UWBackend
                 app.UseHsts();
             }
 
-            // app.UseHttpsRedirection();
             // app.UseMvc();
 
-            // app.UseAuthentication();
+            app.UseAuthentication();
+            app.UseHttpsRedirection();
 
-			app.Map("/api", rpcApp =>
-			{
-				rpcApp
-				.UseManualJsonRpc(builder =>
-				{
-					builder.RegisterController<RpcMath>("math");
-					builder.RegisterController<RpcAuth>("auth");
-				});
-			});
+            app.Map("/api", rpcApp =>
+            {
+                rpcApp
+                .UseManualJsonRpc(builder =>
+                {
+                    builder.RegisterController<RpcMath>("math");
+                    builder.RegisterController<RpcAuth>("auth");
+                });
+            });
         }
     }
 }
