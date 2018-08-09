@@ -56,6 +56,7 @@ namespace UWBackend
 				.UseManualJsonRpc(builder =>
 				{
 					builder.RegisterController<RpcMath>("math");
+					builder.RegisterController<RpcAuth>("auth");
 				});
 			});
         }
