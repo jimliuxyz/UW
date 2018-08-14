@@ -29,12 +29,14 @@ namespace UW.JWT
                 var payload = token.Payload;
                 var role = (from t in payload where t.Key == ClaimTypes.Role select t.Value).FirstOrDefault();
                 var name = (from t in payload where t.Key == ClaimTypes.Name select t.Value).FirstOrDefault();
+                var userid = (from t in payload where t.Key == "userid" select t.Value).FirstOrDefault();
                 var issuer = token.Issuer;
                 var key = token.SecurityKey;
                 var audience = token.Audiences;
                 var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
                 identity.AddClaim(new Claim(ClaimTypes.Name, name.ToString()));
-                identity.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin"));
+                identity.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.ToString()));
+                identity.AddClaim(new Claim("userid", userid.ToString()));
                 principal = new ClaimsPrincipal(identity);
             }
             catch (Exception e)

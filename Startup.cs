@@ -16,8 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using UW.Data;
 using UW.JsonRpc;
 using UW.JWT;
+using UW.Services;
 
 namespace UW
 {
@@ -34,6 +36,8 @@ namespace UW
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<Notifications>();
+            services.AddSingleton<Persistence>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -101,6 +105,7 @@ namespace UW
                 {
                     builder.RegisterController<RpcMath>("math");
                     builder.RegisterController<RpcAuth>("auth");
+                    builder.RegisterController<RpcNotification>("notification");
                 });
             });
         }

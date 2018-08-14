@@ -9,31 +9,54 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System;
+using UW.Services;
+using UW.Data;
+using UW.Models.Collections;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace UW.JsonRpc
 {
     public class RpcAuth : RpcController
     {
         private JwtSettings setting;
-        public RpcAuth(IOptions<JwtSettings> options)
+        private IHttpContextAccessor accessor;
+        private Notifications notifications;
+        private Persistence db;
+        public RpcAuth(IOptions<JwtSettings> options, IHttpContextAccessor accessor, Notifications notifications, Persistence db)
         {
             setting = options.Value;
+            this.accessor = accessor;
+            this.notifications = notifications;
+            this.db = db;
         }
 
         //issue user token
-        public IRpcMethodResult login(string phoneno, string passcode, string devicetoken)
+        public IRpcMethodResult login(string phoneno, string passcode)
         {
             if (passcode == "3333")
             {
-                DataEx.user[phoneno] = devicetoken;
+                //create user
+                var user = db.getUser(phoneno);
+                if (user == null)
+                {
+                    user = new User()
+                    {
+                        phoneno = phoneno,
+                        name = phoneno
+                    };
+                    if (db.upsertUser(user))
+                        user = db.getUser(phoneno);
+                }
+                Console.WriteLine("user : " + user.id);
 
-                //todo : verify with database
+                //make user token
                 var claims = new Claim[]{
                     new Claim(ClaimTypes.MobilePhone, phoneno),
-                    new Claim(ClaimTypes.Sid, phoneno),
                     new Claim(ClaimTypes.Name, phoneno),
                     new Claim(ClaimTypes.Role, "user"),
-                    new Claim("devicetoken", devicetoken)
+                    new Claim("userid", user.id)
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -51,5 +74,7 @@ namespace UW.JsonRpc
 
             return this.Error(JsonRpcErrCode.AUTHENTICATION_FAILED, "authentication failed");
         }
+
     }
 }
+
