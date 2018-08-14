@@ -1,14 +1,18 @@
 ```sh
-//for automatic rebuild/run
-dotnet add package Microsoft.DotNet.Watcher.Tools --version 2.0.2
-
 dotnet watch run
+dotnet publish
 ```
 
 # API
 
+流程說明
+- 登入系統取得token 之後連線必須將該token加入http的header
+- 註冊裝置的pns token 以便之後發送通知
+- 取得使用者列表(包含userId)
+- 用userId發送訊息
+
 ### 登入系統
-http://localhost:5000/api/auth
+http://uwbackend-asia.azurewebsites.net/api/auth
 
 ```js
 //送
@@ -37,7 +41,8 @@ http://localhost:5000/api/auth
 - passcode暫以3333替代
 
 ### 註冊PNS(Push Notification Service) token
-http://localhost:5000/api/notification
+http://uwbackend-asia.azurewebsites.net/api/notification
+
 ```js
 //送
 {
@@ -59,7 +64,8 @@ http://localhost:5000/api/notification
 ```
 
 ### 取得user列表 (尚未實作)
-http://localhost:5000/api/contact
+http://uwbackend-asia.azurewebsites.net/api/contact
+
 ```js
 //送
 {
@@ -89,7 +95,7 @@ http://localhost:5000/api/contact
 ```
 
 ### 發送訊息(個別) (尚未實作)
-http://localhost:5000/api/notification
+http://uwbackend-asia.azurewebsites.net/api/notification
 
 ```js
 //送
@@ -112,7 +118,7 @@ http://localhost:5000/api/notification
 ```
 
 ### 發送訊息(全體) (尚未實作)
-http://localhost:5000/api/notification
+http://uwbackend-asia.azurewebsites.net/api/notification
 
 ```js
 //送
