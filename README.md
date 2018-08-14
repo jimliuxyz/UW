@@ -6,7 +6,7 @@ dotnet publish
 # API
 
 流程說明
-- 登入系統取得token 之後連線必須將該token加入http的header
+- 登入系統後取得token 之後連線必須將該token加入http的header
 - 註冊裝置的pns token 以便之後發送通知
 - 取得使用者列表(包含userId)
 - 用userId發送訊息
