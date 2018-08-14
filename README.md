@@ -79,12 +79,12 @@ http://uwbackend-asia.azurewebsites.net/api/contact
     "jsonrpc": "2.0",
     "result": [
         {
-            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"jim",
             "phoneno":"1234567890"
         },
         {
-            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"alan",
             "phoneno":"1234567890"
         }

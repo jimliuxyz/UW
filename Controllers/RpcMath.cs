@@ -39,7 +39,7 @@ namespace UW.JsonRpc
             return message;
         }
         public string sendMessage(string message, string to){
-            _notifications.sendMessage(message, to);
+            // _notifications.sendMessage(message, to);
             return message;
         }
 

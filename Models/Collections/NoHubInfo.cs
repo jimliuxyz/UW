@@ -8,15 +8,13 @@ namespace UW.Models.Collections
     public class NoHubInfo
     {
         [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
-        public string Owner { get; set; }
+        public string ownerId { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public PNS Pns { get; set; } //Push Notification System
+        public PNS pns { get; set; } //Push Notification System
 
-        public string PnsRegId { get; set; }
+        public string pnsRegId { get; set; }
 
-        public string AzureRegId { get; set; }
+        public string azureRegId { get; set; }
     }
 }

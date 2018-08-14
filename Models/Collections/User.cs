@@ -4,7 +4,8 @@ namespace UW.Models.Collections
 {
     public class User
     {
-        public string id { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string userId { get; set; }
 
         public string name { get; set; }
 

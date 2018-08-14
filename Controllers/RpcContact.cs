@@ -31,22 +31,11 @@ namespace UW.JsonRpc
             this.db = db;
         }
 
-        public async Task<IRpcMethodResult> getAllUsers()
+        public IRpcMethodResult getAllUsers()
         {
-            return Ok(new object[]{
-                new{
-                    userId = "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
-                    name = "Jim",
-                    phoneno = "1234567890",
-                },
-                new{
-                    userId = "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
-                    name = "alan",
-                    phoneno = "1234567890",
-                }
-            });
+            return Ok(db.getUsers());
         }
-        
+
     }
 }
 

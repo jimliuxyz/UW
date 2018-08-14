@@ -37,25 +37,33 @@ namespace UW.JsonRpc
 
             var regId = await this.notifications.updateRegId(pns, pnsToken, userId);
 
-            if (string.IsNullOrEmpty(regId))
-                return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
-            else
+            if (!string.IsNullOrEmpty(regId))
             {
-
-                // db.
-
+                var noinfo = new NoHubInfo()
+                {
+                    ownerId = userId,
+                    pns = pns,
+                    pnsRegId = pnsToken,
+                    azureRegId = regId
+                };
+                if (db.upsertNoHubInfo(noinfo))
+                    return Ok(true);
             }
-            return Ok(true);
+            return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
         }
 
         public async Task<IRpcMethodResult> sendMessage(string userId, string message)
         {
-            // var user = db.getUser(toUserPhoneNo);
-            //userId
-
-            return Ok(true);
+            var noinfo = db.getUserNoHubInfo(userId);
+            if (noinfo != null)
+            {
+                var tag = Notifications.getUserTag(userId);
+                notifications.sendNotification(message, tag, noinfo.pns);
+                return Ok(true);
+            }
+            return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
         }
-        
+
         public async Task<IRpcMethodResult> broadcast()
         {
             return Ok(true);

@@ -38,7 +38,7 @@ namespace UW.JsonRpc
             if (passcode == "3333")
             {
                 //create user
-                var user = db.getUser(phoneno);
+                var user = db.getUserByPhone(phoneno);
                 if (user == null)
                 {
                     user = new User()
@@ -47,16 +47,16 @@ namespace UW.JsonRpc
                         name = phoneno
                     };
                     if (db.upsertUser(user))
-                        user = db.getUser(phoneno);
+                        user = db.getUserByPhone(phoneno);
                 }
-                Console.WriteLine("user : " + user.id);
+                Console.WriteLine("user : " + user.userId);
 
                 //make user token
                 var claims = new Claim[]{
                     new Claim(ClaimTypes.MobilePhone, phoneno),
                     new Claim(ClaimTypes.Name, phoneno),
                     new Claim(ClaimTypes.Role, "user"),
-                    new Claim("userid", user.id)
+                    new Claim("userid", user.userId)
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -51,9 +51,27 @@ namespace UW.Services
             // await hub.SendGcmNativeNotificationAsync(notif, new string[] { "username:" + "nate_"});
             // await hub.SendTemplateNotificationAsync(new Dictionary<string, string>{{"message","hello"}}, "username:" + "nate_");
         }
-        public void sendMessage(string message, string tag)
+        public void sendNotification(string message, string tag, PNS pns)
         {
-            // hub.send
+            var notif = "";
+            switch (pns)
+            {
+                case PNS.apns:
+                    notif = "{ \"aps\" : {\"alert\":\"" + message + "\"}}";
+                    hub.SendAppleNativeNotificationAsync(notif, new string[] { tag });
+                    break;
+                case PNS.gcm:
+                    notif = "{ \"data\" : {\"message\":\"" + message + "\"}}";
+                    hub.SendGcmNativeNotificationAsync(notif, new string[] { tag });
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public static string getUserTag(string userId)
+        {
+            return "uid:" + userId;
         }
 
         // get a new/old regId and clear all
@@ -63,7 +81,6 @@ namespace UW.Services
 
             if (tag != null)
             {
-                // var registrations = await hub.GetRegistrationsByChannelAsync(pnsToken, 100);
                 var registrations = await hub.GetRegistrationsByTagAsync(tag, 100);
 
                 foreach (RegistrationDescription registration in registrations)
@@ -87,7 +104,7 @@ namespace UW.Services
 
         public async Task<string> updateRegId(PNS pns, string pnsToken, string userId)
         {
-            string tag = "uid:" + userId;
+            string tag = getUserTag(userId);
 
             string regId = getRegIdAsync(tag).Result;
             RegistrationDescription registration = null;
@@ -103,12 +120,13 @@ namespace UW.Services
                     break;
             }
 
-            registration.RegistrationId = regId;
-            registration.Tags = new HashSet<string>();
-            registration.Tags.Add(tag);
-
             try
             {
+                registration.RegistrationId = regId;
+                registration.Tags = new HashSet<string>();
+                registration.Tags.Add("everybody");
+                registration.Tags.Add(tag);
+
                 await hub.CreateOrUpdateRegistrationAsync(registration);
             }
             catch (MessagingException e)
