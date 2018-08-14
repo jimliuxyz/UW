@@ -39,7 +39,8 @@ namespace UW.JsonRpc
 
             if (string.IsNullOrEmpty(regId))
                 return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
-            else{
+            else
+            {
 
                 // db.
 
@@ -47,10 +48,17 @@ namespace UW.JsonRpc
             return Ok(true);
         }
 
-        public async Task sendTo(string message, string toUserPhoneNo){
-            var user = db.getUser(toUserPhoneNo);
-            
+        public async Task<IRpcMethodResult> sendMessage(string userId, string message)
+        {
+            // var user = db.getUser(toUserPhoneNo);
+            //userId
 
+            return Ok(true);
+        }
+        
+        public async Task<IRpcMethodResult> broadcast()
+        {
+            return Ok(true);
         }
     }
 }
