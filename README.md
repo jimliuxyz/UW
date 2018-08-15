@@ -3,6 +3,13 @@ dotnet watch run
 dotnet publish
 ```
 
+
+先前發送簡訊驗證的api
+https://davidfunc.azurewebsites.net/api/requestSMSVerify....
+改為
+https://uwfuncapp.azurewebsites.net/api/reqSmsVerify
+
+
 # API
 
 流程說明
