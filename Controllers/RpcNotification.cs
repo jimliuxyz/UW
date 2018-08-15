@@ -33,8 +33,9 @@ namespace UW.JsonRpc
 
         public async Task<IRpcMethodResult> regPnsToken(PNS pns, string pnsToken)
         {
+            pnsToken = pnsToken.Trim();
+            
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
-
             var regId = await this.notifications.updateRegId(pns, pnsToken, userId);
 
             if (!string.IsNullOrEmpty(regId))
@@ -46,6 +47,7 @@ namespace UW.JsonRpc
                     pnsRegId = pnsToken,
                     azureRegId = regId
                 };
+
                 if (db.upsertNoHubInfo(noinfo))
                     return Ok(true);
             }
@@ -64,8 +66,9 @@ namespace UW.JsonRpc
             return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
         }
 
-        public async Task<IRpcMethodResult> broadcast()
+        public async Task<IRpcMethodResult> broadcast(string message)
         {
+            notifications.broadcast(message);
             return Ok(true);
         }
     }

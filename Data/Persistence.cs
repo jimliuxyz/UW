@@ -7,9 +7,23 @@ using Newtonsoft.Json;
 using UW.Models.Collections;
 using System.Net;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace UW.Data
 {
+    // todo : move to somewhere else
+    public static class Extensions
+    {
+        public static string toHash(this string context, string salt)
+        {
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] source = Encoding.Default.GetBytes(context + salt);
+            byte[] crypto = sha256.ComputeHash(source);
+            return Convert.ToBase64String(crypto);
+        }
+    }
+
     class Settings
     {
         public string Uri { get; set; }
@@ -21,6 +35,9 @@ namespace UW.Data
     /// </summary>
     public class Persistence
     {
+        // todo : move to somewhere else
+        static string SMS_SALT = "e^26rYS`}:~%E4`";
+
         private static string SETTING_ROOT = "AzureCosmos";
         private static string DB_NAME = "UWallet";
         private static Uri URI_DB = UriFactory.CreateDatabaseUri(DB_NAME);
@@ -55,13 +72,13 @@ namespace UW.Data
             client.CreateDatabaseIfNotExistsAsync(new Database { Id = DB_NAME }).Wait();
 
             //create collections
-            var defReqOpts = new RequestOptions { OfferThroughput = 400 };
+            var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400可能太小
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_USER }, defReqOpts);
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 30 }, defReqOpts);
+                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 30 }, defReqOpts); //todo:實際運作30秒可能太短
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_NOHUB, DefaultTimeToLive = 30 }, defReqOpts);
+                                new DocumentCollection { Id = COL_NOHUB }, defReqOpts);
 
             // test();
             // test_ttl();
@@ -103,6 +120,14 @@ namespace UW.Data
             var result = from user in q where user.userId == userId select user;
 
             return (result.Count() > 0) ? result.ToList().First() : null;
+        }
+
+        public List<Models.Collections.User> getUserByUserId(string[] userIds)
+        {
+            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var result = from user in q where userIds.Contains(user.userId) select user;
+
+            return (result.Count() > 0) ? result.ToList() : null;
         }
 
         /// <summary>
@@ -154,6 +179,23 @@ namespace UW.Data
                 Console.WriteLine(e.ToString());
             }
             return false;
+        }
+
+        /// <summary>
+        /// 檢查簡訊驗證碼是否相符
+        /// </summary>
+        /// <param name="phoneno"></param>
+        /// <param name="passcode"></param>
+        /// <returns></returns>
+        public bool isSmsPasscodeMatched(string phoneno, string passcode)
+        {
+            phoneno = phoneno.toHash(SMS_SALT);
+            passcode = passcode.toHash(SMS_SALT);
+
+            var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
+            var result = from c in q where (c.phoneno == phoneno && c.passcode == passcode) select c;
+
+            return (result.Count() > 0);
         }
 
         private void test_ttl()

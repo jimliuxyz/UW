@@ -35,7 +35,8 @@ namespace UW.JsonRpc
         //issue user token
         public IRpcMethodResult login(string phoneno, string passcode)
         {
-            if (passcode == "3333")
+            // todo : remove 8888
+            if (db.isSmsPasscodeMatched(phoneno, passcode) || passcode == "8888")
             {
                 //create user
                 var user = db.getUserByPhone(phoneno);

@@ -63,8 +63,10 @@ http://uwbackend-asia.azurewebsites.net/api/notification
 }
 ```
 
-### 取得user列表 (尚未實作)
+### 取得user列表 (測試用途)
 http://uwbackend-asia.azurewebsites.net/api/contact
+
+> 之後類似的行為 將修改為只回傳id陣列
 
 ```js
 //送
@@ -94,7 +96,7 @@ http://uwbackend-asia.azurewebsites.net/api/contact
 }
 ```
 
-### 發送訊息(個別) (尚未實作)
+### 發送訊息(個別)
 http://uwbackend-asia.azurewebsites.net/api/notification
 
 ```js
@@ -117,7 +119,7 @@ http://uwbackend-asia.azurewebsites.net/api/notification
 }
 ```
 
-### 發送訊息(全體) (尚未實作)
+### 發送訊息(全體)
 http://uwbackend-asia.azurewebsites.net/api/notification
 
 ```js
@@ -134,6 +136,79 @@ http://uwbackend-asia.azurewebsites.net/api/notification
 {
     "jsonrpc": "2.0",
     "result": true,
+    "error": null
+    "id": 99,
+}
+```
+
+
+## profile
+http://uwbackend-asia.azurewebsites.net/api/profile
+
+### 取得個人資料
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "getProfile",
+    "params": {},
+    "id": 99
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+        "name": "1234567890",
+        "phoneno": "1234567890"
+    },
+    "error": null,
+    "id": 99,
+}
+```
+
+### 更新個人資料
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "updateProfile",
+    "params": {
+    	"keys": ["name"],
+    	"values": ["Jim"]
+    },
+    "id": 99
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": true,
+    "error": null,
+    "id": 99,
+}
+```
+
+### 取得用戶資料
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "getUsersProfile",
+    "params": {
+    	"userIds": ["c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf"]
+    },
+    "id": 99
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
+            "name": "Jim",
+            "phoneno": "test123"
+        }
+    ],
     "error": null
     "id": 99,
 }

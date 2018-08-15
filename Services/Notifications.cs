@@ -69,6 +69,12 @@ namespace UW.Services
             }
         }
 
+        public void broadcast(string message){
+            foreach(var pns in new PNS[]{PNS.apns, PNS.gcm}){
+                sendNotification(message, "everybody", pns);
+            }
+        }
+
         public static string getUserTag(string userId)
         {
             return "uid:" + userId;

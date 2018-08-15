@@ -106,6 +106,7 @@ namespace UW
                     builder.RegisterController<RpcMath>("math");
                     builder.RegisterController<RpcAuth>("auth");
                     builder.RegisterController<RpcContact>("contact");
+                    builder.RegisterController<RpcProfile>("profile");
                     builder.RegisterController<RpcNotification>("notification");
                 });
             });
