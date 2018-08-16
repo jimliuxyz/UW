@@ -18,7 +18,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UW.Data;
 using UW.JsonRpc;
-using UW.JWT;
 using UW.Services;
 
 namespace UW
@@ -65,14 +64,7 @@ namespace UW
                     RequireExpirationTime = false,
                 };
                 // options.SecurityTokenValidators.Clear();
-                // options.SecurityTokenValidators.Add(new ApiTokenValidator());
-                // options.Events = new JwtBearerEvents(){
-                //     OnMessageReceived = context => {
-                //         var token = context.Request.Headers["myToken"];
-                //         context.Token = token.FirstOrDefault();
-                //         return Task.CompletedTask;
-                //     }
-                // };
+                // options.SecurityTokenValidators.Add(new ApiTokenValidator()); //不需要額外建立Validator
             });
 
             services.AddJsonRpc(config =>
