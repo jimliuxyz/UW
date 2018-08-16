@@ -50,7 +50,6 @@ namespace UW.JsonRpc
                     if (db.upsertUser(user))
                         user = db.getUserByPhone(phoneno);
                 }
-                Console.WriteLine("user : " + user.userId);
 
                 //make user token
                 var claims = new Claim[]{

@@ -54,18 +54,18 @@ namespace UW
             })
             .AddJwtBearer(options =>
             {
-                // options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                // {
-                //     ValidIssuer = jwtSettings.Issuer,
-                //     ValidAudience = jwtSettings.Audience,
-                //     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
-                //     ValidateIssuer = true,
-                //     ValidateAudience = true,
-                //     ValidateIssuerSigningKey = true,
-                //     RequireExpirationTime = false,
-                // };
-                options.SecurityTokenValidators.Clear();
-                options.SecurityTokenValidators.Add(new ApiTokenValidator());
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    RequireExpirationTime = false,
+                };
+                // options.SecurityTokenValidators.Clear();
+                // options.SecurityTokenValidators.Add(new ApiTokenValidator());
                 // options.Events = new JwtBearerEvents(){
                 //     OnMessageReceived = context => {
                 //         var token = context.Request.Headers["myToken"];
@@ -103,10 +103,10 @@ namespace UW
                 rpcApp
                 .UseManualJsonRpc(builder =>
                 {
-                    builder.RegisterController<RpcMath>("math");
                     builder.RegisterController<RpcAuth>("auth");
                     builder.RegisterController<RpcContact>("contact");
                     builder.RegisterController<RpcProfile>("profile");
+                    builder.RegisterController<RpcPlatform>("platform");
                     builder.RegisterController<RpcNotification>("notification");
                 });
             });

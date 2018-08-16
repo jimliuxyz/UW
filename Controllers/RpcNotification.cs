@@ -36,7 +36,7 @@ namespace UW.JsonRpc
             pnsToken = pnsToken.Trim();
             
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
-            var regId = await this.notifications.updateRegId(pns, pnsToken, userId);
+            var regId = await this.notifications.updateRegId(userId, pns, pnsToken);
 
             if (!string.IsNullOrEmpty(regId))
             {
@@ -59,8 +59,7 @@ namespace UW.JsonRpc
             var noinfo = db.getUserNoHubInfo(userId);
             if (noinfo != null)
             {
-                var tag = Notifications.getUserTag(userId);
-                notifications.sendNotification(message, tag, noinfo.pns);
+                notifications.sendMessage(userId, noinfo.pns, message);
                 return Ok(true);
             }
             return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");

@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UW.Models.Collections;
 using Microsoft.Azure.NotificationHubs.Messaging;
+using UW.Data;
 
 namespace UW.Services
 {
+    class HubSettings
+    {
+        public string ConnectionString { get; set; }
+        public string HubName { get; set; }
+    }
     public class Notifications
     {
         private NotificationHubClient hub;
@@ -17,41 +23,39 @@ namespace UW.Services
         public Notifications(IConfiguration configuration)
         {
             HubSettings settings = new HubSettings();
-            configuration.Bind("NotificationHub", settings);
+            configuration.Bind(KEYSTR.NOTIFICATION_SETTING_ROOT, settings);
             hub = NotificationHubClient.CreateClientFromConnectionString(settings.ConnectionString, settings.HubName);
         }
 
-        public void broadcastMessage(string message)
-        {
-            Console.WriteLine("---- sendMulticast ----");
-            var notif = "{ \"data\" : {\"message\":\"" + message + "\"}}";
-            hub.SendGcmNativeNotificationAsync(notif);
-
-            // var alert = "{\"aps\":{\"alert\":\"" + message + "\"}}";
-            // hub.SendAppleNativeNotificationAsync(alert);
+        /// <summary>
+        /// 對某user發送訊息
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="pns"></param>
+        /// <param name="message"></param>
+        public void sendMessage(string userId, PNS pns, string message){
+            var userTag = getUserTag(userId);
+            sendToTag(userTag, pns, message);
         }
-        private string regId = "6999319467446834786-247359078146117058-1";
 
-        public void sendMessage2(string message, string to)
-        {
-            var notif = "{ \"data\" : {\"message\":\"" + message + "\"}}";
-
-            // get the RegistrationDescription by regId
-            RegistrationDescription reg = hub.GetRegistrationAsync<RegistrationDescription>(regId).Result;
-            Console.WriteLine(JsonConvert.SerializeObject(reg, Formatting.Indented));
-
-            // create or update RegistrationDescription
-            // reg.RegistrationId = regId;
-            // reg.Tags = new HashSet<string>(new string[] { "gpk" });
-            // reg.Tags.Add("username:" + "nate_");
-            // await hub.CreateOrUpdateRegistrationAsync(reg);
-
-
-            // send message
-            // await hub.SendGcmNativeNotificationAsync(notif, new string[] { "username:" + "nate_"});
-            // await hub.SendTemplateNotificationAsync(new Dictionary<string, string>{{"message","hello"}}, "username:" + "nate_");
+        /// <summary>
+        /// 以廣播方式發送訊息
+        /// </summary>
+        /// <param name="message"></param>
+        public void broadcast(string message){
+            // 分別對每個PNS發送
+            foreach(PNS pns in Enum.GetValues(typeof(PNS))){
+                sendToTag(KEYSTR.NOTIFICATION_EVERYBODY, pns, message);
+            }
         }
-        public void sendNotification(string message, string tag, PNS pns)
+
+        /// <summary>
+        /// 發送訊息到指定tag
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="pns"></param>
+        /// <param name="message"></param>
+        private void sendToTag(string tag, PNS pns, string message)
         {
             var notif = "";
             switch (pns)
@@ -69,18 +73,21 @@ namespace UW.Services
             }
         }
 
-        public void broadcast(string message){
-            foreach(var pns in new PNS[]{PNS.apns, PNS.gcm}){
-                sendNotification(message, "everybody", pns);
-            }
-        }
-
-        public static string getUserTag(string userId)
+        /// <summary>
+        /// 以userId取得個別使用者的tag
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private static string getUserTag(string userId)
         {
-            return "uid:" + userId;
+            return KEYSTR.NOTIFICATION_UID + userId;
         }
 
-        // get a new/old regId and clear all
+        /// <summary>
+        /// 以tag取得或新建一個azure regId, 並刪除舊id的內容
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         private async Task<string> getRegIdAsync(string tag = null)
         {
             string newRegistrationId = null;
@@ -108,11 +115,21 @@ namespace UW.Services
             return newRegistrationId;
         }
 
-        public async Task<string> updateRegId(PNS pns, string pnsToken, string userId)
+        /// <summary>
+        /// 以userId更新其裝置PNS的資訊
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="pns"></param>
+        /// <param name="pnsToken"></param>
+        /// <returns></returns>
+        public async Task<string> updateRegId(string userId, PNS pns, string pnsToken)
         {
             string tag = getUserTag(userId);
 
+            //取得或新建azure regId
             string regId = getRegIdAsync(tag).Result;
+
+            //依pns類型建立註冊描述
             RegistrationDescription registration = null;
             switch (pns)
             {
@@ -128,9 +145,10 @@ namespace UW.Services
 
             try
             {
+                //填入內容並更新到azure notification hub
                 registration.RegistrationId = regId;
                 registration.Tags = new HashSet<string>();
-                registration.Tags.Add("everybody");
+                registration.Tags.Add(KEYSTR.NOTIFICATION_EVERYBODY);
                 registration.Tags.Add(tag);
 
                 await hub.CreateOrUpdateRegistrationAsync(registration);
@@ -145,9 +163,4 @@ namespace UW.Services
         }
     }
 
-    class HubSettings
-    {
-        public string ConnectionString { get; set; }
-        public string HubName { get; set; }
-    }
 }
