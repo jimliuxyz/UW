@@ -139,8 +139,8 @@ namespace UW.Data
         {
             try
             {
-                client.UpsertDocumentAsync(URI_USER, user).Wait();
-                return true;
+                var res = client.UpsertDocumentAsync(URI_USER, user).Result;
+                return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
             }
             catch (System.Exception e)
             {
@@ -172,7 +172,7 @@ namespace UW.Data
             try
             {
                 var res = client.UpsertDocumentAsync(URI_NOHUB, info).Result;
-                return res.StatusCode == HttpStatusCode.OK;
+                return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
             }
             catch (System.Exception e)
             {
