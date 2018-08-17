@@ -64,7 +64,7 @@ namespace UW.JsonRpc
                             setting.Issuer,
                             setting.Audience,
                             claims,
-                            null,
+                            DateTime.UtcNow,
                             null,
                             creds);
 
