@@ -42,7 +42,7 @@ namespace UW.JsonRpc
             NoHubInfo nohubinfo = null;
             try
             {
-                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
+                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
                 user = db.getUserByUserId(userId);
                 nohubinfo = db.getUserNoHubInfo(userId);
             }

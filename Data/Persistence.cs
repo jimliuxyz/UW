@@ -72,7 +72,7 @@ namespace UW.Data
             client.CreateDatabaseIfNotExistsAsync(new Database { Id = DB_NAME }).Wait();
 
             //create collections
-            var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400可能太小
+            var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_USER }, defReqOpts);
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
@@ -81,7 +81,6 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_NOHUB }, defReqOpts);
 
             // test();
-            // test_ttl();
         }
 
         /// <summary>
@@ -196,17 +195,6 @@ namespace UW.Data
             var result = from c in q where (c.phoneno == phoneno && c.passcode == passcode) select c;
 
             return (result.Count() > 0);
-        }
-
-        private void test_ttl()
-        {
-            client.CreateDocumentAsync(URI_SMSPCODE,
-                new SmsPasscode
-                {
-                    phoneno = "1234567890",
-                    passcode = "3333"
-                });
-            Console.WriteLine("......");
         }
 
         private void test()

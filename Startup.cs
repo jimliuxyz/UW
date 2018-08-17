@@ -40,11 +40,7 @@ namespace UW
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
-
-            var jwtSettings = new JwtSettings();
-            Configuration.Bind("JwtSettings", jwtSettings);
 
             services.AddAuthentication(options =>
             {
@@ -53,6 +49,9 @@ namespace UW
             })
             .AddJwtBearer(options =>
             {
+                var jwtSettings = new JwtSettings();
+                Configuration.Bind("JwtSettings", jwtSettings);
+
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidIssuer = jwtSettings.Issuer,
@@ -92,8 +91,7 @@ namespace UW
 
             app.Map("/api", rpcApp =>
             {
-                rpcApp
-                .UseManualJsonRpc(builder =>
+                rpcApp.UseManualJsonRpc(builder =>
                 {
                     builder.RegisterController<RpcAuth>("auth");
                     builder.RegisterController<RpcContact>("contact");

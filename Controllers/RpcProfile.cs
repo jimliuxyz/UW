@@ -73,7 +73,7 @@ namespace UW.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult updateProfile(string[] keys, string[] values)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
             var user = db.getUserByUserId(userId);
 
@@ -82,7 +82,7 @@ namespace UW.JsonRpc
                 for (int i = 0; i < keys.Length; i++)
                 {
                     var key = keys[i];
-                    if (key == "name")
+                    if (key == KEYSTR.DOC_USER_NAME)
                         user.name = values[i];
                 }
                 db.upsertUser(user);

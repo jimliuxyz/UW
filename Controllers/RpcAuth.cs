@@ -54,9 +54,9 @@ namespace UW.JsonRpc
                 //make user token
                 var claims = new Claim[]{
                     new Claim(ClaimTypes.MobilePhone, phoneno),
-                    new Claim(ClaimTypes.Name, phoneno),
-                    new Claim(ClaimTypes.Role, "user"),
-                    new Claim("userid", user.userId)
+                    new Claim(ClaimTypes.Name, user.name),
+                    new Claim(ClaimTypes.Role, "User"),
+                    new Claim(KEYSTR.CLAIM_USERID, user.userId)
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -68,7 +68,6 @@ namespace UW.JsonRpc
                             null,
                             creds);
 
-                // return this.Ok("login okay");
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
 

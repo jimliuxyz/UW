@@ -35,7 +35,7 @@ namespace UW.JsonRpc
         {
             pnsToken = pnsToken.Trim();
             
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
             var regId = await this.notifications.updateRegId(userId, pns, pnsToken);
 
             if (!string.IsNullOrEmpty(regId))
