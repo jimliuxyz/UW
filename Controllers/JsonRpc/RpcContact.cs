@@ -16,10 +16,10 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace UW.JsonRpc
+namespace UW.Controllers.JsonRpc
 {
     [Authorize]
-    public class RpcContact : RpcController
+    public class RpcContact : RpcBaseController
     {
         private IHttpContextAccessor accessor;
         private Notifications notifications;
@@ -31,6 +31,11 @@ namespace UW.JsonRpc
             this.db = db;
         }
 
+        /// <summary>
+        /// 取得所有使用者
+        /// todo:此api僅供測試,待移除
+        /// </summary>
+        /// <returns></returns>
         public IRpcMethodResult getAllUsers()
         {
             return Ok(db.getUsers());

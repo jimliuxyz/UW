@@ -18,9 +18,9 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 
-namespace UW.JsonRpc
+namespace UW.Controllers.JsonRpc
 {
-    public class RpcPlatform : RpcController
+    public class RpcPlatform : RpcBaseController
     {
         private IHttpContextAccessor accessor;
         private Persistence db;
@@ -34,6 +34,7 @@ namespace UW.JsonRpc
 
         /// <summary>
         /// 取得平台資訊
+        /// todo : 僅用於測試,待移除或權限控管
         /// </summary>
         /// <returns></returns>
         public async Task<IRpcMethodResult> info()

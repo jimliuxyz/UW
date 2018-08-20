@@ -15,11 +15,12 @@ using UW.Models.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
+using UW.Controllers;
 
-namespace UW.JsonRpc
+namespace UW.Controllers.JsonRpc
 {
     [Authorize]
-    public class RpcProfile : RpcController
+    public class RpcProfile : RpcBaseController
     {
         private IHttpContextAccessor accessor;
         private Notifications notifications;
@@ -68,7 +69,7 @@ namespace UW.JsonRpc
         }
 
         /// <summary>
-        /// 更新資料
+        /// 更新用戶資料
         /// </summary>
         /// <returns></returns>
         public IRpcMethodResult updateProfile(string[] keys, string[] values)
@@ -90,7 +91,7 @@ namespace UW.JsonRpc
             catch (System.Exception e)
             {
                 Console.WriteLine(e.ToString());
-                return this.Error(JsonRpcErrCode.ACTION_FAILED, "action failed");
+                return ERROR_ACT_FAILED;
             }
 
             return Ok(true);

@@ -149,7 +149,7 @@ namespace UW.Data
         }
 
         /// <summary>
-        /// 取得NoHubInfo
+        /// 取得user的NoHubInfo
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>

@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UW.Data;
-using UW.JsonRpc;
+using UW.Controllers.JsonRpc;
 using UW.Services;
 
 namespace UW
