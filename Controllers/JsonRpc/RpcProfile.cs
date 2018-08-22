@@ -73,7 +73,8 @@ namespace UW.Controllers.JsonRpc
             {
                 id = user.userId,
                 name = user.name,
-                phoneno = user.phoneno
+                phoneno = user.phoneno,
+                avatar = user.avatar
             });
             return Ok(users_);
         }

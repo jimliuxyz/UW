@@ -32,6 +32,18 @@ namespace UW.Controllers.JsonRpc
         }
 
         /// <summary>
+        /// 取得balance (snapshot)
+        /// </summary>
+        /// <returns></returns>
+        public IRpcMethodResult getBalances()
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+
+            var balance = db.getBalance(userId);
+            return Ok(balance.balances);
+        }
+
+        /// <summary>
         /// 存錢
         /// todo:此api僅供測試,待移除
         /// </summary>
@@ -42,18 +54,6 @@ namespace UW.Controllers.JsonRpc
         }
 
 
-        /// <summary>
-        /// 取得balance
-        /// todo:此api僅供測試,待移除
-        /// </summary>
-        /// <returns></returns>
-        public IRpcMethodResult getBalances()
-        {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
-
-            var balance = db.getBalance(userId);
-            return Ok(balance.balances);
-        }
     }
 }
 
