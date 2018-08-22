@@ -4,14 +4,13 @@
 - /api/profile 取得個人資料 與 貨幣設定
 - /api/contact 取得聯絡人列表
 - /api/trading 取得貨幣餘額
+- http將被關閉 請改用https
 
 # Funciton App
 發送簡訊驗證碼
 https://uwfuncapp.azurewebsites.net/api/reqSmsVerify?phoneno=1234567890
 
 # API Server (JsonRPC over http/https)
-
-- http將被關閉 請改用https
 
 [AUTH - 授權](./docs/AUTH.md)
 
