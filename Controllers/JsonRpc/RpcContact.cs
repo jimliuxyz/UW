@@ -19,12 +19,12 @@ using Newtonsoft.Json;
 namespace UW.Controllers.JsonRpc
 {
     [Authorize]
-    public class RpcContact : RpcBaseController
+    public class RpcContacts : RpcBaseController
     {
         private IHttpContextAccessor accessor;
         private Notifications notifications;
         private Persistence db;
-        public RpcContact(IHttpContextAccessor accessor, Notifications notifications, Persistence db)
+        public RpcContacts(IHttpContextAccessor accessor, Notifications notifications, Persistence db)
         {
             this.accessor = accessor;
             this.notifications = notifications;
@@ -41,6 +41,46 @@ namespace UW.Controllers.JsonRpc
             return Ok(db.getUsers());
         }
 
+
+        /// <summary>
+        /// 新增(或更新)好友
+        /// todo : 上限500人?
+        /// </summary>
+        /// <param name="friends"></param>
+        /// <returns></returns>
+        public IRpcMethodResult getContacts()
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+
+            var contacts = db.getContact(userId);
+
+            return Ok(new
+            {
+                contacts = contacts.friends,
+                recent = new List<Friend>()
+            });
+        }
+
+        /// <summary>
+        /// 新增(或更新)好友
+        /// todo : 上限500人?
+        /// </summary>
+        /// <param name="friends"></param>
+        /// <returns></returns>
+        public IRpcMethodResult addFriends(List<Friend> friends)
+        {
+            return Ok(db.getUsers());
+        }
+
+        /// <summary>
+        /// 刪除好友
+        /// </summary>
+        /// <param name="friends"></param>
+        /// <returns></returns>
+        public IRpcMethodResult delFriends(List<Friend> friends)
+        {
+            return Ok(db.getUsers());
+        }
     }
 }
 

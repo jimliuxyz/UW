@@ -94,10 +94,11 @@ namespace UW
                 rpcApp.UseManualJsonRpc(builder =>
                 {
                     builder.RegisterController<RpcAuth>("auth");
-                    builder.RegisterController<RpcContact>("contact");
+                    builder.RegisterController<RpcContacts>("contacts");
                     builder.RegisterController<RpcProfile>("profile");
                     builder.RegisterController<RpcPlatform>("platform");
                     builder.RegisterController<RpcNotification>("notification");
+                    builder.RegisterController<RpcTrading>("trading");
                 });
             });
         }

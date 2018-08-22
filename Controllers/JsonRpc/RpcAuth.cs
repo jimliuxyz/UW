@@ -50,13 +50,58 @@ namespace UW.Controllers.JsonRpc
                     var user = db.getUserByPhone(phoneno);
                     if (user == null)
                     {
+                        //todo : 暫時的假資料供測試
                         user = new User()
                         {
                             phoneno = phoneno,
-                            name = phoneno
+                            name = phoneno,
+                            avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
+                            currencies = new List<CurrencySettings>{
+                                new CurrencySettings{
+                                    name = CURRENCY_NAME.cny,
+                                    order = 0,
+                                    isDefault = true,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = CURRENCY_NAME.usd,
+                                    order = 1,
+                                    isDefault = false,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = CURRENCY_NAME.bitcoin,
+                                    order = 2,
+                                    isDefault = false,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = CURRENCY_NAME.ether,
+                                    order = 3,
+                                    isDefault = false,
+                                    isVisible = false
+                                }
+                            }
                         };
                         if (db.upsertUser(user))
                             user = db.getUserByPhone(phoneno);
+
+                        var friends = new List<Friend>{
+                                new Friend{
+                                    userId = "mock-id-1",
+                                    name = "buzz",
+                                    avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+                                },
+                                new Friend{
+                                    userId = "mock-id-2",
+                                    name = "jessie",
+                                    avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+                                }
+                            };
+
+                        //todo : 測試用friend list
+                        db.addFriends(user.userId, friends);
+                        db.updateBalance(user.userId, new List<BalanceSlot>());
                     }
 
                     // 發行token (JWT)
@@ -72,7 +117,7 @@ namespace UW.Controllers.JsonRpc
                                 setting.Issuer,
                                 setting.Audience,
                                 claims,
-                                DateTime.UtcNow,
+                                null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
                                 null,
                                 creds);
 

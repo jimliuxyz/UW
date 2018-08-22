@@ -40,13 +40,23 @@ namespace UW.Controllers.JsonRpc
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == "userid").Value;
 
-            var user = db.getUserByUserId(userId);
-            return Ok(new
+            try
             {
-                id = user.userId,
-                name = user.name,
-                phoneno = user.phoneno
-            });
+                var user = db.getUserByUserId(userId);
+                return Ok(new
+                {
+                    id = user.userId,
+                    name = user.name,
+                    phoneno = user.phoneno,
+                    avatar = user.avatar,
+                    currencies = user.currencies
+                });
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return ERROR_ACT_FAILED;
+            }
         }
 
         /// <summary>

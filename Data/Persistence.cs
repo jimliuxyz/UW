@@ -39,7 +39,8 @@ namespace UW.Data
         static string SMS_SALT = "e^26rYS`}:~%E4`";
 
         private static string SETTING_ROOT = "AzureCosmos";
-        private static string DB_NAME = "UWallet";
+        private static string DB_NAME = Environment.GetEnvironmentVariable("DEV_DBNAME") ?? "UWallet";
+
         private static Uri URI_DB = UriFactory.CreateDatabaseUri(DB_NAME);
 
         //user
@@ -50,9 +51,17 @@ namespace UW.Data
         private static string COL_SMSPCODE = typeof(SmsPasscode).Name;
         private static Uri URI_SMSPCODE = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_SMSPCODE);
 
-        //sms passcode
+        //notification hub info
         private static string COL_NOHUB = typeof(NoHubInfo).Name;
         private static Uri URI_NOHUB = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_NOHUB);
+
+        //contact
+        private static string COL_CONTACT = typeof(Contacts).Name;
+        private static Uri URI_CONTACT = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_CONTACT);
+
+        //balance
+        private static string COL_BALANCE = typeof(Balance).Name;
+        private static Uri URI_BALANCE = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_BALANCE);
 
         private Settings setting;
         private IConfiguration configuration;
@@ -79,7 +88,10 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 30 }, defReqOpts); //todo:實際運作30秒可能太短
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_NOHUB }, defReqOpts);
-
+            client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
+                                new DocumentCollection { Id = COL_CONTACT }, defReqOpts);
+            client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
+                                new DocumentCollection { Id = COL_BALANCE }, defReqOpts);
             // test();
         }
 
@@ -196,6 +208,64 @@ namespace UW.Data
 
             return (result.Count() > 0);
         }
+
+        public Contacts getContact(string userId)
+        {
+            var q = client.CreateDocumentQuery<Contacts>(URI_CONTACT);
+            var result = from contact in q where contact.ownerId == userId select contact;
+
+            return (result.Count() > 0) ? result.ToList().First() : null;
+        }
+
+        public void addFriends(string userId, List<Friend> friends)
+        {
+            var contact = getContact(userId);
+            if (contact == null)
+            {
+                contact = new Contacts();
+                contact.ownerId = userId;
+                contact.friends = new List<Friend>();
+            }
+
+            // 去重
+            contact.friends.AddRange(friends);
+            contact.friends = contact.friends.Where((x, i) => contact.friends.FindIndex(z => z.userId == x.userId) == i).ToList();
+
+            var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
+        }
+
+        public Balance getBalance(string userId)
+        {
+            var q = client.CreateDocumentQuery<Balance>(URI_BALANCE);
+            var result = from contact in q where contact.ownerId == userId select contact;
+
+            return (result.Count() > 0) ? result.ToList().First() : null;
+        }
+        public void updateBalance(string userId, List<BalanceSlot> newBalances)
+        {
+            var balance = getBalance(userId);
+            if (balance == null)
+            {
+                balance = new Balance();
+                balance.ownerId = userId;
+                balance.balances = new List<BalanceSlot>(){
+                    new BalanceSlot{name=CURRENCY_NAME.cny, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.usd, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.bitcoin, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.ether, balance="1000"}
+                };
+            }
+
+            Console.WriteLine("---- 1 " + balance);
+            Console.WriteLine("---- 2 " + balance.balances);
+
+            // 去重
+            balance.balances.AddRange(newBalances);
+            balance.balances = balance.balances.Where((x, i) => balance.balances.FindIndex(z => z.name == x.name) == i).ToList();
+
+            var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
+        }
+
 
         private void test()
         {
