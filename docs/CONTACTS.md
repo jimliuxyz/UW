@@ -37,7 +37,9 @@ http://uwbackend-asia.azurewebsites.net/api/contacts
 }
 ```
 
-# 新增(或更新)聯絡人 (未實作)
+# 新增(或更新)聯絡人
+
+- 暫時只有新增
 
 ```js
 //送
