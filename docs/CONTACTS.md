@@ -89,9 +89,10 @@ http://uwbackend-asia.azurewebsites.net/api/contacts
 ```
 
 ### 搜尋聯絡人 (未實作)
-//暫時取得所有聯絡人
 
 ### 取得所有user列表 (測試用途)
+
+//暫時取得所有聯絡人
 
 ```js
 //送

@@ -39,7 +39,15 @@ namespace UW.Data
         static string SMS_SALT = "e^26rYS`}:~%E4`";
 
         private static string SETTING_ROOT = "AzureCosmos";
-        private static string DB_NAME = Environment.GetEnvironmentVariable("DEV_DBNAME") ?? "UWallet";
+        private static string DB_NAME = GetDbName();
+
+        private static string GetDbName(){
+            string name = Environment.GetEnvironmentVariable("DEV_DBNAME") ?? "UWallet";
+
+            if (Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME") == "UWBackend-demo")
+                name = "UWallet_demo";
+            return name;
+        }
 
         private static Uri URI_DB = UriFactory.CreateDatabaseUri(DB_NAME);
 

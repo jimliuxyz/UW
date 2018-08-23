@@ -37,6 +37,23 @@ http://uwbackend-asia.azurewebsites.net/api/trading
 }
 ```
 
+# 付款/轉帳
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "transfer",
+    "params": {
+        "currency": "cny",
+        "amount": "1000",
+        "toUserId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2"
+    }
+    "error": null
+    "id": 99,
+}
+```
+
 # 存錢 (未實作)
 
 ```js

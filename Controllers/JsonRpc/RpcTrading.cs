@@ -48,7 +48,24 @@ namespace UW.Controllers.JsonRpc
         /// todo:此api僅供測試,待移除
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult deposit(CURRENCY_NAME currency, string amount)
+        public IRpcMethodResult deposit(CURRENCY_NAME currency, decimal amount)
+        {
+
+            Console.WriteLine("====================");
+            // Console.WriteLine("1 : {0:G50}", amount);
+
+            return Ok(true);
+        }
+
+        /// <summary>
+        /// 轉帳/付款
+        /// todo:transation搬移到cosmos的stored procedure
+        /// </summary>
+        /// <param name="currency"></param>
+        /// <param name="amount"></param>
+        /// <param name="toUserId"></param>
+        /// <returns></returns>
+        public IRpcMethodResult transfer(CURRENCY_NAME currency, decimal amount, string toUserId)
         {
             return Ok(true);
         }
