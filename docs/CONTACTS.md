@@ -46,20 +46,16 @@ http://uwbackend-asia.azurewebsites.net/api/contacts
 {
     "jsonrpc": "2.0",
     "method": "addFriends",
-    "params": [
-        {
-            "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf", // userId
-            "name": "Jim",
-            "avatar": "http://...." // 於查詢時獲得
-        },
-        {
-            "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
-            "name": "Jim",
-            "avatar": "http://...."
-        }
-    ],
-    "error": null
-    "id": 99,
+    "params": {
+    	"list": [
+    		{
+                "userId": "mock-id-3",
+                "name": "buzz",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+            }
+         ]
+    },
+    "id": 99
 }
 //收
 {

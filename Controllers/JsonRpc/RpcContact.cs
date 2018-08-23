@@ -15,6 +15,7 @@ using UW.Models.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UW.Controllers.JsonRpc
 {
@@ -64,22 +65,22 @@ namespace UW.Controllers.JsonRpc
         /// 新增(或更新)好友
         /// todo : 上限500人?
         /// </summary>
-        /// <param name="friends"></param>
+        /// <param name="list"></param>
         /// <returns></returns>
-        public IRpcMethodResult addFriends(List<Friend> friends)
+        public IRpcMethodResult addFriends(List<Friend> list)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
-            db.addFriends(userId, friends);
+            db.addFriends(userId, list);
             return Ok(true);
         }
 
         /// <summary>
         /// 刪除好友
         /// </summary>
-        /// <param name="friends"></param>
+        /// <param name="list"></param>
         /// <returns></returns>
-        public IRpcMethodResult delFriends(List<Friend> friends)
+        public IRpcMethodResult delFriends(List<Friend> list)
         {
             return Ok(db.getUsers());
         }
