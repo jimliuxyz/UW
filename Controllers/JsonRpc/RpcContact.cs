@@ -43,8 +43,7 @@ namespace UW.Controllers.JsonRpc
 
 
         /// <summary>
-        /// 新增(或更新)好友
-        /// todo : 上限500人?
+        /// 取得連絡人
         /// </summary>
         /// <param name="friends"></param>
         /// <returns></returns>
@@ -69,7 +68,10 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult addFriends(List<Friend> friends)
         {
-            return Ok(db.getUsers());
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+
+            db.addFriends(userId, friends);
+            return Ok(true);
         }
 
         /// <summary>

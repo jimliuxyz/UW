@@ -53,6 +53,7 @@ namespace UW.Controllers.JsonRpc
                         //todo : 暫時的假資料供測試
                         user = new User()
                         {
+                            userId = "tempid-"+phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
                             phoneno = phoneno,
                             name = phoneno,
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
