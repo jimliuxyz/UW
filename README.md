@@ -1,4 +1,7 @@
 
+# 更新內容(180827-2)
+- 頭像url檔名改為隨機字串
+
 # 更新內容(180827)
 
 - 新增 頭像api
@@ -18,10 +21,9 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 ```js
 {
     "statusCode": 200,
-    "result": "https://uwdefstorage.blob.core.windows.net/avatar/200/{USER_ID}.jpg"
+    "result": "https://uwdefstorage.blob.core.windows.net/avatar/200/{RANDOM_ID}.jpg"
 }
 ```
-- 圖片名稱暫時固定用{USER_ID}.jpg 之後會改為亂數字串
 
 # API Server (JsonRPC over http/https)
 
