@@ -53,11 +53,6 @@ namespace UW.Controllers.JsonRpc
 
             var contacts = db.getContact(userId);
 
-            //todo:暫用固定檔名
-            contacts.friends.ForEach(item => {
-                item.avatar = $"https://uwdefstorage.blob.core.windows.net/avatar/200/{item.userId}.jpg";
-            });
-
             return Ok(new
             {
                 contacts = contacts.friends,

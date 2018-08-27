@@ -271,9 +271,24 @@ namespace UW.Data
             var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
         }
 
-        public void transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
+        public bool transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
         {
-            
+            var fromBSlot = getBalance(fromId)?.balances.Find(c=>c.name.Equals(ctype));
+            var toBSlot = getBalance(toId)?.balances.Find(c=>c.name.Equals(ctype));
+
+            if (fromBSlot != null && toBSlot != null){
+                var from_balance = Decimal.Parse(fromBSlot.balance);
+                var to_balance = Decimal.Parse(toBSlot.balance);
+                if (from_balance >= amount){
+                    fromBSlot.balance = (from_balance - amount).ToString();
+                    toBSlot.balance = (to_balance + amount).ToString();
+
+                    updateBalance(fromId, new List<BalanceSlot>{fromBSlot});
+                    updateBalance(toId, new List<BalanceSlot>{toBSlot});
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void test()

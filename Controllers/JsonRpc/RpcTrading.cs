@@ -56,8 +56,10 @@ namespace UW.Controllers.JsonRpc
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
-            balance.balances.ForEach(b=>{
-                if (b.name.Equals(currency)){
+            balance.balances.ForEach(b =>
+            {
+                if (b.name.Equals(currency))
+                {
                     b.balance = (Decimal.Parse(b.balance) + amount).ToString();
                 }
             });
@@ -74,9 +76,13 @@ namespace UW.Controllers.JsonRpc
         /// <param name="amount"></param>
         /// <param name="toUserId"></param>
         /// <returns></returns>
-        public IRpcMethodResult transfer(CURRENCY_NAME currency, decimal amount, string toUserId)
+        public IRpcMethodResult transfer(string toUserId, CURRENCY_NAME currency, decimal amount)
         {
-            return Ok(true);
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+
+            var ok = db.transfer(userId, toUserId, currency, amount);
+
+            return Ok(ok);
         }
 
 
