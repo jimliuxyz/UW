@@ -42,7 +42,6 @@ namespace UW.Controllers.JsonRpc
             return Ok(db.getUsers());
         }
 
-
         /// <summary>
         /// 取得連絡人
         /// </summary>
@@ -53,6 +52,11 @@ namespace UW.Controllers.JsonRpc
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
             var contacts = db.getContact(userId);
+
+            //todo:暫用固定檔名
+            contacts.friends.ForEach(item => {
+                item.avatar = $"https://uwdefstorage.blob.core.windows.net/avatar/200/{item.userId}.jpg";
+            });
 
             return Ok(new
             {

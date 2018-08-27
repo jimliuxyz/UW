@@ -237,7 +237,7 @@ namespace UW.Data
 
             // 去重
             contact.friends.AddRange(friends);
-            contact.friends = contact.friends.Where((x, i) => contact.friends.FindIndex(z => z.userId == x.userId) == i).ToList();
+            contact.friends = contact.friends.Where((x, i) => contact.friends.FindLastIndex(z => z.userId == x.userId) == i).ToList();
 
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
         }
@@ -264,16 +264,17 @@ namespace UW.Data
                 };
             }
 
-            Console.WriteLine("---- 1 " + balance);
-            Console.WriteLine("---- 2 " + balance.balances);
-
             // 去重
             balance.balances.AddRange(newBalances);
-            balance.balances = balance.balances.Where((x, i) => balance.balances.FindIndex(z => z.name == x.name) == i).ToList();
+            balance.balances = balance.balances.Where((x, i) => balance.balances.FindLastIndex(z => z.name == x.name) == i).ToList();
 
             var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
         }
 
+        public void transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
+        {
+            
+        }
 
         private void test()
         {

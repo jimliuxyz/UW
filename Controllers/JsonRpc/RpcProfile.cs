@@ -74,7 +74,8 @@ namespace UW.Controllers.JsonRpc
                 id = user.userId,
                 name = user.name,
                 phoneno = user.phoneno,
-                avatar = user.avatar
+                // avatar = user.avatar
+                avatar = $"https://uwdefstorage.blob.core.windows.net/avatar/200/{user.userId}.jpg" //todo:暫用
             });
             return Ok(users_);
         }

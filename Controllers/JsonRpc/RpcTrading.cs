@@ -50,10 +50,19 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult deposit(CURRENCY_NAME currency, decimal amount)
         {
+            if (amount <= 0)
+                return ERROR_ACT_FAILED;
 
-            Console.WriteLine("====================");
-            // Console.WriteLine("1 : {0:G50}", amount);
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
+            var balance = db.getBalance(userId);
+            balance.balances.ForEach(b=>{
+                if (b.name.Equals(currency)){
+                    b.balance = (Decimal.Parse(b.balance) + amount).ToString();
+                }
+            });
+
+            db.updateBalance(userId, balance.balances);
             return Ok(true);
         }
 

@@ -9,6 +9,7 @@ namespace UW.Models.Collections
         public string ownerId { get; set; }
 
         public List<Friend> friends { get; set; }
+        public List<string> recent { get; set; }
     }
 
     public class Friend

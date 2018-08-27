@@ -55,17 +55,22 @@ namespace UW.Services
         /// <param name="tag"></param>
         /// <param name="pns"></param>
         /// <param name="message"></param>
-        private void sendToTag(string tag, PNS pns, string message)
+        private void sendToTag(string tag, PNS pns, string message, string action=null, object payload=null)
         {
             var notif = "";
+            var custom = new {
+                action = action,
+                payload = payload
+            };
+            var custom_json = "\"custom\" : " + Newtonsoft.Json.JsonConvert.SerializeObject(custom);
             switch (pns)
             {
                 case PNS.apns:
-                    notif = "{ \"aps\" : {\"alert\":\"" + message + "\"}}";
+                    notif = "{ \"aps\" : {\"alert\":\"" + message + "\"}, " + custom_json + "}";
                     hub.SendAppleNativeNotificationAsync(notif, new string[] { tag });
                     break;
                 case PNS.gcm:
-                    notif = "{ \"data\" : {\"message\":\"" + message + "\"}}";
+                    notif = "{ \"data\" : {\"message\":\"" + message + "\"}, " + custom_json + "}";
                     hub.SendGcmNativeNotificationAsync(notif, new string[] { tag });
                     break;
                 default:
