@@ -9,6 +9,8 @@ using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using UW.Services;
+using System.Threading.Tasks;
 
 namespace UW.Data
 {
@@ -41,7 +43,8 @@ namespace UW.Data
         private static string SETTING_ROOT = "AzureCosmos";
         private static string DB_NAME = GetDbName();
 
-        private static string GetDbName(){
+        private static string GetDbName()
+        {
             string name = Environment.GetEnvironmentVariable("DEV_DBNAME") ?? "UWallet";
 
             if (Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME") == "UWBackend-demo")
@@ -73,11 +76,13 @@ namespace UW.Data
 
         private Settings setting;
         private IConfiguration configuration;
+        private Notifications notifications;
 
         public readonly DocumentClient client;
-        public Persistence(IConfiguration configuration)
+        public Persistence(IConfiguration configuration, Notifications notifications)
         {
             this.configuration = configuration;
+            this.notifications = notifications;
 
             this.setting = new Settings();
             configuration.Bind(SETTING_ROOT, setting);
@@ -271,24 +276,76 @@ namespace UW.Data
             var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
         }
 
-        public bool transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
+        /// <summary>
+        /// 轉帳(付款)
+        /// </summary>
+        /// <param name="fromId"></param>
+        /// <param name="toId"></param>
+        /// <param name="ctype"></param>
+        /// <param name="amount"></param>
+        /// <returns>receiptId</returns>
+        public string transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
         {
-            var fromBSlot = getBalance(fromId)?.balances.Find(c=>c.name.Equals(ctype));
-            var toBSlot = getBalance(toId)?.balances.Find(c=>c.name.Equals(ctype));
+            var ok = false;
+            var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-            if (fromBSlot != null && toBSlot != null){
+            //get user
+            var fromUser = getUserByUserId(fromId);
+            var toUser = getUserByUserId(toId);
+
+            //get user's balance
+            var fromBSlot = getBalance(fromId)?.balances.Find(c => c.name.Equals(ctype));
+            var toBSlot = getBalance(toId)?.balances.Find(c => c.name.Equals(ctype));
+
+            //simulate transcation
+            if (fromBSlot != null && toBSlot != null)
+            {
                 var from_balance = Decimal.Parse(fromBSlot.balance);
                 var to_balance = Decimal.Parse(toBSlot.balance);
-                if (from_balance >= amount){
+                if (from_balance >= amount)
+                {
                     fromBSlot.balance = (from_balance - amount).ToString();
                     toBSlot.balance = (to_balance + amount).ToString();
 
-                    updateBalance(fromId, new List<BalanceSlot>{fromBSlot});
-                    updateBalance(toId, new List<BalanceSlot>{toBSlot});
-                    return true;
+                    updateBalance(fromId, new List<BalanceSlot> { fromBSlot });
+                    updateBalance(toId, new List<BalanceSlot> { toBSlot });
+                    ok = true;
                 }
             }
-            return false;
+
+            //generate receipt
+            var receipt = new
+            {
+                receiptId = receiptId,
+                action = "transfer",
+                status = ok ? 0 : -1,   //0 means done, -1 means failed, other means processing
+                currency = ctype,
+                amount = amount,
+                fromUserId = fromUser.userId,
+                fromUserName = fromUser.name,
+                toUserId = toUser.userId,
+                toUserName = toUser.name
+            };
+
+            //simulate receipt notification
+            Task.Run(() =>
+            {
+                Task.Delay(200).Wait();
+                //notify sender
+                var noinfo = getUserNoHubInfo(fromId);
+                if (noinfo != null)
+                    notifications.sendMessage(fromId, noinfo.pns, "message", "TX_RECEIPT", receipt);
+
+                //notify receiver
+                if (ok)
+                {
+                    noinfo = getUserNoHubInfo(toId);
+                    if (noinfo != null)
+                        notifications.sendMessage(toId, noinfo.pns, "message", "TX_RECEIPT", receipt);
+                }
+            });
+
+            return receiptId;
         }
 
         private void test()

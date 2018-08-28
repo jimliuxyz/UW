@@ -33,9 +33,11 @@ namespace UW.Services
         /// <param name="userId"></param>
         /// <param name="pns"></param>
         /// <param name="message"></param>
-        public void sendMessage(string userId, PNS pns, string message){
+        /// <param name="type">自訂動作</param>
+        /// <param name="payload">自訂資料</param>
+        public void sendMessage(string userId, PNS pns, string message, string type=null, object payload=null){
             var userTag = getUserTag(userId);
-            sendToTag(userTag, pns, message);
+            sendToTag(userTag, pns, message, type, payload);
         }
 
         /// <summary>
@@ -55,11 +57,13 @@ namespace UW.Services
         /// <param name="tag"></param>
         /// <param name="pns"></param>
         /// <param name="message"></param>
-        private void sendToTag(string tag, PNS pns, string message, string action=null, object payload=null)
+        /// <param name="type">自訂動作</param>
+        /// <param name="payload">自訂資料</param>
+        private void sendToTag(string tag, PNS pns, string message, string type=null, object payload=null)
         {
             var notif = "";
             var custom = new {
-                action = action,
+                type = type,
                 payload = payload
             };
             var custom_json = "\"custom\" : " + Newtonsoft.Json.JsonConvert.SerializeObject(custom);

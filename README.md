@@ -1,12 +1,7 @@
 
-# 更新內容(180827-2)
-- 頭像url檔名改為隨機字串
-- 修正 頭像url未正確讀出
+# 更新內容(180828)
 
-# 更新內容(180827)
-
-- 新增 頭像api
-- 發送簡訊api返回的status改為statusCode, 正確時回傳200, 錯誤時則依照http的規範回傳status code (因為azure function的http trigger原本就依照這個規範回傳)
+- 新增 付款api
 
 # Funciton App
 
@@ -41,6 +36,17 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 [EXRATE - 匯率](./docs/EXRATE.md)
 
 # 歷史更新
+
+
+# 更新內容(180827-2)
+- 頭像url檔名改為隨機字串
+- 修正 頭像url未正確讀出
+
+# 更新內容(180827)
+
+- 新增 頭像api
+- 發送簡訊api返回的status改為statusCode, 正確時回傳200, 錯誤時則依照http的規範回傳status code (因為azure function的http trigger原本就依照這個規範回傳)
+
 ### 更新內容(180822)
 
 - /api/profile 取得個人資料 與 貨幣設定

@@ -52,6 +52,40 @@ http://uwbackend-asia.azurewebsites.net/api/trading
     "error": null
     "id": 99,
 }
+//收
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "receiptId": "...."
+    },
+    "error": null,
+    "id": 99,
+}
+```
+
+叫用後立即回傳receiptId, 之後再透過notification方式傳送交易結果
+
+```js
+//以apple為例 用以下格式通知
+{
+    "aps": {
+        "alert": "message"
+    },
+    "custom": {
+        "type": "TX_RECEIPT",
+        "payload": {
+            "receiptId": "....",
+            "action": "transfer",
+            "status": 0,   //0 means done, -1 means failed, other means processing
+            "currency": "cny",
+            "amount": "100",
+            "fromUserId": "...",
+            "fromUserName": "jim",
+            "toUserId": "...",
+            "toUserName": "alan"
+        }
+    }
+}
 ```
 
 # 存錢 (未實作)

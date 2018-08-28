@@ -80,9 +80,11 @@ namespace UW.Controllers.JsonRpc
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
-            var ok = db.transfer(userId, toUserId, currency, amount);
+            var receiptId = db.transfer(userId, toUserId, currency, amount);
 
-            return Ok(ok);
+            return Ok(new{
+                receiptId = receiptId
+            });
         }
 
 
