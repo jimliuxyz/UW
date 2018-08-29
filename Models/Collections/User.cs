@@ -15,6 +15,7 @@ namespace UW.Models.Collections
         public string phoneno { get; set; }
 
         public string avatar { get; set; }
+        public string tokenRnd { get; set; }
 
         public List<CurrencySettings> currencies { get; set; }
     }

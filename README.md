@@ -1,3 +1,13 @@
+# 更新內容(180829)
+
+- 更新 AUTH - login
+ - 出現重複login時 會發'通知'到前裝置 此時
+
+- 新增 AUTH - isTokenAvailable
+ - 用來檢查token是否有效
+ - 每次app啟動時檢查一次
+
+> 細節請再查閱api
 
 # 更新內容(180828)
 
@@ -27,7 +37,7 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 
 [PROFILE - 個資](./docs/PROFILE.md)
 
-[CONTACT - 聯絡人](./docs/CONTACTS.md)
+[CONTACTS - 聯絡人](./docs/CONTACTS.md)
 
 [NOTIFICATION - 通知](./docs/NOTIFICATION.md)
 

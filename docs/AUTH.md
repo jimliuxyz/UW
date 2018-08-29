@@ -2,7 +2,7 @@
 http://uwbackend-asia.azurewebsites.net/api/auth
 
 
-### 登入系統
+# 登入系統
 
 登入後請將token置於往後連接的http header中
 
@@ -26,5 +26,44 @@ http://uwbackend-asia.azurewebsites.net/api/auth
     },
     "error": null
     "id": 99,
+}
+```
+
+重複登入時會發出以下通知到前裝置 目的在通知用戶將被登出
+```js
+
+//以apple為例 用以下格式通知
+{
+    "aps": {
+        "alert": "someone logged into your account\nyou've got to logout!"
+    },
+    "custom": {
+        "type": "LOGOUT",
+        "payload": null
+    }
+}
+```
+
+# 檢查token(JWT)是否仍有效
+
+照理說 應該在每個api呼叫時 後端自行檢查token是否有效
+但我考慮到 每次檢查都需查詢資料庫 會造成一些延遲與開銷
+故先嘗試以app啟動時主動查詢token是否有效
+
+這個api現在有兩個目的 一個就是排除重複登入 另一個就是當前端或後端有較大異動時可以透過這個方式讓user重新註冊
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "isTokenAvailable",
+    "params": {},
+    "id": 99
+}
+//收
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": true,
+    "error": null
 }
 ```

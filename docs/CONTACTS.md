@@ -109,12 +109,12 @@ http://uwbackend-asia.azurewebsites.net/api/contacts
         {
             "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"jim",
-            "phoneno":"1234567890"
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
         },
         {
             "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"alan",
-            "phoneno":"1234567890"
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
         }
     ],
     "error": null

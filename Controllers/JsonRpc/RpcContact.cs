@@ -39,7 +39,13 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getAllUsers()
         {
-            return Ok(db.getUsers());
+            return Ok(db.getUsers().Select(user=>{
+                return new {
+                    id = user.userId,
+                    name = user.name,
+                    avatar = user.avatar
+                };
+            }));
         }
 
         /// <summary>

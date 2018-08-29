@@ -15,6 +15,7 @@ using UW.Models.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace UW.Controllers.JsonRpc
 {
@@ -48,12 +49,18 @@ namespace UW.Controllers.JsonRpc
                 {
                     // 建立或取得user
                     var user = db.getUserByPhone(phoneno);
-                    if (user == null)
+                    if (user != null)
+                    {
+                        var noinfo = db.getUserNoHubInfo(user.userId);
+                        if (noinfo != null)
+                            notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\nyou've got to logout!", "LOGOUT");
+                    }
+                    else
                     {
                         //todo : 暫時的假資料供測試
                         user = new User()
                         {
-                            userId = "tempid-"+phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
+                            userId = "tempid-" + phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
                             phoneno = phoneno,
                             name = phoneno,
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
@@ -105,12 +112,15 @@ namespace UW.Controllers.JsonRpc
                         db.updateBalance(user.userId, new List<BalanceSlot>());
                     }
 
+                    var tokenRnd = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
                     // 發行token (JWT)
                     var claims = new Claim[]{
                         new Claim(ClaimTypes.MobilePhone, phoneno),
                         new Claim(ClaimTypes.Name, user.name),
                         new Claim(ClaimTypes.Role, "User"),
-                        new Claim(KEYSTR.CLAIM_USERID, user.userId)
+                        new Claim(KEYSTR.CLAIM_USERID, user.userId),
+                        new Claim(KEYSTR.CLAIM_TOKEN_RND, tokenRnd)
                     };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -121,8 +131,13 @@ namespace UW.Controllers.JsonRpc
                                 null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
                                 null,
                                 creds);
+                    var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+                    // update token random
+                    user.tokenRnd = tokenRnd;
+                    db.upsertUser(user);
+
+                    return Ok(new { token = tokenStr });
                 }
             }
             catch (System.Exception e)
@@ -131,6 +146,26 @@ namespace UW.Controllers.JsonRpc
             }
 
             return ERROR_ACT_FAILED;
+        }
+
+        private static string JWT_SALT = "ChHNrj.Be&%w>(*";
+        private static string Hash(string context)
+        {
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] source = Encoding.Default.GetBytes(context + JWT_SALT);
+            byte[] crypto = sha256.ComputeHash(source);
+            return Convert.ToBase64String(crypto);
+            // return context;
+        }
+
+        [Authorize]
+        public IRpcMethodResult isTokenAvailable()
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID)?.Value;
+            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_TOKEN_RND)?.Value;
+            var user = db.getUserByUserId(userId);
+
+            return Ok(tokenRnd != null && user != null && tokenRnd == user.tokenRnd);
         }
 
     }

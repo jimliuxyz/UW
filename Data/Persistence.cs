@@ -298,11 +298,11 @@ namespace UW.Data
             var toBSlot = getBalance(toId)?.balances.Find(c => c.name.Equals(ctype));
 
             //simulate transcation
-            if (fromBSlot != null && toBSlot != null)
+            if (fromBSlot != null && toBSlot != null && !fromId.Equals(toId))
             {
                 var from_balance = Decimal.Parse(fromBSlot.balance);
                 var to_balance = Decimal.Parse(toBSlot.balance);
-                if (from_balance >= amount)
+                if (from_balance >= amount && amount > 0)
                 {
                     fromBSlot.balance = (from_balance - amount).ToString();
                     toBSlot.balance = (to_balance + amount).ToString();
@@ -318,7 +318,8 @@ namespace UW.Data
             {
                 receiptId = receiptId,
                 action = "transfer",
-                status = ok ? 0 : -1,   //0 means done, -1 means failed, other means processing
+                status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
+                message = "", //user message
                 currency = ctype,
                 amount = amount,
                 fromUserId = fromUser.userId,
