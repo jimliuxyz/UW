@@ -33,6 +33,16 @@ namespace UW.Controllers.JsonRpc
             this.db = db;
         }
 
+        private static string JWT_SALT = "ChHNrj.Be&%w>(*";
+        private static string Hash(string context)
+        {
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] source = Encoding.Default.GetBytes(context + JWT_SALT);
+            byte[] crypto = sha256.ComputeHash(source);
+            return Convert.ToBase64String(crypto);
+            // return context;
+        }
+
         /// <summary>
         /// 登入API service
         /// </summary>
@@ -148,15 +158,6 @@ namespace UW.Controllers.JsonRpc
             return ERROR_ACT_FAILED;
         }
 
-        private static string JWT_SALT = "ChHNrj.Be&%w>(*";
-        private static string Hash(string context)
-        {
-            SHA256 sha256 = new SHA256CryptoServiceProvider();
-            byte[] source = Encoding.Default.GetBytes(context + JWT_SALT);
-            byte[] crypto = sha256.ComputeHash(source);
-            return Convert.ToBase64String(crypto);
-            // return context;
-        }
 
         [Authorize]
         public IRpcMethodResult isTokenAvailable()
@@ -168,6 +169,34 @@ namespace UW.Controllers.JsonRpc
             return Ok(tokenRnd != null && user != null && tokenRnd == user.tokenRnd);
         }
 
+        public IRpcMethodResult loginTest()
+        {
+            var claims = new Claim[]{
+                        new Claim(ClaimTypes.MobilePhone, "phoneno"),
+                        new Claim(ClaimTypes.Name, "user.name"),
+                        new Claim(ClaimTypes.Role, "Admin"),
+                        new Claim(KEYSTR.CLAIM_USERID, "user.userId"),
+                        new Claim(KEYSTR.CLAIM_TOKEN_RND, "tokenRnd")
+                    };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                        setting.Issuer,
+                        setting.Audience,
+                        claims,
+                        null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
+                        null,
+                        creds);
+            var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new { token = tokenStr });
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IRpcMethodResult adminGetHello()
+        {
+            return Ok("hello world~~~~");
+        }
     }
 }
 
