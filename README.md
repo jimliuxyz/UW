@@ -4,8 +4,8 @@
  - 出現重複login時 會發'通知'到前裝置 此時
 
 - 新增 AUTH - isTokenAvailable
- - 用來檢查token是否有效
- - 每次app啟動時檢查一次
+ 1. 用來檢查token是否有效
+ 2. 每次app啟動時檢查一次
 
 > 細節請再查閱api
 
