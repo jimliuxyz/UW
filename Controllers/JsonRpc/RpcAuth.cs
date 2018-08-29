@@ -169,7 +169,7 @@ namespace UW.Controllers.JsonRpc
             return Ok(tokenRnd != null && user != null && tokenRnd == user.tokenRnd);
         }
 
-        public IRpcMethodResult loginTest()
+        public IRpcMethodResult adminLogin()
         {
             var claims = new Claim[]{
                         new Claim(ClaimTypes.MobilePhone, "phoneno"),
