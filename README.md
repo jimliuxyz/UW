@@ -2,7 +2,7 @@
 
 - 更新 AUTH - login
 ```
-  出現重複login時 會發'通知'到前裝置 此時
+  出現重複login時 會發'通知'到前裝置
 ```
 - 新增 AUTH - isTokenAvailable
 ```
