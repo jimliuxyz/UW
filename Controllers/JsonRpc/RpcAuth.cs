@@ -63,7 +63,7 @@ namespace UW.Controllers.JsonRpc
                     {
                         var noinfo = db.getUserNoHubInfo(user.userId);
                         if (noinfo != null)
-                            notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!", "LOGOUT");
+                            notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!", KEYSTR.NOTIFY_LOGOUT);
                     }
                     else
                     {

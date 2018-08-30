@@ -335,14 +335,14 @@ namespace UW.Data
                 //notify sender
                 var noinfo = getUserNoHubInfo(fromId);
                 if (noinfo != null)
-                    notifications.sendMessage(fromId, noinfo.pns, "message", "TX_RECEIPT", receipt);
+                    notifications.sendMessage(fromId, noinfo.pns, "transfer out", "TX_RECEIPT", receipt);
 
                 //notify receiver
                 if (ok)
                 {
                     noinfo = getUserNoHubInfo(toId);
                     if (noinfo != null)
-                        notifications.sendMessage(toId, noinfo.pns, "message", "TX_RECEIPT", receipt);
+                        notifications.sendMessage(toId, noinfo.pns, "transfer in", "TX_RECEIPT", receipt);
                 }
             });
 

@@ -63,7 +63,7 @@ namespace UW.Services
         {
             var notif = "";
             var custom = new {
-                type = type,
+                type = type ?? KEYSTR.NOTIFY_MESSAGE,
                 payload = payload
             };
             var custom_json = "\"custom\" : " + Newtonsoft.Json.JsonConvert.SerializeObject(custom);

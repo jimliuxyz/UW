@@ -77,6 +77,7 @@ namespace UW
         {
             if (env.IsDevelopment())
             {
+                new Playground();
                 app.UseDeveloperExceptionPage();
             }
             else
