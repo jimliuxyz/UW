@@ -49,7 +49,7 @@ namespace UW.Controllers.JsonRpc
         /// <param name="phoneno"></param>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        public IRpcMethodResult login(string phoneno, string passcode)
+        public async Task<IRpcMethodResult> login(string phoneno, string passcode, PNS pns, string pngToken)
         {
             try
             {
@@ -61,9 +61,17 @@ namespace UW.Controllers.JsonRpc
                     var user = db.getUserByPhone(phoneno);
                     if (user != null)
                     {
+                        // 通知前裝置必須登出
                         var noinfo = db.getUserNoHubInfo(user.userId);
-                        if (noinfo != null)
+                        if (noinfo != null && (noinfo.pns != pns || noinfo.pnsRegId != pngToken))
                             notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!", KEYSTR.NOTIFY_LOGOUT);
+                        
+                        // 更新裝置pns token
+                        if (noinfo == null || noinfo.pns != pns || noinfo.pnsRegId != pngToken)
+                        {
+                            var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
+                            await nc.regPnsToken(pns, pngToken, user.userId);
+                        }
                     }
                     else
                     {
@@ -104,6 +112,9 @@ namespace UW.Controllers.JsonRpc
                         if (db.upsertUser(user))
                             user = db.getUserByPhone(phoneno);
 
+                        var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
+                        await nc.regPnsToken(pns, pngToken, user.userId);
+
                         var friends = new List<Friend>{
                                 new Friend{
                                     userId = "mock-id-1",
@@ -122,9 +133,8 @@ namespace UW.Controllers.JsonRpc
                         db.updateBalance(user.userId, new List<BalanceSlot>());
                     }
 
-                    var tokenRnd = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-
                     // 發行token (JWT)
+                    var tokenRnd = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
                     var claims = new Claim[]{
                         new Claim(ClaimTypes.MobilePhone, phoneno),
                         new Claim(ClaimTypes.Name, user.name),

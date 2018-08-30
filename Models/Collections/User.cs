@@ -18,6 +18,8 @@ namespace UW.Models.Collections
         public string tokenRnd { get; set; }
 
         public List<CurrencySettings> currencies { get; set; }
+
+        public NoHubInfo ntfInfo { get; set; }
     }
 
     public class CurrencySettings

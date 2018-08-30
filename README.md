@@ -47,14 +47,34 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 
 [EXRATE - 匯率](./docs/EXRATE.md)
 
+
+# Notification通知格式
+
+```js
+//以apple為例
+{
+    "aps": {
+        "alert": "someone logged into your account\nyou've got to logout!"
+    },
+    "custom": {
+        "type": "LOGOUT",
+        "payload": null
+    }
+}
+```
+custom中的type若為null時 表示為`一般訊息`通知
+#### type
+- LOGOUT : 通知使用者將被登出 (token失效或其他因素))
+- TX_RECEIPT : 交易收據 (交易雙方都會通知)
+
+
 # 歷史更新
 
-
-# 更新內容(180827-2)
+### 更新內容(180827-2)
 - 頭像url檔名改為隨機字串
 - 修正 頭像url未正確讀出
 
-# 更新內容(180827)
+### 更新內容(180827)
 
 - 新增 頭像api
 - 發送簡訊api返回的status改為statusCode, 正確時回傳200, 錯誤時則依照http的規範回傳status code (因為azure function的http trigger原本就依照這個規範回傳)

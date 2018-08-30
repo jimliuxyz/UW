@@ -37,11 +37,13 @@ namespace UW.Controllers.JsonRpc
         /// <param name="pns"></param>
         /// <param name="pnsToken"></param>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> regPnsToken(PNS pns, string pnsToken)
+        public async Task<IRpcMethodResult> regPnsToken(PNS pns, string pnsToken, string _userId=null)
         {
-            pnsToken = pnsToken.Trim();
+            try
+            {
+                            pnsToken = pnsToken.Trim();
             
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+            var userId = _userId ?? this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
             var regId = await this.notifications.updateRegId(userId, pns, pnsToken);
 
             if (!string.IsNullOrEmpty(regId))
@@ -57,6 +59,13 @@ namespace UW.Controllers.JsonRpc
                 if (db.upsertNoHubInfo(noinfo))
                     return Ok(true);
             }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
+            }
+
             return ERROR_ACT_FAILED;
         }
 

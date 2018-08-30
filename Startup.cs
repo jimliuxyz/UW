@@ -70,6 +70,9 @@ namespace UW
             {
                 config.ShowServerExceptions = true;
             });
+
+            services.AddMvc().AddControllersAsServices();
+            services.AddTransient<RpcNotification>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
