@@ -26,7 +26,7 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 }
 ```
 
-# API Server (JsonRPC over http/https)
+# API Server (JsonRPC over https)
 
 [AUTH - 授權](./docs/AUTH.md)
 

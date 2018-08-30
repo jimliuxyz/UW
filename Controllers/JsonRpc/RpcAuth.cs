@@ -64,8 +64,15 @@ namespace UW.Controllers.JsonRpc
                         // 通知前裝置必須登出
                         var noinfo = db.getUserNoHubInfo(user.userId);
                         if (noinfo != null && (noinfo.pns != pns || noinfo.pnsRegId != pnsToken))
-                            notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!", KEYSTR.NOTIFY_LOGOUT);
-                        
+                        {
+                            await Task.Run(() =>
+                            {
+                                notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
+                                Task.Delay(3000).Wait();
+                            });
+
+                        }
+
                         // 更新裝置pns token
                         if (noinfo == null || noinfo.pns != pns || noinfo.pnsRegId != pnsToken)
                         {
