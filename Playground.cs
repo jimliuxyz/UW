@@ -16,21 +16,11 @@ namespace UW
     {
         public Playground()
         {
-            // test1(null);
+            test1(null);
         }
 
         public void test1(object payload)
         {
-            // object payload = null;
-            var custom = new
-            {
-                type = "123",
-                payload = payload
-            };
-            var custom_json = "\"custom\" : " + Newtonsoft.Json.JsonConvert.SerializeObject(custom);
-
-            Console.WriteLine(custom_json);
-
         }
     }
 }
