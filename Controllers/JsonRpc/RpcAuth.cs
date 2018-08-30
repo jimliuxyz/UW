@@ -49,7 +49,7 @@ namespace UW.Controllers.JsonRpc
         /// <param name="phoneno"></param>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> login(string phoneno, string passcode, PNS pns, string pngToken)
+        public async Task<IRpcMethodResult> login(string phoneno, string passcode, PNS pns, string pnsToken)
         {
             try
             {
@@ -63,14 +63,14 @@ namespace UW.Controllers.JsonRpc
                     {
                         // 通知前裝置必須登出
                         var noinfo = db.getUserNoHubInfo(user.userId);
-                        if (noinfo != null && (noinfo.pns != pns || noinfo.pnsRegId != pngToken))
+                        if (noinfo != null && (noinfo.pns != pns || noinfo.pnsRegId != pnsToken))
                             notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!", KEYSTR.NOTIFY_LOGOUT);
                         
                         // 更新裝置pns token
-                        if (noinfo == null || noinfo.pns != pns || noinfo.pnsRegId != pngToken)
+                        if (noinfo == null || noinfo.pns != pns || noinfo.pnsRegId != pnsToken)
                         {
                             var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                            await nc.regPnsToken(pns, pngToken, user.userId);
+                            await nc.regPnsToken(pns, pnsToken, user.userId);
                         }
                     }
                     else
@@ -113,7 +113,7 @@ namespace UW.Controllers.JsonRpc
                             user = db.getUserByPhone(phoneno);
 
                         var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                        await nc.regPnsToken(pns, pngToken, user.userId);
+                        await nc.regPnsToken(pns, pnsToken, user.userId);
 
                         var friends = new List<Friend>{
                                 new Friend{

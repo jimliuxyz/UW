@@ -14,6 +14,8 @@ http://uwbackend-asia.azurewebsites.net/api/auth
     "params": {
         "phoneno": "1234567890",
         "passcode": "8888",
+        "pns": "apns",
+        "pnsToken": ""
     },
     "id": 99
 }
