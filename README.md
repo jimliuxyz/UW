@@ -3,6 +3,7 @@
 - 更新 AUTH - login
 ```
   輸入參數新增pns與pnsToken 用以讓後端識別與前次裝置是否為不同裝置 以便發送登出通知
+  (之後pnsToken有更動仍然要透過regPnsToken更新)
 ```
 
 
