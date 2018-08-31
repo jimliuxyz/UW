@@ -121,6 +121,19 @@ namespace UW.Data
         }
 
         /// <summary>
+        /// 以電話號碼取得使用者列表
+        /// </summary>
+        /// <param name="phones"></param>
+        /// <returns></returns>
+        public List<Models.Collections.User> findUsersByPhone(List<string> phones)
+        {
+            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var result = from user in q where phones.Contains(user.phoneno) select user;
+
+            return result.ToList();
+        }
+
+        /// <summary>
         /// 以電話號碼取得使用者
         /// </summary>
         /// <param name="phoneno"></param>
@@ -335,7 +348,7 @@ namespace UW.Data
                 //notify sender
                 var noinfo = getUserNoHubInfo(fromId);
                 if (noinfo != null)
-                    notifications.sendMessage(fromId, noinfo.pns, "transfer out", "TX_RECEIPT", receipt);
+                    notifications.sendMessage(fromId, noinfo.pns, $"transfer out({(ok?"okay":"failure")})", "TX_RECEIPT", receipt);
 
                 //notify receiver
                 if (ok)

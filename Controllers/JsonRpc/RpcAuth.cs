@@ -70,7 +70,6 @@ namespace UW.Controllers.JsonRpc
                                 notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
                                 Task.Delay(3000).Wait();
                             });
-
                         }
 
                         // 更新裝置pns token
@@ -122,15 +121,16 @@ namespace UW.Controllers.JsonRpc
                         var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
                         await nc.regPnsToken(pns, pnsToken, user.userId);
 
+                        // var friends = new List<Friend>{};
                         var friends = new List<Friend>{
                                 new Friend{
                                     userId = "mock-id-1",
-                                    name = "buzz",
+                                    name = "buzz(不要點我)",
                                     avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
                                 },
                                 new Friend{
                                     userId = "mock-id-2",
-                                    name = "jessie",
+                                    name = "jessie(不要點我)",
                                     avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
                                 }
                             };

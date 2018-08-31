@@ -1,10 +1,6 @@
-# 更新內容(180830)
+# 更新內容(180831)
 
-- 更新 AUTH - login
-```
-  輸入參數新增pns與pnsToken 用以讓後端識別與前次裝置是否為不同裝置 以便發送登出通知
-  (之後pnsToken有更動仍然要透過regPnsToken更新)
-```
+- 新增 CONTACTS - findUsersByPhone 以電話號碼搜尋聯絡人
 
 
 
@@ -62,6 +58,15 @@ custom中的type若為null時 表示為`一般訊息`通知
 
 
 # 歷史更新
+
+
+### 更新內容(180830)
+
+- 更新 AUTH - login
+```
+  輸入參數新增pns與pnsToken 用以讓後端識別與前次裝置是否為不同裝置 以便發送登出通知
+  (之後pnsToken有更動仍然要透過regPnsToken更新)
+```
 
 ### 更新內容(180829)
 

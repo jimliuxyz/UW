@@ -88,11 +88,33 @@ http://uwbackend-asia.azurewebsites.net/api/contacts
 }
 ```
 
-### 搜尋聯絡人 (未實作)
+### 以電話號碼搜尋使用者
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "findUsersByPhone",
+    "params": {
+    	"list": ["886919123456"]
+    },
+    "id": 99
+}
+//收
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "name": "Nate",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
+        }
+    ],
+    "error": null
+}
+```
 
 ### 取得所有user列表 (測試用途)
-
-//暫時取得所有聯絡人
 
 ```js
 //送

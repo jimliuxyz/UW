@@ -89,6 +89,24 @@ namespace UW.Controllers.JsonRpc
         {
             return Ok(db.getUsers());
         }
+
+        /// <summary>
+        /// 以電話號碼取得使用者列表
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public IRpcMethodResult findUsersByPhone(List<string> list)
+        {
+            return Ok(db.findUsersByPhone(list).Select(user=>{
+                return new {
+                    id = user.userId,
+                    name = user.name,
+                    avatar = user.avatar
+                };
+            }));
+        }
+
+
     }
 }
 
