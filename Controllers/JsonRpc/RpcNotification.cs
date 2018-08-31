@@ -67,7 +67,7 @@ namespace UW.Controllers.JsonRpc
         /// <param name="userId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> sendMessage(string userId, string message)
+        public IRpcMethodResult sendMessage(string userId, string message)
         {
             var noinfo = db.getUserNoHubInfo(userId);
             if (noinfo != null)
@@ -84,7 +84,7 @@ namespace UW.Controllers.JsonRpc
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> broadcast(string message)
+        public IRpcMethodResult broadcast(string message)
         {
             notifications.broadcast(message);
             return Ok(true);

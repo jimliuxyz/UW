@@ -275,10 +275,10 @@ namespace UW.Data
                 balance = new Balance();
                 balance.ownerId = userId;
                 balance.balances = new List<BalanceSlot>(){
-                    new BalanceSlot{name=CURRENCY_NAME.cny, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.usd, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.bitcoin, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.ether, balance="1000"}
+                    new BalanceSlot{name=CURRENCY_NAME.CNY, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.USD, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.BTC, balance="1000"},
+                    new BalanceSlot{name=CURRENCY_NAME.ETH, balance="1000"}
                 };
             }
 

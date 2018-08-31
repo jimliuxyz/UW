@@ -82,12 +82,21 @@ namespace UW.Controllers.JsonRpc
 
             var receiptId = db.transfer(userId, toUserId, currency, amount);
 
-            return Ok(new{
+            return Ok(new
+            {
                 receiptId = receiptId
             });
         }
 
+        public IRpcMethodResult estimateExchangeTo(CURRENCY_NAME from, CURRENCY_NAME to, decimal from_amount)
+        {
 
+
+            return Ok(new
+            {
+                amount = 11
+            });
+        }
     }
 }
 

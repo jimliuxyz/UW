@@ -68,6 +68,7 @@ namespace UW.Controllers.JsonRpc
                             await Task.Run(() =>
                             {
                                 notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
+                                // 避免rpc時間差可能造成regPnsToken在sendMessage之前
                                 Task.Delay(3000).Wait();
                             });
                         }
@@ -90,25 +91,25 @@ namespace UW.Controllers.JsonRpc
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
                             currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.cny,
+                                    name = CURRENCY_NAME.CNY,
                                     order = 0,
                                     isDefault = true,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.usd,
+                                    name = CURRENCY_NAME.USD,
                                     order = 1,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.bitcoin,
+                                    name = CURRENCY_NAME.BTC,
                                     order = 2,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.ether,
+                                    name = CURRENCY_NAME.ETH,
                                     order = 3,
                                     isDefault = false,
                                     isVisible = false

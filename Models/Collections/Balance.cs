@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 
 namespace UW.Models.Collections
 {
-    public enum CURRENCY_NAME { cny, usd, bitcoin, ether }
+    public enum CURRENCY_NAME { CNY, USD, BTC, ETH }
 
     public class Balance //snapshot
     {
