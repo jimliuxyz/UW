@@ -21,13 +21,11 @@ namespace UW.Controllers.JsonRpc
 {
     public class RpcAuth : RpcBaseController
     {
-        private JwtSettings setting;
         private IHttpContextAccessor accessor;
         private Notifications notifications;
         private Persistence db;
-        public RpcAuth(IOptions<JwtSettings> options, IHttpContextAccessor accessor, Notifications notifications, Persistence db)
+        public RpcAuth(IHttpContextAccessor accessor, Notifications notifications, Persistence db)
         {
-            setting = options.Value;
             this.accessor = accessor;
             this.notifications = notifications;
             this.db = db;
@@ -140,11 +138,11 @@ namespace UW.Controllers.JsonRpc
                         new Claim(KEYSTR.CLAIM_USERID, user.userId),
                         new Claim(KEYSTR.CLAIM_TOKEN_RND, tokenRnd)
                     };
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                     var token = new JwtSecurityToken(
-                                setting.Issuer,
-                                setting.Audience,
+                                R.JWT_ISSUER,
+                                R.JWT_AUDIENCE,
                                 claims,
                                 null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
                                 null,
@@ -186,11 +184,11 @@ namespace UW.Controllers.JsonRpc
                         new Claim(KEYSTR.CLAIM_USERID, "user.userId"),
                         new Claim(KEYSTR.CLAIM_TOKEN_RND, "tokenRnd")
                     };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                        setting.Issuer,
-                        setting.Audience,
+                        R.JWT_ISSUER,
+                        R.JWT_AUDIENCE,
                         claims,
                         null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
                         null,

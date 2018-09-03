@@ -4,6 +4,8 @@ using Newtonsoft.Json.Converters;
 
 namespace UW.Models.Collections
 {
+    public enum PNS { gcm, apns }
+
     public class User
     {
         [JsonProperty(PropertyName = "id")]

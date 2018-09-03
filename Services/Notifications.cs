@@ -20,11 +20,9 @@ namespace UW.Services
     {
         private NotificationHubClient hub;
 
-        public Notifications(IConfiguration configuration)
+        public Notifications()
         {
-            HubSettings settings = new HubSettings();
-            configuration.Bind(KEYSTR.NOTIFICATION_SETTING_ROOT, settings);
-            hub = NotificationHubClient.CreateClientFromConnectionString(settings.ConnectionString, settings.HubName);
+            hub = NotificationHubClient.CreateClientFromConnectionString(R.NTFHUB_CSTR, R.NTFHUB_NAME);
         }
 
         /// <summary>

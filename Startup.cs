@@ -40,8 +40,6 @@ namespace UW
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,14 +47,11 @@ namespace UW
             })
             .AddJwtBearer(options =>
             {
-                var jwtSettings = new JwtSettings();
-                Configuration.Bind("JwtSettings", jwtSettings);
-
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                    ValidIssuer = R.JWT_ISSUER,
+                    ValidAudience = R.JWT_AUDIENCE,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,

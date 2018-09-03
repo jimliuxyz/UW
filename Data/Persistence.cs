@@ -14,17 +14,7 @@ using System.Threading.Tasks;
 
 namespace UW.Data
 {
-    // todo : move to somewhere else
-    public static class Extensions
-    {
-        public static string toHash(this string context, string salt)
-        {
-            SHA256 sha256 = new SHA256CryptoServiceProvider();
-            byte[] source = Encoding.Default.GetBytes(context + salt);
-            byte[] crypto = sha256.ComputeHash(source);
-            return Convert.ToBase64String(crypto);
-        }
-    }
+
 
     class Settings
     {
@@ -37,67 +27,52 @@ namespace UW.Data
     /// </summary>
     public class Persistence
     {
-        // todo : move to somewhere else
-        static string SMS_SALT = "e^26rYS`}:~%E4`";
-
-        private static string SETTING_ROOT = "AzureCosmos";
-        private static string DB_NAME = GetDbName();
-
-        private static string GetDbName()
-        {
-            string name = Environment.GetEnvironmentVariable("DB_NAME");
-            return name;
-        }
-
-        private static Uri URI_DB = UriFactory.CreateDatabaseUri(DB_NAME);
+        private static Uri URI_DB = UriFactory.CreateDatabaseUri(R.DB_NAME);
 
         //user
         private static string COL_USER = typeof(UW.Models.Collections.User).Name;
-        private static Uri URI_USER = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_USER);
+        private static Uri URI_USER = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_USER);
 
         //sms passcode
         private static string COL_SMSPCODE = typeof(SmsPasscode).Name;
-        private static Uri URI_SMSPCODE = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_SMSPCODE);
+        private static Uri URI_SMSPCODE = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_SMSPCODE);
 
         //contact
         private static string COL_CONTACT = typeof(Contacts).Name;
-        private static Uri URI_CONTACT = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_CONTACT);
+        private static Uri URI_CONTACT = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_CONTACT);
 
         //balance
         private static string COL_BALANCE = typeof(Balance).Name;
-        private static Uri URI_BALANCE = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_BALANCE);
-
-        private Settings setting;
-        private IConfiguration configuration;
+        private static Uri URI_BALANCE = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_BALANCE);
         private Notifications notifications;
 
         public readonly DocumentClient client;
-        public Persistence(IConfiguration configuration, Notifications notifications)
+        public Persistence(Notifications notifications)
         {
             Console.WriteLine("====init db====");
-            this.configuration = configuration;
             this.notifications = notifications;
 
-            this.setting = new Settings();
-            configuration.Bind(SETTING_ROOT, setting);
-
             //get database client as a connection
-            client = new DocumentClient(new Uri(setting.Uri), setting.SecretKey);
+            client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
 
+            InitDB();
+        }
+
+        public void InitDB()
+        {
             //create database
-            client.CreateDatabaseIfNotExistsAsync(new Database { Id = DB_NAME }).Wait();
+            client.CreateDatabaseIfNotExistsAsync(new Database { Id = R.DB_NAME }).Wait();
 
             //create collections
-            var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
+            var defReqOpts = new RequestOptions { OfferThroughput = 100 }; //todo:實際運作400RU可能太小
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_USER }, defReqOpts);
+                                new DocumentCollection { Id = COL_USER }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 30 }, defReqOpts); //todo:實際運作30秒可能太短
+                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 60*60 }, defReqOpts).Wait(); //60min for a round
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_CONTACT }, defReqOpts);
+                                new DocumentCollection { Id = COL_CONTACT }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_BALANCE }, defReqOpts);
-            // test();
+                                new DocumentCollection { Id = COL_BALANCE }, defReqOpts).Wait();
         }
 
         /// <summary>
@@ -187,8 +162,8 @@ namespace UW.Data
         /// <returns></returns>
         public bool isSmsPasscodeMatched(string phoneno, string passcode)
         {
-            phoneno = phoneno.toHash(SMS_SALT);
-            passcode = passcode.toHash(SMS_SALT);
+            phoneno = phoneno.toHash(R.SALT_SMS);
+            passcode = passcode.toHash(R.SALT_SMS);
 
             var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
             var result = from c in q where (c.phoneno == phoneno && c.passcode == passcode) select c;
@@ -323,7 +298,7 @@ namespace UW.Data
                 Task.Delay(200).Wait();
                 //notify sender
                 if (fromUser.ntfInfo != null)
-                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok?"okay":"failure")})", "TX_RECEIPT", receipt);
+                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", "TX_RECEIPT", receipt);
 
                 //notify receiver
                 if (ok)
@@ -363,7 +338,7 @@ namespace UW.Data
 
                 user.phoneno = "123";
 
-                client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DB_NAME, COL_USER, user.userId), user);
+                client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(R.DB_NAME, COL_USER, user.userId), user);
             }
         }
 

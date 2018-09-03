@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 
 namespace UW.Models.Collections
 {
