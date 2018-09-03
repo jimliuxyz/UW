@@ -1,5 +1,5 @@
 
-http://uwbackend-asia.azurewebsites.net/api/auth
+https://uwbackend-dev.azurewebsites.net/api/auth
 
 
 # 登入系統

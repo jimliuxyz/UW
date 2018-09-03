@@ -1,5 +1,5 @@
 
-http://uwbackend-asia.azurewebsites.net/api/profile
+https://uwbackend-dev.azurewebsites.net/api/profile
 
 # 取得個人資料 (連帶個人設定)
 

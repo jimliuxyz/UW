@@ -1,5 +1,5 @@
 
-http://uwbackend-asia.azurewebsites.net/api/notification
+https://uwbackend-dev.azurewebsites.net/api/notification
 
 ### 註冊PNS(Push Notification Service) token
 

@@ -1,5 +1,5 @@
 
-http://uwbackend-asia.azurewebsites.net/api/trading
+https://uwbackend-dev.azurewebsites.net/api/trading
 
 # 取得餘額
 

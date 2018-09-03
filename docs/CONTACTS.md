@@ -1,5 +1,5 @@
 
-http://uwbackend-asia.azurewebsites.net/api/contacts
+https://uwbackend-dev.azurewebsites.net/api/contacts
 
 
 # 取得聯絡人名單
