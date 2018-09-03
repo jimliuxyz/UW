@@ -25,6 +25,7 @@ namespace UW.Controllers.JsonRpc
         public RpcTest()
         {
         }
+
         public async Task<IRpcMethodResult> test()
         {
             return this.Ok(true);
