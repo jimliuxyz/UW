@@ -33,16 +33,6 @@ namespace UW.Controllers.JsonRpc
             this.db = db;
         }
 
-        private static string JWT_SALT = "ChHNrj.Be&%w>(*";
-        private static string Hash(string context)
-        {
-            SHA256 sha256 = new SHA256CryptoServiceProvider();
-            byte[] source = Encoding.Default.GetBytes(context + JWT_SALT);
-            byte[] crypto = sha256.ComputeHash(source);
-            return Convert.ToBase64String(crypto);
-            // return context;
-        }
-
         /// <summary>
         /// 登入API service
         /// </summary>
@@ -55,29 +45,29 @@ namespace UW.Controllers.JsonRpc
             {
                 // 驗證sms passcode
                 // todo : remove 8888
-                if (db.isSmsPasscodeMatched(phoneno, passcode) || passcode == "8888")
+                if (passcode == "8888" || db.isSmsPasscodeMatched(phoneno, passcode))
                 {
                     // 建立或取得user
                     var user = db.getUserByPhone(phoneno);
                     if (user != null)
                     {
                         // 通知前裝置必須登出
-                        var noinfo = db.getUserNoHubInfo(user.userId);
-                        if (noinfo != null && (noinfo.pns != pns || noinfo.pnsRegId != pnsToken))
+                        var ntfInfo = user.ntfInfo;
+                        if (ntfInfo != null && (ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken))
                         {
                             await Task.Run(() =>
                             {
-                                notifications.sendMessage(user.userId, noinfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
+                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
                                 // 避免rpc時間差可能造成regPnsToken在sendMessage之前
                                 Task.Delay(3000).Wait();
                             });
                         }
 
                         // 更新裝置pns token
-                        if (noinfo == null || noinfo.pns != pns || noinfo.pnsRegId != pnsToken)
+                        if (ntfInfo == null || ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken)
                         {
                             var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                            await nc.regPnsToken(pns, pnsToken, user.userId);
+                            await nc.regPnsToken(pns, pnsToken, user);
                         }
                     }
                     else
@@ -120,7 +110,7 @@ namespace UW.Controllers.JsonRpc
                             user = db.getUserByPhone(phoneno);
 
                         var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                        await nc.regPnsToken(pns, pnsToken, user.userId);
+                        await nc.regPnsToken(pns, pnsToken, user);
 
                         // var friends = new List<Friend>{};
                         var friends = new List<Friend>{

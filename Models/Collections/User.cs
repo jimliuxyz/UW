@@ -4,7 +4,6 @@ using Newtonsoft.Json.Converters;
 
 namespace UW.Models.Collections
 {
-    
     public class User
     {
         [JsonProperty(PropertyName = "id")]
@@ -19,7 +18,7 @@ namespace UW.Models.Collections
 
         public List<CurrencySettings> currencies { get; set; }
 
-        public NoHubInfo ntfInfo { get; set; }
+        public NtfInfo ntfInfo { get; set; }
     }
 
     public class CurrencySettings
@@ -30,4 +29,16 @@ namespace UW.Models.Collections
         public bool isDefault { get; set; }
         public bool isVisible { get; set; }
     }
+
+
+    public class NtfInfo
+    {
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PNS pns { get; set; } //Push Notification System
+
+        public string pnsRegId { get; set; }
+
+        public string azureRegId { get; set; }
+    }
+    
 }

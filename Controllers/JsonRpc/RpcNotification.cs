@@ -37,25 +37,26 @@ namespace UW.Controllers.JsonRpc
         /// <param name="pns"></param>
         /// <param name="pnsToken"></param>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> regPnsToken(PNS pns, string pnsToken, string _userId=null)
+        public async Task<IRpcMethodResult> regPnsToken(PNS pns, string pnsToken, User user = null)
         {
             pnsToken = pnsToken.Trim();
-            
-            var userId = _userId ?? this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
-            var regId = await this.notifications.updateRegId(userId, pns, pnsToken);
 
-            if (!string.IsNullOrEmpty(regId))
+            if (user == null)
             {
-                var noinfo = new NoHubInfo()
-                {
-                    ownerId = userId,
-                    pns = pns,
-                    pnsRegId = pnsToken,
-                    azureRegId = regId
-                };
+                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+                user = db.getUserByUserId(userId);
+            }
 
-                if (db.upsertNoHubInfo(noinfo))
-                    return Ok(true);
+            if (user != null)
+            {
+                var regId = await this.notifications.updateRegId(user.userId, pns, pnsToken);
+
+                user.ntfInfo = user.ntfInfo ?? new NtfInfo();
+                user.ntfInfo.pns = pns;
+                user.ntfInfo.pnsRegId = pnsToken;
+                user.ntfInfo.azureRegId = regId;
+
+                db.upsertUser(user);
             }
             return ERROR_ACT_FAILED;
         }
@@ -69,13 +70,10 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult sendMessage(string userId, string message)
         {
-            var noinfo = db.getUserNoHubInfo(userId);
-            if (noinfo != null)
-            {
-                notifications.sendMessage(userId, noinfo.pns, message);
-                return Ok(true);
-            }
-            return ERROR_ACT_FAILED;
+            var user = db.getUserByUserId(userId);
+
+            notifications.sendMessage(userId, user.ntfInfo.pns, message);
+            return Ok();
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace UW.Controllers.JsonRpc
         public IRpcMethodResult broadcast(string message)
         {
             notifications.broadcast(message);
-            return Ok(true);
+            return Ok();
         }
     }
 }

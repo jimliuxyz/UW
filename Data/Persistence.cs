@@ -45,10 +45,7 @@ namespace UW.Data
 
         private static string GetDbName()
         {
-            string name = Environment.GetEnvironmentVariable("DEV_DBNAME") ?? "UWallet";
-
-            if (Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME") == "UWBackend-demo")
-                name = "UWallet_demo";
+            string name = Environment.GetEnvironmentVariable("DB_NAME");
             return name;
         }
 
@@ -61,10 +58,6 @@ namespace UW.Data
         //sms passcode
         private static string COL_SMSPCODE = typeof(SmsPasscode).Name;
         private static Uri URI_SMSPCODE = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_SMSPCODE);
-
-        //notification hub info
-        private static string COL_NOHUB = typeof(NoHubInfo).Name;
-        private static Uri URI_NOHUB = UriFactory.CreateDocumentCollectionUri(DB_NAME, COL_NOHUB);
 
         //contact
         private static string COL_CONTACT = typeof(Contacts).Name;
@@ -81,6 +74,7 @@ namespace UW.Data
         public readonly DocumentClient client;
         public Persistence(IConfiguration configuration, Notifications notifications)
         {
+            Console.WriteLine("====init db====");
             this.configuration = configuration;
             this.notifications = notifications;
 
@@ -99,8 +93,6 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_USER }, defReqOpts);
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 30 }, defReqOpts); //todo:實際運作30秒可能太短
-            client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_NOHUB }, defReqOpts);
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_CONTACT }, defReqOpts);
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
@@ -186,37 +178,6 @@ namespace UW.Data
             return false;
         }
 
-        /// <summary>
-        /// 取得user的NoHubInfo
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public NoHubInfo getUserNoHubInfo(string userId)
-        {
-            var q = client.CreateDocumentQuery<NoHubInfo>(URI_NOHUB);
-            var result = from user in q where user.ownerId == userId select user;
-
-            return (result.Count() > 0) ? result.ToList().First() : null;
-        }
-
-        /// <summary>
-        /// 更新或新增NoHubInfo
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public bool upsertNoHubInfo(NoHubInfo info)
-        {
-            try
-            {
-                var res = client.UpsertDocumentAsync(URI_NOHUB, info).Result;
-                return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            return false;
-        }
 
         /// <summary>
         /// 檢查簡訊驗證碼是否相符
@@ -260,6 +221,21 @@ namespace UW.Data
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
         }
 
+        public void delFriends(string userId, List<Friend> rmlist)
+        {
+            var contact = getContact(userId);
+            if (contact == null)
+            {
+                contact = new Contacts();
+                contact.ownerId = userId;
+                contact.friends = new List<Friend>();
+            }
+
+            // 移除
+            contact.friends = contact.friends.Where((x, i) => rmlist.FindIndex(z => z.userId == x.userId) < 0).ToList();
+
+            var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
+        }
         public Balance getBalance(string userId)
         {
             var q = client.CreateDocumentQuery<Balance>(URI_BALANCE);
@@ -346,16 +322,14 @@ namespace UW.Data
             {
                 Task.Delay(200).Wait();
                 //notify sender
-                var noinfo = getUserNoHubInfo(fromId);
-                if (noinfo != null)
-                    notifications.sendMessage(fromId, noinfo.pns, $"transfer out({(ok?"okay":"failure")})", "TX_RECEIPT", receipt);
+                if (fromUser.ntfInfo != null)
+                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok?"okay":"failure")})", "TX_RECEIPT", receipt);
 
                 //notify receiver
                 if (ok)
                 {
-                    noinfo = getUserNoHubInfo(toId);
-                    if (noinfo != null)
-                        notifications.sendMessage(toId, noinfo.pns, "transfer in", "TX_RECEIPT", receipt);
+                    if (toUser.ntfInfo != null)
+                        notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", "TX_RECEIPT", receipt);
                 }
             });
 

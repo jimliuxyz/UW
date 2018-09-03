@@ -105,7 +105,7 @@ namespace UW.Controllers.JsonRpc
                 return ERROR_ACT_FAILED;
             }
 
-            return Ok(true);
+            return Ok();
         }
     }
 }

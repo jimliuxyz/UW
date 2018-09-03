@@ -40,19 +40,16 @@ namespace UW.Controllers.JsonRpc
         public async Task<IRpcMethodResult> info()
         {
             User user = null;
-            NoHubInfo nohubinfo = null;
             try
             {
                 var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
                 user = db.getUserByUserId(userId);
-                nohubinfo = db.getUserNoHubInfo(userId);
             }
             catch (System.Exception) { }
 
             return this.Ok(new
             {
                 token_owner = user,
-                owner_pns = nohubinfo,
                 csharp_env = new
                 {
                     EnvironmentName = env.EnvironmentName,

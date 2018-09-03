@@ -77,7 +77,7 @@ namespace UW.Controllers.JsonRpc
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
             db.addFriends(userId, list);
-            return Ok(true);
+            return Ok();
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult delFriends(List<Friend> list)
         {
-            return Ok(db.getUsers());
+            return Ok();
         }
 
         /// <summary>

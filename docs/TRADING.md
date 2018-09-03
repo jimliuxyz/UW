@@ -17,19 +17,19 @@ http://uwbackend-asia.azurewebsites.net/api/trading
     "jsonrpc": "2.0",
     "result": [
         {
-            "name": "cny",
+            "name": "CNY",
             "balance": "1000"
         },
         {
-            "name": "usd",
+            "name": "USD",
             "balance": "1000"
         },
         {
-            "name": "bitcoin",
+            "name": "BTC",
             "balance": "1000"
         },
         {
-            "name": "ether",
+            "name": "ETH",
             "balance": "1000"
         }
     ],

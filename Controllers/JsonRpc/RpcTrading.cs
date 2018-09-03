@@ -65,7 +65,7 @@ namespace UW.Controllers.JsonRpc
             });
 
             db.updateBalance(userId, balance.balances);
-            return Ok(true);
+            return Ok();
         }
 
         /// <summary>

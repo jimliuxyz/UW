@@ -22,25 +22,25 @@ http://uwbackend-asia.azurewebsites.net/api/profile
         "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
         "currencies": [
             {
-                "name": "cny",
+                "name": "CNY",
                 "order": 0,
                 "isDefault": true,
                 "isVisible": false
             },
             {
-                "name": "usd",
+                "name": "USD",
                 "order": 1,
                 "isDefault": false,
                 "isVisible": false
             },
             {
-                "name": "bitcoin",
+                "name": "BTC",
                 "order": 2,
                 "isDefault": false,
                 "isVisible": false
             },
             {
-                "name": "ether",
+                "name": "ETH",
                 "order": 3,
                 "isDefault": false,
                 "isVisible": false

@@ -7,8 +7,8 @@ namespace UW.Models.Collections
 
     public class NoHubInfo
     {
-        [JsonProperty(PropertyName = "id")]
-        public string ownerId { get; set; }
+        // [JsonProperty(PropertyName = "id")]
+        // public string ownerId { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public PNS pns { get; set; } //Push Notification System
