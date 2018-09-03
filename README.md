@@ -1,13 +1,16 @@
 # 更新內容(180903)
 
 > 為了區分`release`與`develop`環境 我們將有至少有兩組api網域 例如:
- api service:
-  http://uwbackend-rel.azurewebsites.net/api/
-  http://uwbackend-dev.azurewebsites.net/api/
- function app:
-  https://uwfuncapp-rel.azurewebsites.net/api/
-  https://uwfuncapp-dev.azurewebsites.net/api/
- 前端也必須有機制切換`release`與`develop`環境 (例如用程式變數或編譯參數?)
+
+> api service:
+
+>  http://uwbackend-rel.azurewebsites.net/api/
+
+>  http://uwbackend-dev.azurewebsites.net/api/
+> function app:
+>  https://uwfuncapp-rel.azurewebsites.net/api/
+>  https://uwfuncapp-dev.azurewebsites.net/api/
+> 前端也必須有機制切換`release`與`develop`環境 (例如用程式變數或編譯參數?)
 
 - cny/usd/bitcoin/ether字串更改為`CNY/USD/BTC/ETH`
 
