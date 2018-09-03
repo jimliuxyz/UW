@@ -34,32 +34,32 @@ namespace UW
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<Notifications>();
-            services.AddSingleton<Persistence>();
+            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // services.AddSingleton<Notifications>();
+            // services.AddSingleton<Persistence>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidIssuer = R.JWT_ISSUER,
-                    ValidAudience = R.JWT_AUDIENCE,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET)),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    RequireExpirationTime = false,
-                };
-                // options.SecurityTokenValidators.Clear();
-                // options.SecurityTokenValidators.Add(new ApiTokenValidator()); //不需要額外建立Validator
-            });
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // })
+            // .AddJwtBearer(options =>
+            // {
+            //     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            //     {
+            //         ValidIssuer = R.JWT_ISSUER,
+            //         ValidAudience = R.JWT_AUDIENCE,
+            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET)),
+            //         ValidateIssuer = true,
+            //         ValidateAudience = true,
+            //         ValidateIssuerSigningKey = true,
+            //         RequireExpirationTime = false,
+            //     };
+            //     // options.SecurityTokenValidators.Clear();
+            //     // options.SecurityTokenValidators.Add(new ApiTokenValidator()); //不需要額外建立Validator
+            // });
 
             services.AddJsonRpc(config =>
             {
@@ -92,13 +92,14 @@ namespace UW
             {
                 rpcApp.UseManualJsonRpc(builder =>
                 {
-                    builder.RegisterController<RpcAuth>("auth");
-                    builder.RegisterController<RpcContacts>("contacts");
-                    builder.RegisterController<RpcProfile>("profile");
-                    builder.RegisterController<RpcPlatform>("platform");
-                    builder.RegisterController<RpcNotification>("notification");
-                    builder.RegisterController<RpcTrading>("trading");
-                    builder.RegisterController<RpcExRate>("exrate");
+                    // builder.RegisterController<RpcAuth>("auth");
+                    // builder.RegisterController<RpcContacts>("contacts");
+                    // builder.RegisterController<RpcProfile>("profile");
+                    // builder.RegisterController<RpcPlatform>("platform");
+                    // builder.RegisterController<RpcNotification>("notification");
+                    // builder.RegisterController<RpcTrading>("trading");
+                    // builder.RegisterController<RpcExRate>("exrate");
+                    builder.RegisterController<RpcTest>("test");
                 });
             });
         }
