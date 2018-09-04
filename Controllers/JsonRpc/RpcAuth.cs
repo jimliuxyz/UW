@@ -79,25 +79,25 @@ namespace UW.Controllers.JsonRpc
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
                             currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.CNY,
+                                    name = KEYSTR.CNY,
                                     order = 0,
                                     isDefault = true,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.USD,
+                                    name = KEYSTR.USD,
                                     order = 1,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.BTC,
+                                    name = KEYSTR.BTC,
                                     order = 2,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = CURRENCY_NAME.ETH,
+                                    name = KEYSTR.ETH,
                                     order = 3,
                                     isDefault = false,
                                     isVisible = false

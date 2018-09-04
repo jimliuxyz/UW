@@ -13,5 +13,12 @@ namespace UW.Data
 
         public static readonly string DOC_USER_NAME = "name";
 
+
+        // currency
+        public static readonly string CNY = "CNY";
+        public static readonly string USD = "USD";
+        public static readonly string BTC = "BTC";
+        public static readonly string ETH = "ETH";
+
     }
 }

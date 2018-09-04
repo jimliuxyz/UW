@@ -56,7 +56,8 @@ namespace UW.Controllers.JsonRpc
                 user.ntfInfo.pnsRegId = pnsToken;
                 user.ntfInfo.azureRegId = regId;
 
-                db.upsertUser(user);
+                if (db.upsertUser(user))
+                    return Ok(true);
             }
             return ERROR_ACT_FAILED;
         }

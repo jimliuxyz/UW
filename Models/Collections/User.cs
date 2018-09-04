@@ -25,8 +25,7 @@ namespace UW.Models.Collections
 
     public class CurrencySettings
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public CURRENCY_NAME name { get; set; }
+        public string name { get; set; }
         public int order { get; set; }
         public bool isDefault { get; set; }
         public bool isVisible { get; set; }

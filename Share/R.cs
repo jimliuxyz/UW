@@ -21,8 +21,8 @@ namespace UW
         static R()
         {
             Console.WriteLine("GetEnvironmentVariable....");
-            JWT_SECRET = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            JWT_SECRET = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+            JWT_ISSUER = Environment.GetEnvironmentVariable("JWT_ISSUER");
+            JWT_AUDIENCE = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
             JWT_SECRET = Environment.GetEnvironmentVariable("JWT_SECRET");
 
             SALT_SMS = Environment.GetEnvironmentVariable("SALT_SMS");

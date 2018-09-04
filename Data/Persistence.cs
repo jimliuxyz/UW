@@ -64,7 +64,7 @@ namespace UW.Data
             client.CreateDatabaseIfNotExistsAsync(new Database { Id = R.DB_NAME }).Wait();
 
             //create collections
-            var defReqOpts = new RequestOptions { OfferThroughput = 100 }; //todo:實際運作400RU可能太小
+            var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_USER }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
@@ -226,10 +226,10 @@ namespace UW.Data
                 balance = new Balance();
                 balance.ownerId = userId;
                 balance.balances = new List<BalanceSlot>(){
-                    new BalanceSlot{name=CURRENCY_NAME.CNY, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.USD, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.BTC, balance="1000"},
-                    new BalanceSlot{name=CURRENCY_NAME.ETH, balance="1000"}
+                    new BalanceSlot{name=KEYSTR.CNY, balance="1000"},
+                    new BalanceSlot{name=KEYSTR.USD, balance="1000"},
+                    new BalanceSlot{name=KEYSTR.BTC, balance="1000"},
+                    new BalanceSlot{name=KEYSTR.ETH, balance="1000"}
                 };
             }
 
@@ -245,10 +245,10 @@ namespace UW.Data
         /// </summary>
         /// <param name="fromId"></param>
         /// <param name="toId"></param>
-        /// <param name="ctype"></param>
+        /// <param name="currency"></param>
         /// <param name="amount"></param>
         /// <returns>receiptId</returns>
-        public string transfer(string fromId, string toId, CURRENCY_NAME ctype, decimal amount)
+        public string transfer(string fromId, string toId, string currency, decimal amount)
         {
             var ok = false;
             var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -258,8 +258,8 @@ namespace UW.Data
             var toUser = getUserByUserId(toId);
 
             //get user's balance
-            var fromBSlot = getBalance(fromId)?.balances.Find(c => c.name.Equals(ctype));
-            var toBSlot = getBalance(toId)?.balances.Find(c => c.name.Equals(ctype));
+            var fromBSlot = getBalance(fromId)?.balances.Find(c => c.name.Equals(currency));
+            var toBSlot = getBalance(toId)?.balances.Find(c => c.name.Equals(currency));
 
             //simulate transcation
             if (fromBSlot != null && toBSlot != null && !fromId.Equals(toId))
@@ -284,7 +284,7 @@ namespace UW.Data
                 action = "transfer",
                 status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
                 message = "", //user message
-                currency = ctype,
+                currency = currency,
                 amount = amount,
                 fromUserId = fromUser.userId,
                 fromUserName = fromUser.name,

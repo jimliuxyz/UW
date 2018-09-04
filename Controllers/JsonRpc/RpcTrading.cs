@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace UW.Controllers.JsonRpc
 {
-    [Authorize]
+    // [Authorize]
     public class RpcTrading : RpcBaseController
     {
         private IHttpContextAccessor accessor;
@@ -48,7 +48,7 @@ namespace UW.Controllers.JsonRpc
         /// todo:此api僅供測試,待移除
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult deposit(CURRENCY_NAME currency, decimal amount)
+        public IRpcMethodResult deposit(KEYSTR currency, decimal amount)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
@@ -76,7 +76,7 @@ namespace UW.Controllers.JsonRpc
         /// <param name="amount"></param>
         /// <param name="toUserId"></param>
         /// <returns></returns>
-        public IRpcMethodResult transfer(string toUserId, CURRENCY_NAME currency, decimal amount)
+        public IRpcMethodResult transfer(string toUserId, string currency, decimal amount)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
 
@@ -88,13 +88,13 @@ namespace UW.Controllers.JsonRpc
             });
         }
 
-        public IRpcMethodResult estimateExchangeTo(CURRENCY_NAME from, CURRENCY_NAME to, decimal from_amount)
+        public IRpcMethodResult estimateExchangeTo(string from, string to, decimal from_amount)
         {
-
+            var rate = RpcExRate.getRate(from, to);
 
             return Ok(new
             {
-                amount = 11
+                amount = from_amount / rate
             });
         }
     }
