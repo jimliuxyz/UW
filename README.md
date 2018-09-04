@@ -1,7 +1,7 @@
 # 更新內容(180903)
 
 ```
- 為了區分`release`與`develop`環境 我們將有至少有兩組api網域 例如:
+ 為了區分`release`與`develop`環境 我們將至少有兩組api網域 例如:
  api service:
   https://uwbackend-rel.azurewebsites.net/api/
   https://uwbackend-dev.azurewebsites.net/api/
@@ -31,6 +31,7 @@
     "id": 99,
 }
 //這些狀況出現在...
+//AUTH : isTokenAvailable
 //PROFILE : updateProfile
 //CONTACTS : addFriends/delFriends
 //NOTIFICATION : regPnsToken/sendMessage/broadcast

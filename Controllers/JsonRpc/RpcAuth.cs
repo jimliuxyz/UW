@@ -172,7 +172,10 @@ namespace UW.Controllers.JsonRpc
             var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_TOKEN_RND)?.Value;
             var user = db.getUserByUserId(userId);
 
-            return Ok(tokenRnd != null && user != null && tokenRnd == user.tokenRnd);
+            return Ok(new
+            {
+                available = tokenRnd != null && user != null && tokenRnd == user.tokenRnd
+            });
         }
 
         public IRpcMethodResult adminLogin()

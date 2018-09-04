@@ -65,7 +65,9 @@ https://uwbackend-dev.azurewebsites.net/api/auth
 {
     "id": 99,
     "jsonrpc": "2.0",
-    "result": true,
+    "result": {
+        available: true
+    }
     "error": null
 }
 ```
