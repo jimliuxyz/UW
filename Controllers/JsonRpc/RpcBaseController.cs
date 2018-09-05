@@ -9,7 +9,7 @@ namespace UW.Controllers
         public static readonly int ACTION_FAILED = -1002;
 
         public static readonly RpcMethodErrorResult ERROR_ACT_FAILED
-     = new RpcMethodErrorResult(ACTION_FAILED, "action failed");
+     = new RpcMethodErrorResult(ACTION_FAILED, "Action failed");
 
     }
 }
