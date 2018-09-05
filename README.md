@@ -1,6 +1,7 @@
 # 更新內容(180905)
 
-- Trading - transfer參數加上message 供轉帳交易時傳遞訊息
+- 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
+- 新增 ExCurrency 處理匯率交易 [參考]](./docs/EXCURRENCY.md)
 
 # 更新內容(180903)
 

@@ -52,7 +52,7 @@ https://uwbackend-dev.azurewebsites.net/api/excurrency
 }
 ```
 
-> 可嘗試手機端自行換算 降低server負載
+> 手機端可嘗試自行換算 降低server負載
 
 # 執行換匯
 
