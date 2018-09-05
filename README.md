@@ -1,7 +1,7 @@
 # 更新內容(180905)
 
 - 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
-- 新增 ExCurrency 處理匯率交易 [參考]](./docs/EXCURRENCY.md)
+- 新增 ExCurrency 處理匯率交易 [參考](./docs/EXCURRENCY.md)
 - 新增[錯誤碼定義](./docs/ERRORCODE.md)
 
 # API Service (JsonRPC over https)
