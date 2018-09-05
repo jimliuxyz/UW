@@ -3,73 +3,13 @@
 - 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
 - 新增 ExCurrency 處理匯率交易 [參考]](./docs/EXCURRENCY.md)
 
-# 更新內容(180903)
+# API Service (JsonRPC over https)
 
-```
- 為了區分`release`與`develop`環境 我們將至少有兩組api網域 例如:
- api service:
-  https://uwbackend-rel.azurewebsites.net/api/
-  https://uwbackend-dev.azurewebsites.net/api/
- function app:
-  https://uwfuncapp-rel.azurewebsites.net/api/
-  https://uwfuncapp-dev.azurewebsites.net/api/
- 前端也必須有機制切換`release`與`develop`環境 (例如用程式變數或編譯參數?)
-```
-- cny/usd/bitcoin/ether字串更改為`CNY/USD/BTC/ETH`
-
-- Function app的api送收也改為jsonRpc樣式 [參考](./docs/FUNCAPP.md)
-
-- JsonRPC中的result將僅回傳null/物件/空物件 `不會直接回傳數字/字串/布林` 主要是方便用dictionary解析 與格式上的一至性
-```js
-//原本
-{
-    "jsonrpc": "2.0",
-    "result": true,
-    "error": null,
-    "id": 99,
-}
-//更改為
-{
-    "jsonrpc": "2.0",
-    "result": null,
-    "error": null,
-    "id": 99,
-}
-//這些狀況出現在...
-//AUTH : isTokenAvailable
-//PROFILE : updateProfile
-//CONTACTS : addFriends/delFriends
-//NOTIFICATION : regPnsToken/sendMessage/broadcast
-//TRADING : deposit
-```
-
-
-# Funciton App
-將棄用
-
-#### 發送簡訊驗證碼
-https://uwfuncapp.azurewebsites.net/api/reqSmsVerify?phoneno=1234567890
-- 原本回的status改為statusCode 正確時回傳200 錯誤時則依照http的規範
-
-#### 更改頭像
-https://uwfuncapp.azurewebsites.net/api/uploadAvatar
-- http header必須帶token
-- post動作夾帶一個圖檔
-- 回傳
-```js
-{
-    "statusCode": 200,
-    "result": "https://uwdefstorage.blob.core.windows.net/avatar/200/{RANDOM_ID}.jpg"
-}
-```
-
-# API Server (JsonRPC over https)
-
-[FUNC APP - 授權](./docs/FUNCAPP.md)
+[Azure Func](./docs/AZUREFUNC.md)
 
 [AUTH - 授權](./docs/AUTH.md)
 
-[PROFILE - 個資](./docs/PROFILE.md)
+[PROFILE - 個資(設定))](./docs/PROFILE.md)
 
 [CONTACTS - 聯絡人](./docs/CONTACTS.md)
 
@@ -102,6 +42,47 @@ custom中的type若為null時 表示為`一般訊息`通知
 
 # 歷史更新
 
+
+
+### 更新內容(180903)
+
+```
+ 為了區分`release`與`develop`環境 我們將至少有兩組api網域 例如:
+ api service:
+  https://uwbackend-rel.azurewebsites.net/api/
+  https://uwbackend-dev.azurewebsites.net/api/
+ function app:
+  https://uwfuncapp-rel.azurewebsites.net/api/
+  https://uwfuncapp-dev.azurewebsites.net/api/
+ 前端也必須有機制切換`release`與`develop`環境 (例如用程式變數或編譯參數?)
+```
+- cny/usd/bitcoin/ether字串更改為`CNY/USD/BTC/ETH`
+
+- Azure Function的api送收也改為jsonRpc樣式 [參考](./docs/AZUREFUNC.md)
+
+- JsonRPC中的result將僅回傳null/物件/空物件 `不會再直接回傳數字/字串/布林` 主要是方便用dictionary/map解析 與格式上的一至性
+```js
+//原本
+{
+    "jsonrpc": "2.0",
+    "result": true,
+    "error": null,
+    "id": 99,
+}
+//更改為
+{
+    "jsonrpc": "2.0",
+    "result": null,
+    "error": null,
+    "id": 99,
+}
+//這些狀況出現在...
+//AUTH : isTokenAvailable
+//PROFILE : updateProfile
+//CONTACTS : addFriends/delFriends
+//NOTIFICATION : regPnsToken/sendMessage/broadcast
+//TRADING : deposit
+```
 
 
 ### 更新內容(180831)

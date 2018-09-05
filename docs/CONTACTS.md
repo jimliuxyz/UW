@@ -4,8 +4,6 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 
 # 取得聯絡人名單
 
-- 主要用於list 往後若需個別用戶的詳細內容將透過profile取回
-
 ```js
 //送
 {
@@ -39,8 +37,6 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 
 # 新增(或更新)聯絡人
 
-- 暫時只有新增
-
 ```js
 //送
 {
@@ -66,7 +62,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 }
 ```
 
-# 刪除聯絡人 (未實作)
+# 刪除聯絡人
 
 ```js
 //送
@@ -89,6 +85,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 ```
 
 # 以電話號碼搜尋使用者
+
 ```js
 //送
 {

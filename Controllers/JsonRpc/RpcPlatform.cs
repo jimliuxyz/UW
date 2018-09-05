@@ -37,7 +37,7 @@ namespace UW.Controllers.JsonRpc
         /// todo : 僅用於測試,待移除或權限控管
         /// </summary>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> info()
+        public IRpcMethodResult info()
         {
             User user = null;
             try

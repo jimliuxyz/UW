@@ -77,7 +77,7 @@ https://uwbackend-dev.azurewebsites.net/api/profile
 
 # 取得用戶資料
 
-如果有取得用戶`細部`資料的需求 將以此api取得, 若從contacts足以取得足夠資料 此api可能最終會棄用.
+取得用戶`進一步`的資料
 
 ```js
 //送

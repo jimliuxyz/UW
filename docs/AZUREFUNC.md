@@ -28,8 +28,8 @@ https://uwfuncapp-dev.azurewebsites.net/api/reqSmsVerify
 
 https://uwfuncapp-dev.azurewebsites.net/api/uploadAvatar
 
-- http header必須帶token
-- post動作夾帶一個圖檔
+- http header必須帶JWT token
+- form-data方式夾帶一圖檔
 
 ```js
 //收

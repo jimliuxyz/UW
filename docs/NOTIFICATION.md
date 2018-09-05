@@ -1,7 +1,7 @@
 
 https://uwbackend-dev.azurewebsites.net/api/notification
 
-### 註冊PNS(Push Notification Service) token
+# 註冊(或變更)PNS(Push Notification Service) token
 
 ```js
 //送
@@ -24,7 +24,7 @@ https://uwbackend-dev.azurewebsites.net/api/notification
 }
 ```
 
-### 發送訊息(個別)(測試用)
+# 發送訊息(個別)(測試用)
 
 ```js
 //送

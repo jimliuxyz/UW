@@ -2,7 +2,7 @@
 https://uwbackend-dev.azurewebsites.net/api/auth
 
 
-# 登入系統
+# 登入系統 (取得JWT token)
 
 登入後請將token置於往後連接的http header中
 
@@ -46,13 +46,13 @@ https://uwbackend-dev.azurewebsites.net/api/auth
 }
 ```
 
-# 檢查token(JWT)是否仍有效
+# 檢查token(JWT)是否仍有效(是否為最新)
 
 照理說 應該在每個api呼叫時 後端自行檢查token是否有效
 但我考慮到 每次檢查都需查詢資料庫 會造成一些延遲與開銷
-故先嘗試以app啟動時主動查詢token是否有效
+故先嘗試以app啟動時(輸入pincode時)主動查詢token是否有效
 
-這個api現在有兩個目的 一個就是排除重複登入 另一個就是當前端或後端有較大異動時可以透過這個方式讓user重新註冊
+這個api現在有兩個目的 一個就是排除舊登入 另一個就是當前端或後端有較大異動時 可以透過這個方式讓重新將user導到登入頁面 重新註冊
 ```js
 //送
 {
