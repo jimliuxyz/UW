@@ -98,7 +98,7 @@ namespace UW
                     builder.RegisterController<RpcPlatform>("platform");
                     builder.RegisterController<RpcNotification>("notification");
                     builder.RegisterController<RpcTrading>("trading");
-                    builder.RegisterController<RpcExRate>("exrate");
+                    builder.RegisterController<RpcExCurrency>("excurrency");
                     builder.RegisterController<RpcTest>("test");
                 });
             });

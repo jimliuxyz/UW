@@ -55,7 +55,7 @@ namespace UW.Controllers.JsonRpc
                         {
                             await Task.Run(() =>
                             {
-                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", KEYSTR.NOTIFY_LOGOUT);
+                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", STR.NOTIFY_LOGOUT);
                                 // 避免rpc時間差可能造成regPnsToken在sendMessage之前
                                 Task.Delay(3000).Wait();
                             });
@@ -79,25 +79,25 @@ namespace UW.Controllers.JsonRpc
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
                             currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
-                                    name = KEYSTR.CNY,
+                                    name = STR.CNY,
                                     order = 0,
                                     isDefault = true,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = KEYSTR.USD,
+                                    name = STR.USD,
                                     order = 1,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = KEYSTR.BTC,
+                                    name = STR.BTC,
                                     order = 2,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = KEYSTR.ETH,
+                                    name = STR.ETH,
                                     order = 3,
                                     isDefault = false,
                                     isVisible = false
@@ -135,8 +135,8 @@ namespace UW.Controllers.JsonRpc
                         new Claim(ClaimTypes.MobilePhone, phoneno),
                         new Claim(ClaimTypes.Name, user.name),
                         new Claim(ClaimTypes.Role, "User"),
-                        new Claim(KEYSTR.CLAIM_USERID, user.userId),
-                        new Claim(KEYSTR.CLAIM_TOKEN_RND, tokenRnd)
+                        new Claim(STR.CLAIM_USERID, user.userId),
+                        new Claim(STR.CLAIM_TOKEN_RND, tokenRnd)
                     };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -168,8 +168,8 @@ namespace UW.Controllers.JsonRpc
         [Authorize]
         public IRpcMethodResult isTokenAvailable()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID)?.Value;
-            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_TOKEN_RND)?.Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID)?.Value;
+            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_TOKEN_RND)?.Value;
             var user = db.getUserByUserId(userId);
 
             return Ok(new
@@ -184,8 +184,8 @@ namespace UW.Controllers.JsonRpc
                         new Claim(ClaimTypes.MobilePhone, "phoneno"),
                         new Claim(ClaimTypes.Name, "user.name"),
                         new Claim(ClaimTypes.Role, "Admin"),
-                        new Claim(KEYSTR.CLAIM_USERID, "user.userId"),
-                        new Claim(KEYSTR.CLAIM_TOKEN_RND, "tokenRnd")
+                        new Claim(STR.CLAIM_USERID, "user.userId"),
+                        new Claim(STR.CLAIM_TOKEN_RND, "tokenRnd")
                     };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

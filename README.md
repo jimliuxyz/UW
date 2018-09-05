@@ -1,3 +1,7 @@
+# 更新內容(180905)
+
+- Trading - transfer參數加上message 供轉帳交易時傳遞訊息
+
 # 更新內容(180903)
 
 ```
@@ -72,7 +76,7 @@ https://uwfuncapp.azurewebsites.net/api/uploadAvatar
 
 [TRADING - 交易](./docs/TRADING.md)
 
-[EXRATE - 匯率](./docs/EXRATE.md)
+[EXCURRENCY - 匯率交易](./docs/EXCURRENCY.md)
 
 
 # Notification通知格式

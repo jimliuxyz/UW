@@ -1,6 +1,6 @@
-namespace UW.Data
+namespace UW
 {
-    public class KEYSTR
+    public class STR
     {
         public static readonly string NOTIFICATION_UID = "uid:";
         public static readonly string NOTIFICATION_EVERYBODY = "everybody";
@@ -19,6 +19,8 @@ namespace UW.Data
         public static readonly string USD = "USD";
         public static readonly string BTC = "BTC";
         public static readonly string ETH = "ETH";
+        public static readonly string _SELL = "-sell";
+        public static readonly string _BUY = "-buy";
 
     }
 }

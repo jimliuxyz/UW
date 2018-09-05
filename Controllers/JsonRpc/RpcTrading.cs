@@ -37,7 +37,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getBalances()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
             return Ok(balance.balances);
@@ -48,12 +48,12 @@ namespace UW.Controllers.JsonRpc
         /// todo:此api僅供測試,待移除
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult deposit(KEYSTR currency, decimal amount)
+        public IRpcMethodResult deposit(STR currency, decimal amount)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
 
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
             balance.balances.ForEach(b =>
@@ -75,12 +75,13 @@ namespace UW.Controllers.JsonRpc
         /// <param name="currency"></param>
         /// <param name="amount"></param>
         /// <param name="toUserId"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        public IRpcMethodResult transfer(string toUserId, string currency, decimal amount)
+        public IRpcMethodResult transfer(string toUserId, string currency, decimal amount, string message)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == KEYSTR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
 
-            var receiptId = db.transfer(userId, toUserId, currency, amount);
+            var receiptId = db.doTransfer(userId, toUserId, currency, amount, message);
 
             return Ok(new
             {
@@ -88,15 +89,6 @@ namespace UW.Controllers.JsonRpc
             });
         }
 
-        public IRpcMethodResult estimateExchangeTo(string from, string to, decimal from_amount)
-        {
-            var rate = RpcExRate.getRate(from, to);
-
-            return Ok(new
-            {
-                amount = from_amount / rate
-            });
-        }
     }
 }
 

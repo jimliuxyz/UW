@@ -47,7 +47,8 @@ https://uwbackend-dev.azurewebsites.net/api/trading
     "params": {
         "currency": "cny",
         "amount": "1000",
-        "toUserId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2"
+        "toUserId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+        "message": "..."
     }
     "error": null
     "id": 99,
@@ -77,6 +78,7 @@ https://uwbackend-dev.azurewebsites.net/api/trading
             "receiptId": "....",
             "action": "transfer",
             "status": 0,   //0 means done, -1 means failed, other means processing
+            "message": "...",
             "currency": "cny",
             "amount": "100",
             "fromUserId": "...",

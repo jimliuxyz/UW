@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UW.Services;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace UW.Data
 {
@@ -68,7 +69,7 @@ namespace UW.Data
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_USER }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 60*60 }, defReqOpts).Wait(); //60min for a round
+                                new DocumentCollection { Id = COL_SMSPCODE, DefaultTimeToLive = 60 * 60 }, defReqOpts).Wait(); //60min for a round
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_CONTACT }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
@@ -226,10 +227,10 @@ namespace UW.Data
                 balance = new Balance();
                 balance.ownerId = userId;
                 balance.balances = new List<BalanceSlot>(){
-                    new BalanceSlot{name=KEYSTR.CNY, balance="1000"},
-                    new BalanceSlot{name=KEYSTR.USD, balance="1000"},
-                    new BalanceSlot{name=KEYSTR.BTC, balance="1000"},
-                    new BalanceSlot{name=KEYSTR.ETH, balance="1000"}
+                    new BalanceSlot{name=STR.CNY, balance="1000"},
+                    new BalanceSlot{name=STR.USD, balance="1000"},
+                    new BalanceSlot{name=STR.BTC, balance="1000"},
+                    new BalanceSlot{name=STR.ETH, balance="1000"}
                 };
             }
 
@@ -248,7 +249,7 @@ namespace UW.Data
         /// <param name="currency"></param>
         /// <param name="amount"></param>
         /// <returns>receiptId</returns>
-        public string transfer(string fromId, string toId, string currency, decimal amount)
+        public string doTransfer(string fromId, string toId, string currency, decimal amount, string message)
         {
             var ok = false;
             var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -283,7 +284,7 @@ namespace UW.Data
                 receiptId = receiptId,
                 action = "transfer",
                 status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
-                message = "", //user message
+                message, //user message
                 currency = currency,
                 amount = amount,
                 fromUserId = fromUser.userId,
@@ -310,38 +311,66 @@ namespace UW.Data
 
             return receiptId;
         }
-
-        private void test()
+        public string doExchange(string userId, string fromCurrency, string toCurrency, decimal fromAmount, decimal toAmount, string message)
         {
-            // client.CreateDocumentAsync(URI_USER,
-            //     new Models.Collections.User
-            //     {
-            //         name = "Jimx"
-            //     });
+            var ok = false;
+            var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
-            var u = from f in q where f.name == "Jim" select f;
-            // u = q.Where(f => f.Name == "Jim");
+            //get user
+            var user = getUserByUserId(userId);
+            var fromBSlot = getBalance(userId)?.balances.Find(c => c.name.Equals(fromCurrency, StringComparison.OrdinalIgnoreCase));
+            var toBSlot = getBalance(userId)?.balances.Find(c => c.name.Equals(toCurrency, StringComparison.OrdinalIgnoreCase));
 
-            Console.WriteLine("======");
-            Console.WriteLine(u.ToString());
-            Console.WriteLine(JsonConvert.SerializeObject(u.ToList(), Formatting.Indented));
+            if (user == null || fromBSlot == null || fromBSlot == null)
+                throw new Exception();
 
-            u = from f in q where f.name == "Jim2" select f;
-            Console.WriteLine("======");
-            Console.WriteLine(u.ToString());
-            Console.WriteLine(JsonConvert.SerializeObject(u.ToList(), Formatting.Indented));
+            if (fromCurrency.Equals(toCurrency, StringComparison.OrdinalIgnoreCase))
+                throw new Exception();
 
-            foreach (var user in u)
+            //simulate transcation
             {
-                Console.WriteLine(JsonConvert.SerializeObject(user, Formatting.Indented));
+                var from_balance = Decimal.Parse(fromBSlot.balance);
+                var to_balance = Decimal.Parse(toBSlot.balance);
+                if (from_balance < fromAmount)
+                {
+                    ok = false;
+                    // throw new Exception("Insufficient balance");
+                }
+                else
+                {
+                    fromBSlot.balance = (from_balance - fromAmount).ToString();
+                    toBSlot.balance = (to_balance + toAmount).ToString();
 
-                user.phoneno = "123";
-
-                client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(R.DB_NAME, COL_USER, user.userId), user);
+                    updateBalance(userId, new List<BalanceSlot> { fromBSlot });
+                    updateBalance(userId, new List<BalanceSlot> { toBSlot });
+                    ok = true;
+                }
             }
-        }
 
+            //generate receipt
+            var receipt = new
+            {
+                receiptId = receiptId,
+                action = "exchange",
+                status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
+                message, //user message
+                fromCurrency = fromCurrency,
+                fromAmount = fromAmount,
+                toCurrency = toCurrency
+            };
+
+            //simulate receipt notification
+            Task.Run(() =>
+            {
+                Task.Delay(200).Wait();
+                //notify sender
+                if (user.ntfInfo != null)
+                    notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", "TX_RECEIPT", receipt);
+            });
+
+            return receiptId;
+        }
+        
 
     }
 
