@@ -102,7 +102,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "jsonrpc": "2.0",
     "result": [
         {
-            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name": "Nate",
             "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
         }
@@ -126,12 +126,12 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "jsonrpc": "2.0",
     "result": [
         {
-            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"jim",
             "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
         },
         {
-            "id": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
             "name":"alan",
             "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
         }
