@@ -1,0 +1,782 @@
+{
+	"info": {
+		"_postman_id": "564144bf-d294-49d4-b21b-668b5eb32f7b",
+		"name": "UWallet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"_postman_id": "56da77b7-7ba5-4cf0-8bdb-2812c627048a",
+			"name": "auth - login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"login\",\n    \"params\": {\n        \"phoneno\": \"test-jim-123\",\n        \"passcode\": \"8888\",\n        \"pns\": \"apns\",\n        \"pnsToken\": \"f607a1efa8ec3beb994d810a4b93623b81a257332aff8a9709990ba1611478c1\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "74a5f8d1-2128-418d-86ec-29a1b1548465",
+			"name": "notification - regPnsToken",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiVzZvZ3YvaHVWVXFLME84OFpTbzd5QT09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.oVyWW0nXG7ndPhhEt2w0KDVrkjWi_dE_S2uLyzT9YUA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"regPnsToken\",\n    \"params\": {\n        \"pns\": \"apns\",\n        \"pnsToken\": \"8888\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/notification",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"notification"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "ab6a65ca-6457-40f5-b3e0-b94040b46709",
+			"name": "auth - isTokenAvailable",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsInRva2Vucm5kIjoiaExFTWRVbWlURVdGM3lER3IxYnc0Zz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.BO5t0ldrndTnLrKsiwB9590RqOLsGzNJXjfp0S4qZe0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"isTokenAvailable\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "e76e7cc7-8cf4-4a82-91bb-8884759596b3",
+			"name": "profile - getProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getProfile\",\n    \"params\": {\n    \t\"keys\": [\"name\"],\n    \t\"values\": [\"Jim2\"]\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"profile"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "4cc24d97-51bd-44dd-a81b-9346c75f4c2a",
+			"name": "profile - updateProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"updateProfile\",\n    \"params\": {\n    \t\"keys\": [\"name\"],\n    \t\"values\": [\"Jim2\"]\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"profile"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "b6e50814-d6d8-448f-913c-7fb8c5a155c7",
+			"name": "contacts - getContacts",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getContacts\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"contacts"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "1c919268-1cf2-4d4d-abf7-83f708eef182",
+			"name": "contacts - addFriends",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"addFriends\",\n    \"params\": {\n    \t\"list\": [\n    \t\t{\n                \"userId\": \"19\",\n                \"name\": \"buzz\",\n                \"avatar\": \"https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png\"\n            }\n         ]\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"contacts"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "753525f6-c22c-4d50-a0c4-e41f6dcb7350",
+			"name": "contacts - getAllUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJ1c2VyaWQiOiJjNmUzY2Q2OS05NzU1LTQ1MDYtOGMzYS00YzY0YjFjYTFlYmYiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.S4YApQjJrvymZJcI1fGHPNheF-uQ2vF4Kf1f6JCnsZw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getAllUsers\",\n    \"params\": {},\n    \"id\": 99\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "12cb45e1-6cd2-416f-9369-b501eb666eac",
+			"name": "contacts - findUsersByPhone",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJ1c2VyaWQiOiJjNmUzY2Q2OS05NzU1LTQ1MDYtOGMzYS00YzY0YjFjYTFlYmYiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.S4YApQjJrvymZJcI1fGHPNheF-uQ2vF4Kf1f6JCnsZw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"findUsersByPhone\",\n    \"params\": {\n    \t\"list\": [\"886919099069\"]\n    },\n    \"id\": 99\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "494f9910-fd4c-44c3-a226-80debedab3ee",
+			"name": "platform - info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJ1c2VyaWQiOiJjNmUzY2Q2OS05NzU1LTQ1MDYtOGMzYS00YzY0YjFjYTFlYmYiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.S4YApQjJrvymZJcI1fGHPNheF-uQ2vF4Kf1f6JCnsZw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"info\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/platform",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"platform"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "cdf8926a-2e5c-45c8-b41f-8d263f858289",
+			"name": "trading - getBalances",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiIwNDA1NjRhNi1mNWRkLTRiYTEtOGQwMy1iNDI4ZTQxMjZiODEiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.aIUT3Wcl2en3q0u18RRx-imMMNEH8mZFjT9UqsCW25g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getBalances\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/trading",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "af6e41f7-be7b-4da3-a6e0-0ac42769fd78",
+			"name": "trading - transfer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"transfer\",\n    \"params\": {\n    \t\"currency\": \"cny\",\n    \t\"amount\": \"15\",\n    \t\"toUserId\": \"980c3d9c-24f8-47e1-baad-ac35cf90fef4\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/trading",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "7747bc6f-f099-44ed-a8b5-320957eabcad",
+			"name": "auth - adminLogin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"login\",\n    \"params\": {\n        \"phoneno\": \"test123\",\n        \"passcode\": \"8888\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "dea6fff6-e6c1-4ae1-bc18-4634cc62e42d",
+			"name": "auth - adminGetHello",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"login\",\n    \"params\": {\n        \"phoneno\": \"test123\",\n        \"passcode\": \"8888\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "5ce6a9cf-4cb3-419b-adf6-dc6594ebb7be",
+			"name": "excurrency - getExRate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiL1B0SVlIWkF5RXFFYmJOUDljTEpwdz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.mgVVnMrYgX6-O_t3F_lsK-5X0V0HPdUtiB8NnPZ4rgs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getExRate\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/excurrency",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"excurrency"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "b2c8b822-9a98-4a9d-bc3c-0817e4e6b8eb",
+			"name": "excurrency - estimateExFrom",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"estimateExFrom\",\n    \"params\": {\n    \t\"fromCurrency\": \"CNY\",\n    \t\"toCurrency\": \"USD\",\n    \t\"fromAmount\": \"100\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/excurrency",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"excurrency"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "e52f0f15-7ade-4138-99ef-19216f0aff93",
+			"name": "excurrency - doExFrom",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJ1c2VyaWQiOiJ0ZW1waWQtdGVzdDEyMyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n8WSNRz85xZp9j0dpT8AsdNG75p3NPHvqQ_KfmJwG8g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"doExFrom\",\n    \"params\": {\n    \t\"fromCurrency\": \"CNY\",\n    \t\"toCurrency\": \"USD\",\n    \t\"fromAmount\": \"100\",\n    \t\"message\": \"yes\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/excurrency",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"excurrency"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "61b473f8-bbbf-41f9-80cb-6bc2602517b9",
+			"name": "funcapp (local) - reqSmsVerify",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"reqSmsVerify\",\n    \"params\": {\n        \"phoneno\": \"test-jim-123\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/reqSmsVerify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"reqSmsVerify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "8fdd815b-200c-42c4-a6bd-b3fcb1ecd85e",
+			"name": "funcapp (local) - reqSmsVerify Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"reqSmsVerify\",\n    \"params\": {\n        \"phoneno\": \"test-jim-123\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/reqSmsVerify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"reqSmsVerify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "47e08d9c-cb75-4bf2-8dfc-45898a688e1c",
+			"name": "funcapp(local) - uploadAvatar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiTEY4cWNkTGo3ME9JTFpyL0Rpa25FUT09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.nLDg9JWavixhV_YqmxeXbs2uFppQdfPUAoIupMRsJ2o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "avatar",
+							"sessionValue": {
+								"0": {}
+							},
+							"type": "file"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/uploadAvatar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"uploadAvatar"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
