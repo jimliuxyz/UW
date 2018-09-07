@@ -18,7 +18,7 @@ https://uwbackend-dev.azurewebsites.net/api/notification
 //收
 {
     "jsonrpc": "2.0",
-    "result": true,
+    "result": null,
     "error": null
     "id": 99,
 }
@@ -40,7 +40,7 @@ https://uwbackend-dev.azurewebsites.net/api/notification
 //收
 {
     "jsonrpc": "2.0",
-    "result": true,
+    "result": null,
     "error": null
     "id": 99,
 }
@@ -61,7 +61,7 @@ https://uwbackend-dev.azurewebsites.net/api/notification
 //收
 {
     "jsonrpc": "2.0",
-    "result": true,
+    "result": null,
     "error": null
     "id": 99,
 }

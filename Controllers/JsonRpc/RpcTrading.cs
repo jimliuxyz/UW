@@ -40,7 +40,17 @@ namespace UW.Controllers.JsonRpc
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
-            return Ok(balance.balances);
+            // return Ok(new {
+            //     list = balance.balances
+            // });
+
+            var map = new Dictionary<string, decimal>();
+            foreach (var b in balance.balances)
+            {
+                map.Add(b.name, decimal.Parse(b.balance));
+            }
+
+            return Ok(map);
         }
 
         /// <summary>

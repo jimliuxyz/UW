@@ -81,6 +81,8 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_CONTACT }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_BALANCE }, defReqOpts).Wait();
+            client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
+                                new DocumentCollection { Id = COL_RECEIPT }, defReqOpts).Wait();
         }
 
         public void Mockup()
@@ -246,6 +248,17 @@ namespace UW.Data
             return (result.Count() > 0) ? result.ToList().First() : null;
         }
 
+        public void addFriends(string userId, List<string> friends)
+        {
+            var list = getUserByUserId(friends.ToArray()).Select(u =>
+                new Friend
+                {
+                    name = u.name,
+                    avatar = u.avatar
+                }
+            ).ToList();
+            addFriends(userId, list);
+        }
         public void addFriends(string userId, List<Friend> friends)
         {
             var contact = getContact(userId);
@@ -263,7 +276,7 @@ namespace UW.Data
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
         }
 
-        public void delFriends(string userId, List<Friend> rmlist)
+        public void delFriends(string userId, List<string> rmlist)
         {
             var contact = getContact(userId);
             if (contact == null)
@@ -274,7 +287,7 @@ namespace UW.Data
             }
 
             // 移除
-            contact.friends = contact.friends.Where((x, i) => rmlist.FindIndex(z => z.userId == x.userId) < 0).ToList();
+            contact.friends = contact.friends.Where((x, i) => rmlist.FindIndex(z => z == x.userId) < 0).ToList();
 
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
         }
@@ -446,6 +459,7 @@ namespace UW.Data
                 ownerId = userId,
                 currency = fromCurrency,
                 message = message,
+                isParent = true,
 
                 txAction = (int)TxAction.EXCHANGE,
                 txStatusCode = ok ? 0 : -1,
@@ -465,6 +479,7 @@ namespace UW.Data
                 ownerId = userId,
                 currency = toCurrency,
                 message = message,
+                isParent = false,
 
                 txAction = (int)TxAction.EXCHANGE,
                 txStatusCode = ok ? 0 : -1,

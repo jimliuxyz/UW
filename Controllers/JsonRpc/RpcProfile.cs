@@ -43,13 +43,24 @@ namespace UW.Controllers.JsonRpc
             try
             {
                 var user = db.getUserByUserId(userId);
+
+                var map = new Dictionary<string, dynamic>();
+                foreach (var b in user.currencies)
+                {
+                    map.Add(b.name, new{
+                        order = b.order,
+                        isDefault = b.isDefault,
+                        isVisible = b.isVisible
+                    });
+                }
+
                 return Ok(new
                 {
                     id = user.userId,
                     name = user.name,
                     phoneno = user.phoneno,
                     avatar = user.avatar,
-                    currencies = user.currencies
+                    currencies = map
                 });
             }
             catch (System.Exception e)
@@ -76,7 +87,10 @@ namespace UW.Controllers.JsonRpc
                 phoneno = user.phoneno,
                 avatar = user.avatar
             });
-            return Ok(users_);
+            return Ok(new
+            {
+                list = users_
+            });
         }
 
         /// <summary>

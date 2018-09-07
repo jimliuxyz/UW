@@ -39,13 +39,17 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getAllUsers()
         {
-            return Ok(db.getUsers().Select(user=>{
-                return new {
-                    userId = user.userId,
-                    name = user.name,
-                    avatar = user.avatar
-                };
-            }));
+            var map = new Dictionary<string, dynamic>();
+            foreach (var b in db.getUsers())
+            {
+                map.Add(b.userId, new
+                {
+                    name = b.name,
+                    avatar = b.avatar
+                });
+            }
+
+            return Ok(map);
         }
 
         /// <summary>
@@ -59,11 +63,17 @@ namespace UW.Controllers.JsonRpc
 
             var contacts = db.getContact(userId);
 
-            return Ok(new
+            var map = new Dictionary<string, dynamic>();
+            foreach (var b in contacts.friends)
             {
-                contacts = contacts.friends,
-                recent = new List<Friend>()
-            });
+                map.Add(b.userId, new
+                {
+                    name = b.name,
+                    avatar = b.avatar
+                });
+            }
+
+            return Ok(map);
         }
 
         /// <summary>
@@ -72,7 +82,7 @@ namespace UW.Controllers.JsonRpc
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public IRpcMethodResult addFriends(List<Friend> list)
+        public IRpcMethodResult addFriends(List<string> list)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
@@ -85,8 +95,11 @@ namespace UW.Controllers.JsonRpc
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public IRpcMethodResult delFriends(List<Friend> list)
+        public IRpcMethodResult delFriends(List<string> list)
         {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+
+            db.delFriends(userId, list);
             return Ok();
         }
 
@@ -97,13 +110,17 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult findUsersByPhone(List<string> list)
         {
-            return Ok(db.findUsersByPhone(list).Select(user=>{
-                return new {
-                    userId = user.userId,
-                    name = user.name,
-                    avatar = user.avatar
-                };
-            }));
+            var map = new Dictionary<string, dynamic>();
+            foreach (var b in db.findUsersByPhone(list))
+            {
+                map.Add(b.userId, new
+                {
+                    name = b.name,
+                    avatar = b.avatar
+                });
+            }
+
+            return Ok(map);
         }
 
 

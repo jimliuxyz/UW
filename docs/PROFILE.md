@@ -20,32 +20,28 @@ https://uwbackend-dev.azurewebsites.net/api/profile
         "name": "test123",
         "phoneno": "test123",
         "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
-        "currencies": [
-            {
-                "name": "CNY",
+        "currencies": {
+            "CNY": {
                 "order": 0,
                 "isDefault": true,
                 "isVisible": false
             },
-            {
-                "name": "USD",
+            "USD": {
                 "order": 1,
                 "isDefault": false,
                 "isVisible": false
             },
-            {
-                "name": "BTC",
+            "BTC": {
                 "order": 2,
                 "isDefault": false,
                 "isVisible": false
             },
-            {
-                "name": "ETH",
+            "ETH": {
                 "order": 3,
                 "isDefault": false,
                 "isVisible": false
             }
-        ]
+        }
     },
     "error": null
 }
@@ -92,14 +88,16 @@ https://uwbackend-dev.azurewebsites.net/api/profile
 //收
 {
     "jsonrpc": "2.0",
-    "result": [
-        {
-            "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
-            "name": "Jim",
-            "phoneno": "test123",
-            "avatar": "http://..."
-        }
-    ],
+    "result": {
+        "list": [
+            {
+                "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
+                "name": "Jim",
+                "phoneno": "test123",
+                "avatar": "http://..."
+            }
+        ]
+    },
     "error": null
     "id": 99,
 }

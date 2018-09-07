@@ -57,7 +57,7 @@ namespace UW.Controllers.JsonRpc
                 user.ntfInfo.azureRegId = regId;
 
                 if (db.upsertUser(user))
-                    return Ok(true);
+                    return Ok(null);
             }
             return ERROR_ACT_FAILED;
         }

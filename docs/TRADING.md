@@ -15,24 +15,12 @@ https://uwbackend-dev.azurewebsites.net/api/trading
 {
     "id": 99,
     "jsonrpc": "2.0",
-    "result": [
-        {
-            "name": "CNY",
-            "balance": "1000"
-        },
-        {
-            "name": "USD",
-            "balance": "1000"
-        },
-        {
-            "name": "BTC",
-            "balance": "1000"
-        },
-        {
-            "name": "ETH",
-            "balance": "1000"
-        }
-    ],
+    "result": {
+        "CNY": 1000,
+        "USD": 1000,
+        "BTC": 1000,
+        "ETH": 1000
+    },
     "error": null
 }
 ```
@@ -107,7 +95,7 @@ https://uwbackend-dev.azurewebsites.net/api/trading
 //收
 {
     "jsonrpc": "2.0",
-    "result": true,
+    "result": null,
     "error": null,
     "id": 99,
 }

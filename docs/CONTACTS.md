@@ -17,19 +17,14 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "id": 99,
     "jsonrpc": "2.0",
     "result": {
-        "contacts": [
-            {
-                "userId": "mock-id-1",
-                "name": "buzz",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-            },
-            {
-                "userId": "mock-id-2",
-                "name": "jessie",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-            }
-        ],
-        "recent": []
+        "tempid-886986123456": {
+            "name": "buzz",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+        },
+        "tempid-886986123457": {
+            "name": "jessie",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+        }
     },
     "error": null
 }
@@ -100,13 +95,16 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 {
     "id": 99,
     "jsonrpc": "2.0",
-    "result": [
-        {
-            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
-            "name": "Nate",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
+    "result": {
+        "tempid-886986123456": {
+            "name": "buzz",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+        },
+        "tempid-886986123457": {
+            "name": "jessie",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
         }
-    ],
+    },
     "error": null
 }
 ```
@@ -124,18 +122,24 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 //收
 {
     "jsonrpc": "2.0",
-    "result": [
-        {
-            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
-            "name":"jim",
+    "result": {
+        "tempid-886978123123": {
+            "name": "alan",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
+        },
+        "tempid-886986123456": {
+            "name": "buzz",
             "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
         },
-        {
-            "userId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
-            "name":"alan",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+        "tempid-886986123457": {
+            "name": "jessie",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+        },
+        "tempid-test-jim-123": {
+            "name": "test-jim-123",
+            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
         }
-    ],
+    },
     "error": null
     "id": 99,
 }

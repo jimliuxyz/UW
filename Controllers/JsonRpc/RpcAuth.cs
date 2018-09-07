@@ -110,22 +110,7 @@ namespace UW.Controllers.JsonRpc
                         var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
                         await nc.regPnsToken(pns, pnsToken, user);
 
-                        var friends = new List<Friend>{};
-                        // var friends = new List<Friend>{
-                        //         new Friend{
-                        //             userId = "mock-id-1",
-                        //             name = "buzz(不要點我)",
-                        //             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-                        //         },
-                        //         new Friend{
-                        //             userId = "mock-id-2",
-                        //             name = "jessie(不要點我)",
-                        //             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-                        //         }
-                        //     };
-
-                        //todo : 測試用friend list
-                        db.addFriends(user.userId, friends);
+                        db.addFriends(user.userId, new List<Friend>{});
                         db.updateBalance(user.userId, new List<BalanceSlot>());
                     }
 
