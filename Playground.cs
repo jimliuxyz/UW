@@ -16,10 +16,10 @@ namespace UW
     {
         public Playground()
         {
-            test1(null);
+            test1();
         }
 
-        public void test1(object payload)
+        public void test1()
         {
         }
     }

@@ -37,7 +37,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getBalances()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
             return Ok(balance.balances);
@@ -48,12 +48,12 @@ namespace UW.Controllers.JsonRpc
         /// todo:此api僅供測試,待移除
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult deposit(STR currency, decimal amount)
+        public IRpcMethodResult deposit(D currency, decimal amount)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
 
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var balance = db.getBalance(userId);
             balance.balances.ForEach(b =>
@@ -79,7 +79,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult transfer(string toUserId, string currency, decimal amount, string message)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var receiptId = db.doTransfer(userId, toUserId, currency, amount, message);
 

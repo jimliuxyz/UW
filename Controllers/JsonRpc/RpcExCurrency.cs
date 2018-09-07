@@ -58,14 +58,14 @@ namespace UW.Controllers.JsonRpc
         private static Dictionary<string, decimal> rates = new Dictionary<string, decimal>();
         static RpcExCurrency()
         {
-            rates.Add(STR.USD + STR.CNY + STR._SELL, USD_CNY.AsSell(EXRATE_DIF));
-            rates.Add(STR.USD + STR.CNY + STR._BUY, USD_CNY.AsBuy(EXRATE_DIF));
+            rates.Add(D.USD + D.CNY + D._SELL, USD_CNY.AsSell(EXRATE_DIF));
+            rates.Add(D.USD + D.CNY + D._BUY, USD_CNY.AsBuy(EXRATE_DIF));
 
-            rates.Add(STR.BTC + STR.USD + STR._SELL, BTC_USD.AsSell(EXRATE_DIF));
-            rates.Add(STR.BTC + STR.USD + STR._BUY, BTC_USD.AsBuy(EXRATE_DIF));
+            rates.Add(D.BTC + D.USD + D._SELL, BTC_USD.AsSell(EXRATE_DIF));
+            rates.Add(D.BTC + D.USD + D._BUY, BTC_USD.AsBuy(EXRATE_DIF));
 
-            rates.Add(STR.ETH + STR.USD + STR._SELL, ETH_USD.AsSell(EXRATE_DIF));
-            rates.Add(STR.ETH + STR.USD + STR._BUY, ETH_USD.AsBuy(EXRATE_DIF));
+            rates.Add(D.ETH + D.USD + D._SELL, ETH_USD.AsSell(EXRATE_DIF));
+            rates.Add(D.ETH + D.USD + D._BUY, ETH_USD.AsBuy(EXRATE_DIF));
         }
 
 
@@ -80,7 +80,7 @@ namespace UW.Controllers.JsonRpc
 
         public IRpcMethodResult doExFrom(string fromCurrency, string toCurrency, decimal fromAmount, string message)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             try
             {
@@ -128,29 +128,29 @@ namespace UW.Controllers.JsonRpc
 
             var amount = from_amount;
 
-            if (rates.ContainsKey(to + from + STR._SELL))
+            if (rates.ContainsKey(to + from + D._SELL))
             {
-                amount /= rates[to + from + STR._SELL];
+                amount /= rates[to + from + D._SELL];
             }
-            else if (rates.ContainsKey(from + to + STR._BUY))
+            else if (rates.ContainsKey(from + to + D._BUY))
             {
-                amount *= rates[from + to + STR._BUY];
+                amount *= rates[from + to + D._BUY];
             }
             else
             {
                 //1st exchange : change to USD
-                if (rates.ContainsKey(STR.USD + from + STR._SELL))
-                    amount /= rates[STR.USD + from + STR._SELL];
-                else if (rates.ContainsKey(from + STR.USD + STR._BUY))
-                    amount *= rates[from + STR.USD + STR._BUY];
+                if (rates.ContainsKey(D.USD + from + D._SELL))
+                    amount /= rates[D.USD + from + D._SELL];
+                else if (rates.ContainsKey(from + D.USD + D._BUY))
+                    amount *= rates[from + D.USD + D._BUY];
                 else
                     throw new Exception($"can't exchange from {from} to {to}");
 
                 //2nd exchange : change to `to` currency from USD
-                if (rates.ContainsKey(to + STR.USD + STR._SELL))
-                    amount /= rates[to + STR.USD + STR._SELL];
-                else if (rates.ContainsKey(STR.USD + to + STR._BUY))
-                    amount *= rates[STR.USD + to + STR._BUY];
+                if (rates.ContainsKey(to + D.USD + D._SELL))
+                    amount /= rates[to + D.USD + D._SELL];
+                else if (rates.ContainsKey(D.USD + to + D._BUY))
+                    amount *= rates[D.USD + to + D._BUY];
                 else
                     throw new Exception($"can't exchange from {from} to {to}");
             }

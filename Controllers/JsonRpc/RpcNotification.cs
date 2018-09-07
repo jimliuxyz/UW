@@ -43,7 +43,7 @@ namespace UW.Controllers.JsonRpc
 
             if (user == null)
             {
-                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
                 user = db.getUserByUserId(userId);
             }
 

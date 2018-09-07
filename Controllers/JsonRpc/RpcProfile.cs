@@ -85,7 +85,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult updateProfile(string[] keys, string[] values)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var user = db.getUserByUserId(userId);
 
@@ -94,7 +94,7 @@ namespace UW.Controllers.JsonRpc
                 for (int i = 0; i < keys.Length; i++)
                 {
                     var key = keys[i];
-                    if (key == STR.DOC_USER_NAME)
+                    if (key == D.DOC_USER_NAME)
                         user.name = values[i];
                 }
                 db.upsertUser(user);
@@ -108,5 +108,10 @@ namespace UW.Controllers.JsonRpc
             return Ok();
         }
     }
+
+    // public IRpcMethodResult getReceipts()
+    // {
+
+    // }
 }
 

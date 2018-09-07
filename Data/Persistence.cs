@@ -45,6 +45,12 @@ namespace UW.Data
         //balance
         private static string COL_BALANCE = typeof(Balance).Name;
         private static Uri URI_BALANCE = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_BALANCE);
+
+        //receipts
+        private static string COL_RECEIPT = typeof(TxReceipt).Name;
+        private static Uri URI_TXRECEIPT = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_RECEIPT);
+
+
         private Notifications notifications;
 
         public readonly DocumentClient client;
@@ -57,6 +63,7 @@ namespace UW.Data
             client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
 
             InitDB();
+            Mockup();
         }
 
         public void InitDB()
@@ -74,6 +81,65 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_CONTACT }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_BALANCE }, defReqOpts).Wait();
+        }
+
+        public void Mockup()
+        {
+            var user1 = new
+            {
+                phoneno = "886986123456",
+                name = "buzz",
+                avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+            };
+            var user2 = new
+            {
+                phoneno = "886986123457",
+                name = "jessie",
+                avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+            };
+
+            foreach (var u in new dynamic[] { user1, user2 })
+            {
+                var user = new Models.Collections.User()
+                {
+                    userId = "tempid-" + u.phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
+                    phoneno = u.phoneno,
+                    name = u.name,
+                    avatar = u.avatar,
+                    currencies = new List<CurrencySettings>{
+                                new CurrencySettings{
+                                    name = D.CNY,
+                                    order = 0,
+                                    isDefault = true,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = D.USD,
+                                    order = 1,
+                                    isDefault = false,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = D.BTC,
+                                    order = 2,
+                                    isDefault = false,
+                                    isVisible = false
+                                },
+                                new CurrencySettings{
+                                    name = D.ETH,
+                                    order = 3,
+                                    isDefault = false,
+                                    isVisible = false
+                                }
+                            }
+                };
+                if (upsertUser(user))
+                    user = getUserByPhone(u.phoneno);
+
+                var friends = new List<Friend> { };
+                addFriends(user.userId, friends);
+                updateBalance(user.userId, new List<BalanceSlot>());
+            }
         }
 
         /// <summary>
@@ -227,10 +293,10 @@ namespace UW.Data
                 balance = new Balance();
                 balance.ownerId = userId;
                 balance.balances = new List<BalanceSlot>(){
-                    new BalanceSlot{name=STR.CNY, balance="1000"},
-                    new BalanceSlot{name=STR.USD, balance="1000"},
-                    new BalanceSlot{name=STR.BTC, balance="1000"},
-                    new BalanceSlot{name=STR.ETH, balance="1000"}
+                    new BalanceSlot{name=D.CNY, balance="1000"},
+                    new BalanceSlot{name=D.USD, balance="1000"},
+                    new BalanceSlot{name=D.BTC, balance="1000"},
+                    new BalanceSlot{name=D.ETH, balance="1000"}
                 };
             }
 
@@ -239,6 +305,25 @@ namespace UW.Data
             balance.balances = balance.balances.Where((x, i) => balance.balances.FindLastIndex(z => z.name == x.name) == i).ToList();
 
             var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
+        }
+
+        /// <summary>
+        /// 更新或新增交易收據
+        /// </summary>
+        /// <param name="receipt"></param>
+        /// <returns></returns>
+        public bool upsertReceipt(TxReceipt receipt)
+        {
+            try
+            {
+                var res = client.UpsertDocumentAsync(URI_TXRECEIPT, receipt).Result;
+                return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            return false;
         }
 
         /// <summary>
@@ -348,16 +433,56 @@ namespace UW.Data
             }
 
             //generate receipt
-            var receipt = new
+            var param = new ExchangeParams
+            {
+                fromCurrency = fromCurrency,
+                toCurrency = toCurrency,
+                fromAmount = fromAmount
+            };
+            var receipt = new TxReceipt
             {
                 receiptId = receiptId,
-                action = "exchange",
-                status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
-                message, //user message
-                fromCurrency = fromCurrency,
-                fromAmount = fromAmount,
-                toCurrency = toCurrency
+                executorId = userId,
+                ownerId = userId,
+                currency = fromCurrency,
+                message = message,
+
+                txAction = (int)TxAction.EXCHANGE,
+                txStatusCode = ok ? 0 : -1,
+                txStatusMsg = "",
+                txParams = param,
+                txResult = new TxResult
+                {
+                    outflow = true,
+                    amount = fromAmount,
+                    // balance = 0,
+                }
             };
+            var receiptTo = new TxReceipt
+            {
+                receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                executorId = userId,
+                ownerId = userId,
+                currency = toCurrency,
+                message = message,
+
+                txAction = (int)TxAction.EXCHANGE,
+                txStatusCode = ok ? 0 : -1,
+                txStatusMsg = "",
+                txParams = param,
+                txResult = new TxResult
+                {
+                    outflow = false,
+                    amount = toAmount,
+                    // balance = 0,
+                }
+            };
+            //暫時直接先將receipt寫入db
+            //for from currency
+            upsertReceipt(receipt);
+
+            //for to currency
+            upsertReceipt(receiptTo);
 
             //simulate receipt notification
             Task.Run(() =>
@@ -370,7 +495,7 @@ namespace UW.Data
 
             return receiptId;
         }
-        
+
 
     }
 

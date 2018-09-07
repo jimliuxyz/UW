@@ -41,7 +41,7 @@ namespace UW.Controllers.JsonRpc
         {
             return Ok(db.getUsers().Select(user=>{
                 return new {
-                    id = user.userId,
+                    userId = user.userId,
                     name = user.name,
                     avatar = user.avatar
                 };
@@ -55,7 +55,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getContacts()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             var contacts = db.getContact(userId);
 
@@ -74,7 +74,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult addFriends(List<Friend> list)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
 
             db.addFriends(userId, list);
             return Ok();
@@ -99,7 +99,7 @@ namespace UW.Controllers.JsonRpc
         {
             return Ok(db.findUsersByPhone(list).Select(user=>{
                 return new {
-                    id = user.userId,
+                    userId = user.userId,
                     name = user.name,
                     avatar = user.avatar
                 };

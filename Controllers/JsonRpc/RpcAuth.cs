@@ -55,7 +55,7 @@ namespace UW.Controllers.JsonRpc
                         {
                             await Task.Run(() =>
                             {
-                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", STR.NOTIFY_LOGOUT);
+                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", D.NOTIFY_LOGOUT);
                                 // 避免rpc時間差可能造成regPnsToken在sendMessage之前
                                 Task.Delay(3000).Wait();
                             });
@@ -79,25 +79,25 @@ namespace UW.Controllers.JsonRpc
                             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
                             currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
-                                    name = STR.CNY,
+                                    name = D.CNY,
                                     order = 0,
                                     isDefault = true,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = STR.USD,
+                                    name = D.USD,
                                     order = 1,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = STR.BTC,
+                                    name = D.BTC,
                                     order = 2,
                                     isDefault = false,
                                     isVisible = false
                                 },
                                 new CurrencySettings{
-                                    name = STR.ETH,
+                                    name = D.ETH,
                                     order = 3,
                                     isDefault = false,
                                     isVisible = false
@@ -110,19 +110,19 @@ namespace UW.Controllers.JsonRpc
                         var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
                         await nc.regPnsToken(pns, pnsToken, user);
 
-                        // var friends = new List<Friend>{};
-                        var friends = new List<Friend>{
-                                new Friend{
-                                    userId = "mock-id-1",
-                                    name = "buzz(不要點我)",
-                                    avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-                                },
-                                new Friend{
-                                    userId = "mock-id-2",
-                                    name = "jessie(不要點我)",
-                                    avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-                                }
-                            };
+                        var friends = new List<Friend>{};
+                        // var friends = new List<Friend>{
+                        //         new Friend{
+                        //             userId = "mock-id-1",
+                        //             name = "buzz(不要點我)",
+                        //             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+                        //         },
+                        //         new Friend{
+                        //             userId = "mock-id-2",
+                        //             name = "jessie(不要點我)",
+                        //             avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+                        //         }
+                        //     };
 
                         //todo : 測試用friend list
                         db.addFriends(user.userId, friends);
@@ -135,8 +135,8 @@ namespace UW.Controllers.JsonRpc
                         new Claim(ClaimTypes.MobilePhone, phoneno),
                         new Claim(ClaimTypes.Name, user.name),
                         new Claim(ClaimTypes.Role, "User"),
-                        new Claim(STR.CLAIM_USERID, user.userId),
-                        new Claim(STR.CLAIM_TOKEN_RND, tokenRnd)
+                        new Claim(D.CLAIM_USERID, user.userId),
+                        new Claim(D.CLAIM_TOKEN_RND, tokenRnd)
                     };
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -168,8 +168,8 @@ namespace UW.Controllers.JsonRpc
         [Authorize]
         public IRpcMethodResult isTokenAvailable()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_USERID)?.Value;
-            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == STR.CLAIM_TOKEN_RND)?.Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID)?.Value;
+            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_TOKEN_RND)?.Value;
             var user = db.getUserByUserId(userId);
 
             return Ok(new
@@ -184,8 +184,8 @@ namespace UW.Controllers.JsonRpc
                         new Claim(ClaimTypes.MobilePhone, "phoneno"),
                         new Claim(ClaimTypes.Name, "user.name"),
                         new Claim(ClaimTypes.Role, "Admin"),
-                        new Claim(STR.CLAIM_USERID, "user.userId"),
-                        new Claim(STR.CLAIM_TOKEN_RND, "tokenRnd")
+                        new Claim(D.CLAIM_USERID, "user.userId"),
+                        new Claim(D.CLAIM_TOKEN_RND, "tokenRnd")
                     };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

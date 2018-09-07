@@ -1,6 +1,9 @@
 namespace UW
 {
-    public class STR
+    /// <summary>
+    /// Defines
+    /// </summary>
+    public class D
     {
         public static readonly string NOTIFICATION_UID = "uid:";
         public static readonly string NOTIFICATION_EVERYBODY = "everybody";

@@ -8,6 +8,7 @@ namespace UW.Models.Collections
         [JsonProperty(PropertyName = "id")]
         public string ownerId { get; set; }
 
+        public List<string> friendOf { get; set; }
         public List<Friend> friends { get; set; }
         public List<string> recent { get; set; }
     }

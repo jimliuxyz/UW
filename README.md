@@ -1,8 +1,24 @@
+# 更新內容(180907)
+- 修正 Contacts中getAllUser與findUsersByBphone回傳`id更改為userId`
+
 # 更新內容(180905)
 
 - 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
 - 新增 ExCurrency 處理匯率交易 [參考](./docs/EXCURRENCY.md)
 - 新增[錯誤碼定義](./docs/ERRORCODE.md)
+- 當任何api回傳以下內容 請將user登出 重新導到登入頁
+```json
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": null,
+    "error": {
+        "code": -32600,
+        "message": "Unauthorized",
+        "data": null
+    }
+}
+```
 
 # API Service (JsonRPC over https)
 
