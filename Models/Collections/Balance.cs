@@ -9,7 +9,7 @@ namespace UW.Models.Collections
         [JsonProperty(PropertyName = "id")]
         public string ownerId { get; set; }
 
-        public List<BalanceSlot> balances { get; set; }
+        public Dictionary<string, decimal> balances { get; set; }
     }
     public class BalanceSlot
     {

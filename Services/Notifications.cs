@@ -45,7 +45,7 @@ namespace UW.Services
         public void broadcast(string message){
             // 分別對每個PNS發送
             foreach(PNS pns in Enum.GetValues(typeof(PNS))){
-                sendToTag(D.NOTIFICATION_EVERYBODY, pns, message);
+                sendToTag(D.NTFTAG.EVERYBODY, pns, message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace UW.Services
         /// <returns></returns>
         private static string getUserTag(string userId)
         {
-            return D.NOTIFICATION_UID + userId;
+            return D.NTFTAG.USER_PREFIX + userId;
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace UW.Services
                 //填入內容並更新到azure notification hub
                 registration.RegistrationId = regId;
                 registration.Tags = new HashSet<string>();
-                registration.Tags.Add(D.NOTIFICATION_EVERYBODY);
+                registration.Tags.Add(D.NTFTAG.EVERYBODY);
                 registration.Tags.Add(tag);
 
                 await hub.CreateOrUpdateRegistrationAsync(registration);

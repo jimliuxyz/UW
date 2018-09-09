@@ -4,6 +4,8 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 
 # 取得聯絡人名單
 
+> 聯絡人沒以map方式回傳而用list是因為資訊到手機端時仍須排序 以list較為方便
+
 ```js
 //送
 {
@@ -17,20 +19,24 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "id": 99,
     "jsonrpc": "2.0",
     "result": {
-        "tempid-886986123456": {
-            "name": "buzz",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-        },
-        "tempid-886986123457": {
-            "name": "jessie",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-        }
+        "list": [
+            {
+                "userId": "tempid-886986123456",
+                "name": "buzz",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+            },
+            {
+                "userId": "tempid-886986123457",
+                "name": "jessie",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+            }
+        ]
     },
     "error": null
 }
 ```
 
-# 新增(或更新)聯絡人
+# 新增聯絡人
 
 ```js
 //送
@@ -38,13 +44,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "jsonrpc": "2.0",
     "method": "addFriends",
     "params": {
-    	"list": [
-    		{
-                "userId": "mock-id-3",
-                "name": "buzz",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-            }
-         ]
+    	"list": ["c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf"]
     },
     "id": 99
 }
@@ -65,7 +65,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "jsonrpc": "2.0",
     "method": "delFriends",
     "params": {
-        "ids": ["c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf", "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf"]
+        "list": ["c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf", "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf"]
     }
     "error": null
     "id": 99,
@@ -87,7 +87,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "jsonrpc": "2.0",
     "method": "findUsersByPhone",
     "params": {
-    	"list": ["886919123456"]
+    	"list": ["886986123456"]
     },
     "id": 99
 }
@@ -96,14 +96,13 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     "id": 99,
     "jsonrpc": "2.0",
     "result": {
-        "tempid-886986123456": {
-            "name": "buzz",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-        },
-        "tempid-886986123457": {
-            "name": "jessie",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-        }
+        "list": [
+            {
+                "userId": "tempid-886986123456",
+                "name": "buzz",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+            }
+        ]
     },
     "error": null
 }
@@ -123,22 +122,18 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
 {
     "jsonrpc": "2.0",
     "result": {
-        "tempid-886978123123": {
-            "name": "alan",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
-        },
-        "tempid-886986123456": {
-            "name": "buzz",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
-        },
-        "tempid-886986123457": {
-            "name": "jessie",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
-        },
-        "tempid-test-jim-123": {
-            "name": "test-jim-123",
-            "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png"
-        }
+        "list": [
+            {
+                "userId": "tempid-886986123456",
+                "name": "buzz",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+            },
+            {
+                "userId": "tempid-886986123457",
+                "name": "jessie",
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+            }
+        ]
     },
     "error": null
     "id": 99,

@@ -80,25 +80,4 @@ https://uwbackend-dev.azurewebsites.net/api/excurrency
 }
 ```
 
-叫用後立即回傳receiptId, 之後再透過notification方式傳送交易結果
-
-```js
-//以apple為例 用以下格式通知
-{
-    "aps": {
-        "alert": "message"
-    },
-    "custom": {
-        "type": "TX_RECEIPT",
-        "payload": {
-            "receiptId": "....",
-            "action": "exchange",
-            "status": 0,   //0 means done, -1 means failed, other means processing
-            "message": "...",
-            "fromCurrency": "cny",
-            "fromAmount": "100",
-            "toCurrency": "..."
-        }
-    }
-}
-```
+叫用後立即回傳receiptId, 之後再透過notification方式傳送交易結果(同Trading - transfer)

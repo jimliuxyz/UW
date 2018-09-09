@@ -42,42 +42,51 @@ namespace UW.Controllers.JsonRpc
             try
             {
                 // 驗證sms passcode
-                // todo : remove 8888
-                if (passcode == "8888" || db.isSmsPasscodeMatched(phoneno, passcode))
-                {
-                    // 建立或取得user
-                    var user = db.getUserByPhone(phoneno);
-                    if (user != null)
-                    {
-                        // 通知前裝置必須登出
-                        var ntfInfo = user.ntfInfo;
-                        if (ntfInfo != null && (ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken))
-                        {
-                            await Task.Run(() =>
-                            {
-                                notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", D.NOTIFY_LOGOUT);
-                                // 避免rpc時間差可能造成regPnsToken在sendMessage之前
-                                Task.Delay(3000).Wait();
-                            });
-                        }
+                dynamic res = db.isSmsPasscodeMatched(phoneno, passcode);
 
-                        // 更新裝置pns token
-                        if (ntfInfo == null || ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken)
-                        {
-                            var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                            await nc.regPnsToken(pns, pnsToken, user);
-                        }
-                    }
-                    else
+                // todo : remove this
+                Console.WriteLine("萬用passcode未移除!");
+                if (passcode == "88888888")
+                { }
+                else
+
+                // 驗證失敗
+                if (!res.passed)
+                    return Bad(res.error);
+
+                // 建立或取得user
+                var user = db.getUserByPhone(phoneno);
+                if (user != null)
+                {
+                    // 通知前裝置必須登出
+                    var ntfInfo = user.ntfInfo;
+                    if (ntfInfo != null && (ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken))
                     {
-                        //todo : 暫時的假資料供測試
-                        user = new User()
+                        await Task.Run(() =>
                         {
-                            userId = "tempid-" + phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
-                            phoneno = phoneno,
-                            name = phoneno,
-                            avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
-                            currencies = new List<CurrencySettings>{
+                            notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", D.NTFTYPE.LOGOUT);
+                            // 避免rpc時間差可能造成regPnsToken在sendMessage之前
+                            Task.Delay(3000).Wait();
+                        });
+                    }
+
+                    // 更新裝置pns token
+                    if (ntfInfo == null || ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken)
+                    {
+                        var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
+                        await nc.regPnsToken(pns, pnsToken, user);
+                    }
+                }
+                else
+                {
+                    //todo : 暫時的假資料供測試
+                    user = new User()
+                    {
+                        userId = "tempid-" + phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
+                        phoneno = phoneno,
+                        name = phoneno,
+                        avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
+                        currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
                                     name = D.CNY,
                                     order = 0,
@@ -103,43 +112,42 @@ namespace UW.Controllers.JsonRpc
                                     isVisible = false
                                 }
                             }
-                        };
-                        if (db.upsertUser(user))
-                            user = db.getUserByPhone(phoneno);
+                    };
+                    if (db.upsertUser(user))
+                        user = db.getUserByPhone(phoneno);
 
-                        var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
-                        await nc.regPnsToken(pns, pnsToken, user);
+                    var nc = (RpcNotification)this.accessor.HttpContext.RequestServices.GetService(typeof(RpcNotification));
+                    await nc.regPnsToken(pns, pnsToken, user);
 
-                        db.addFriends(user.userId, new List<Friend>{});
-                        db.updateBalance(user.userId, new List<BalanceSlot>());
-                    }
+                    db.addFriends(user.userId, new List<string> { });
+                    db.updateBalance(user.userId, new Dictionary<string, decimal>());
+                }
 
-                    // 發行token (JWT)
-                    var tokenRnd = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-                    var claims = new Claim[]{
+                // 發行token (JWT)
+                var tokenRnd = F.NewGuid();
+                var claims = new Claim[]{
                         new Claim(ClaimTypes.MobilePhone, phoneno),
                         new Claim(ClaimTypes.Name, user.name),
                         new Claim(ClaimTypes.Role, "User"),
-                        new Claim(D.CLAIM_USERID, user.userId),
-                        new Claim(D.CLAIM_TOKEN_RND, tokenRnd)
+                        new Claim(D.CLAIM.USERID, user.userId),
+                        new Claim(D.CLAIM.TOKENRND, tokenRnd)
                     };
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                    var token = new JwtSecurityToken(
-                                R.JWT_ISSUER,
-                                R.JWT_AUDIENCE,
-                                claims,
-                                null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
-                                null,
-                                creds);
-                    var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                            R.JWT_ISSUER,
+                            R.JWT_AUDIENCE,
+                            claims,
+                            null, //DateTime.UtcNow, //todo : 日後再決定是否每次token帶入時間加密
+                            null,
+                            creds);
+                var tokenStr = new JwtSecurityTokenHandler().WriteToken(token);
 
-                    // update token random
-                    user.tokenRnd = tokenRnd;
-                    db.upsertUser(user);
+                // update token random
+                user.tokenRnd = tokenRnd;
+                db.upsertUser(user);
 
-                    return Ok(new { token = tokenStr });
-                }
+                return Ok(new { token = tokenStr });
             }
             catch (System.Exception e)
             {
@@ -153,8 +161,8 @@ namespace UW.Controllers.JsonRpc
         [Authorize]
         public IRpcMethodResult isTokenAvailable()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID)?.Value;
-            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_TOKEN_RND)?.Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID)?.Value;
+            var tokenRnd = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.TOKENRND)?.Value;
             var user = db.getUserByUserId(userId);
 
             return Ok(new
@@ -169,8 +177,8 @@ namespace UW.Controllers.JsonRpc
                         new Claim(ClaimTypes.MobilePhone, "phoneno"),
                         new Claim(ClaimTypes.Name, "user.name"),
                         new Claim(ClaimTypes.Role, "Admin"),
-                        new Claim(D.CLAIM_USERID, "user.userId"),
-                        new Claim(D.CLAIM_TOKEN_RND, "tokenRnd")
+                        new Claim(D.CLAIM.USERID, "user.userId"),
+                        new Claim(D.CLAIM.TOKENRND, "tokenRnd")
                     };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

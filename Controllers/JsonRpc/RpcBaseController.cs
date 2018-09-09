@@ -5,11 +5,16 @@ namespace UW.Controllers
 {
     public abstract class RpcBaseController : RpcController
     {
-        public static readonly int AUTHENTICATION_FAILED = -1001;
-        public static readonly int ACTION_FAILED = -1002;
-
         public static readonly RpcMethodErrorResult ERROR_ACT_FAILED
-     = new RpcMethodErrorResult(ACTION_FAILED, "Action failed");
+     = genError(RPCERR.ACTION_FAILED);
 
+        public static RpcMethodErrorResult Bad(RPCERR err){
+            return new RpcMethodErrorResult(err.code, err.msg);
+        }
+
+        private static RpcMethodErrorResult genError(RPCERR err)
+        {
+            return new RpcMethodErrorResult(err.code, err.msg);
+        }
     }
 }

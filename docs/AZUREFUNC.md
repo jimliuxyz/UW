@@ -1,6 +1,8 @@
 
 # 發送簡訊驗證碼
 
+每一小時可發3次簡訊 每一個passcode有效期限10分鐘 可以驗證3次
+
 https://uwfuncapp-dev.azurewebsites.net/api/reqSmsVerify
 
 ```js
@@ -15,10 +17,22 @@ https://uwfuncapp-dev.azurewebsites.net/api/reqSmsVerify
 }
 //收
 {
-  "jsonrpc": "2.0",
-  "id": 99,
-  "result": null,
-  "error": null
+    "jsonrpc": "2.0",
+    "id": 99,
+    "result": {
+        "resendCount": 1
+    },
+    "error": null
+}
+//收(超過發送次數)
+{
+    "jsonrpc": "2.0",
+    "id": 99,
+    "result": null,
+    "error": {
+        "code": -1001,
+        "message": "SMS resend limit Exceeded"
+    }
 }
 ```
 

@@ -6,8 +6,10 @@
 錯誤碼 | 訊息 | 描述
 --------- | ------------- | ---
 -32600 | Unauthorized | 身份驗證錯誤
+-1001 | SMS resend limit Exceeded | 簡訊驗證碼超過重送次數
 -1002 | Action failed | 動作(操作)失敗
-
+-1003 | Passcode expired | 驗證碼已過時效
+-1004 | Passcode verify limit Exceeded | 驗證碼超過驗證次數
 
 # 標準錯誤
 
@@ -20,3 +22,10 @@
 -32603 | Internal error - 內部錯誤 | JSON-RPC 內部錯誤。
 -32000 to -32099 | Server error - 伺服端錯誤 | 預留用於自訂的伺服器錯誤。
 
+# 交易類型 (txType)
+碼 | 描述
+--- | ---
+1 | 存款
+2 | 提款
+3 | 轉帳
+4 | 換匯

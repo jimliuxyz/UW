@@ -39,17 +39,18 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getAllUsers()
         {
-            var map = new Dictionary<string, dynamic>();
-            foreach (var b in db.getUsers())
+            return Ok(new
             {
-                map.Add(b.userId, new
+                list = db.getUsers().Select(user =>
                 {
-                    name = b.name,
-                    avatar = b.avatar
-                });
-            }
-
-            return Ok(map);
+                    return new
+                    {
+                        userId = user.userId,
+                        name = user.name,
+                        avatar = user.avatar
+                    };
+                })
+            });
         }
 
         /// <summary>
@@ -59,32 +60,25 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult getContacts()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             var contacts = db.getContact(userId);
 
-            var map = new Dictionary<string, dynamic>();
-            foreach (var b in contacts.friends)
+            return Ok(new
             {
-                map.Add(b.userId, new
-                {
-                    name = b.name,
-                    avatar = b.avatar
-                });
-            }
-
-            return Ok(map);
+                list = contacts.friends
+            });
         }
 
         /// <summary>
-        /// 新增(或更新)好友
+        /// 新增好友
         /// todo : 上限500人?
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
         public IRpcMethodResult addFriends(List<string> list)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             db.addFriends(userId, list);
             return Ok();
@@ -97,7 +91,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult delFriends(List<string> list)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             db.delFriends(userId, list);
             return Ok();
@@ -110,17 +104,18 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult findUsersByPhone(List<string> list)
         {
-            var map = new Dictionary<string, dynamic>();
-            foreach (var b in db.findUsersByPhone(list))
+            return Ok(new
             {
-                map.Add(b.userId, new
+                list = db.findUsersByPhone(list).Select(user =>
                 {
-                    name = b.name,
-                    avatar = b.avatar
-                });
-            }
-
-            return Ok(map);
+                    return new
+                    {
+                        userId = user.userId,
+                        name = user.name,
+                        avatar = user.avatar
+                    };
+                })
+            });
         }
 
 

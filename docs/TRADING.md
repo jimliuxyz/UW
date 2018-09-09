@@ -25,6 +25,80 @@ https://uwbackend-dev.azurewebsites.net/api/trading
 }
 ```
 
+# 查詢交易紀錄
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "getReceipts",
+    "params": {
+    	"fromDatetime": "2018-09-09T05:44:25.537037Z"
+    },
+    "id": 99
+}
+//收 (以換匯為例 CNY換USD)
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": {
+        "list": [
+            {
+                "id": "HO8tSTYvhEeeuWgl20DmTg",
+                "datetime": "2018-09-09T05:44:25.537037Z",
+                "currency": "CNY",  //此筆紀錄所屬幣別
+                "message": "test",
+                "statusCode": 0,    //0表示這筆交易已成功完成
+                "statusMsg": "",
+                "txType": 4,        //此筆紀錄為換匯交易
+                "txParams": { //交易發起時的參數
+                    "toCurrency": "USD",    //轉換幣別(只有在txType為4時才會出現)
+                    "sender": "tempid-test-jim-123-3",  //付款人
+                    "receiver": "tempid-test-jim-123-3",//收款人
+                    "currency": "CNY",      //交易幣別
+                    "amount": 10            //交易金額
+                },
+                "txResult": { //交易成功完成造成的金流
+                    "outflow": true,    //出帳
+                    "amount": 10,       //金額為10
+                    "balance": 860
+                }
+            },
+            {
+                "id": "jKwEcgCx-EuGZH45I7XsPg",
+                "datetime": "2018-09-09T05:44:25.538187Z",
+                "currency": "USD",
+                "message": "test",
+                "statusCode": 0,
+                "statusMsg": "",
+                "txType": 4,
+                "txParams": {
+                    "toCurrency": "USD",
+                    "sender": "tempid-test-jim-123-3",
+                    "receiver": "tempid-test-jim-123-3",
+                    "currency": "CNY",
+                    "amount": 10
+                },
+                "txResult": {
+                    "outflow": false,    //入帳
+                    "amount": 1.4568446202370287,
+                    "balance": 1018.938980063117
+                }
+            }
+        ]
+    },
+    "error": null
+}
+```
+
+#### txType
+```js
+DEPOSIT = 1,    //存款
+WITHDRAW = 2,   //提款
+TRANSFER = 3,   //轉帳
+EXCHANGE = 4    //換匯
+```
+
 # 付款/轉帳
 
 ```js
@@ -63,16 +137,30 @@ https://uwbackend-dev.azurewebsites.net/api/trading
     "custom": {
         "type": "TX_RECEIPT",
         "payload": {
-            "receiptId": "....",
-            "action": "transfer",
-            "status": 0,   //0 means done, -1 means failed, other means processing
-            "message": "...",
-            "currency": "cny",
-            "amount": "100",
-            "fromUserId": "...",
-            "fromUserName": "jim",
-            "toUserId": "...",
-            "toUserName": "alan"
+            //以下格式同上述`查詢交易紀錄`的回傳
+            "list": [
+                {
+                    "id": "HO8tSTYvhEeeuWgl20DmTg",
+                    "datetime": "2018-09-09T05:44:25.537037Z",
+                    "currency": "CNY",  //此筆紀錄所屬幣別
+                    "message": "test",
+                    "statusCode": 0,    //0表示這筆交易已成功完成
+                    "statusMsg": "",
+                    "txType": 4,        //此筆紀錄為換匯交易
+                    "txParams": { //交易發起時的參數
+                        "toCurrency": "USD",    //轉換幣別(只有在txType為4時才會出現)
+                        "sender": "tempid-test-jim-123-3",  //付款人
+                        "receiver": "tempid-test-jim-123-3",//收款人
+                        "currency": "CNY",      //交易幣別
+                        "amount": 10            //交易金額
+                    },
+                    "txResult": { //交易成功完成造成的金流
+                        "outflow": true,    //出帳
+                        "amount": 10,       //金額為10
+                        "balance": 860
+                    }
+                }
+            ]
         }
     }
 }

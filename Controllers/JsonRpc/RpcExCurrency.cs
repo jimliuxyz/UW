@@ -80,7 +80,7 @@ namespace UW.Controllers.JsonRpc
 
         public IRpcMethodResult doExFrom(string fromCurrency, string toCurrency, decimal fromAmount, string message)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             try
             {

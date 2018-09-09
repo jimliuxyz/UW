@@ -44,23 +44,13 @@ namespace UW.Controllers.JsonRpc
             {
                 var user = db.getUserByUserId(userId);
 
-                var map = new Dictionary<string, dynamic>();
-                foreach (var b in user.currencies)
-                {
-                    map.Add(b.name, new{
-                        order = b.order,
-                        isDefault = b.isDefault,
-                        isVisible = b.isVisible
-                    });
-                }
-
                 return Ok(new
                 {
                     id = user.userId,
                     name = user.name,
                     phoneno = user.phoneno,
                     avatar = user.avatar,
-                    currencies = map
+                    currencies = user.currencies
                 });
             }
             catch (System.Exception e)
@@ -99,7 +89,7 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public IRpcMethodResult updateProfile(string[] keys, string[] values)
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM_USERID).Value;
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             var user = db.getUserByUserId(userId);
 
@@ -121,11 +111,28 @@ namespace UW.Controllers.JsonRpc
 
             return Ok();
         }
+
+        public IRpcMethodResult updateCurrencySetting(List<CurrencySettings> list)
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
+
+            var user = db.getUserByUserId(userId);
+
+            try
+            {
+                user.currencies.AddRange(list);
+                user.currencies = user.currencies.Where((x, i) => user.currencies.FindLastIndex(z => z.name == x.name) == i).ToList();
+
+                db.upsertUser(user);
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return ERROR_ACT_FAILED;
+            }
+
+            return Ok();
+        }
     }
-
-    // public IRpcMethodResult getReceipts()
-    // {
-
-    // }
 }
 

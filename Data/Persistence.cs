@@ -56,18 +56,20 @@ namespace UW.Data
         public readonly DocumentClient client;
         public Persistence(Notifications notifications)
         {
-            Console.WriteLine("====init db====");
             this.notifications = notifications;
 
             //get database client as a connection
             client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
 
-            InitDB();
+            // InitDB();
             Mockup();
+            // ClearDB();
+            Console.WriteLine("====end db====");
         }
 
         public void InitDB()
         {
+            Console.WriteLine("====init db====");
             //create database
             client.CreateDatabaseIfNotExistsAsync(new Database { Id = R.DB_NAME }).Wait();
 
@@ -83,8 +85,27 @@ namespace UW.Data
                                 new DocumentCollection { Id = COL_BALANCE }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_RECEIPT }, defReqOpts).Wait();
+
+        }
+        public async void ClearDB()
+        {
+            Console.WriteLine("====clear db====");
+            ClearCollection(URI_USER).Wait();
+            ClearCollection(URI_BALANCE).Wait();
+            ClearCollection(URI_CONTACT).Wait();
+            // ClearCollection(URI_RECEIPT).Wait();
         }
 
+        public async Task ClearCollection(Uri uri)
+        {
+            var docs = client.CreateDocumentQuery(uri, "select c._self, c.id from c", new FeedOptions() { EnableCrossPartitionQuery = true }).ToList();
+
+            foreach (var doc in docs)
+            {
+                // Console.WriteLine(doc.id);
+                await client.DeleteDocumentAsync(doc._self);
+            }
+        }
         public void Mockup()
         {
             var user1 = new
@@ -140,7 +161,7 @@ namespace UW.Data
 
                 var friends = new List<Friend> { };
                 addFriends(user.userId, friends);
-                updateBalance(user.userId, new List<BalanceSlot>());
+                updateBalance(user.userId, new Dictionary<string, decimal>());
             }
         }
 
@@ -200,7 +221,7 @@ namespace UW.Data
             var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
             var result = from user in q where userIds.Contains(user.userId) select user;
 
-            return (result.Count() > 0) ? result.ToList() : null;
+            return result.ToList();
         }
 
         /// <summary>
@@ -229,15 +250,57 @@ namespace UW.Data
         /// <param name="phoneno"></param>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        public bool isSmsPasscodeMatched(string phoneno, string passcode)
+        public dynamic isSmsPasscodeMatched(string phoneno, string passcode)
         {
+            var passed = false;
+            var error = RPCERR.PASSCODE_EXPIRED;
+
             phoneno = phoneno.toHash(R.SALT_SMS);
             passcode = passcode.toHash(R.SALT_SMS);
 
+            // 取得SmsPasscode
             var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
-            var result = from c in q where (c.phoneno == phoneno && c.passcode == passcode) select c;
+            var result = from c in q where (c.phoneno == phoneno) select c;
 
-            return (result.Count() > 0);
+            if (result.Count() > 0)
+            {
+                var sms = result.ToList().First();
+
+                //是否在有效期間內
+                if (sms.verifyAvailTime.CompareTo(DateTime.UtcNow) > 0)
+                {
+                    //是否嘗試3次內
+                    if (sms.verifyCount < 3)
+                    {
+                        //是否正確
+                        if (passcode == sms.passcode)
+                        {
+                            passed = true;
+
+                            //刪除sms
+                            client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(R.DB_NAME, COL_SMSPCODE, sms.id)).Wait();
+                        }
+                        else
+                        {
+                            error = RPCERR.PASSCODE_MISMATCH;
+
+                            //更新sms
+                            sms.verifyCount++;
+                            client.UpsertDocumentAsync(URI_SMSPCODE, sms).Wait();
+                        }
+                    }
+                    else
+                        error = RPCERR.PASSCODE_VERIFY_EXCEEDED;
+                }
+                else
+                    error = RPCERR.PASSCODE_EXPIRED;
+            }
+
+            return new
+            {
+                passed,
+                error
+            }; ;
         }
 
         public Contacts getContact(string userId)
@@ -250,16 +313,20 @@ namespace UW.Data
 
         public void addFriends(string userId, List<string> friends)
         {
-            var list = getUserByUserId(friends.ToArray()).Select(u =>
+            //todo : are users allow to be friend
+            var list = getUserByUserId(friends.ToArray())?.Select(u =>
                 new Friend
                 {
+                    userId = u.userId,
                     name = u.name,
                     avatar = u.avatar
                 }
             ).ToList();
-            addFriends(userId, list);
+
+            if (list != null)
+                addFriends(userId, list);
         }
-        public void addFriends(string userId, List<Friend> friends)
+        private void addFriends(string userId, List<Friend> friends)
         {
             var contact = getContact(userId);
             if (contact == null)
@@ -298,26 +365,35 @@ namespace UW.Data
 
             return (result.Count() > 0) ? result.ToList().First() : null;
         }
-        public void updateBalance(string userId, List<BalanceSlot> newBalances)
+        public void updateBalance(string userId, Dictionary<string, decimal> newBalances)
         {
             var balance = getBalance(userId);
             if (balance == null)
             {
+                var init_balance = new Dictionary<string, decimal>() {
+                    {D.BTC, 1000},
+                    {D.CNY, 1000},
+                    {D.ETH, 1000},
+                    {D.USD, 1000},
+                };
                 balance = new Balance();
                 balance.ownerId = userId;
-                balance.balances = new List<BalanceSlot>(){
-                    new BalanceSlot{name=D.CNY, balance="1000"},
-                    new BalanceSlot{name=D.USD, balance="1000"},
-                    new BalanceSlot{name=D.BTC, balance="1000"},
-                    new BalanceSlot{name=D.ETH, balance="1000"}
-                };
+                balance.balances = init_balance;
+            }
+            foreach (var kp in newBalances)
+            {
+                balance.balances[kp.Key] = kp.Value;
             }
 
-            // 去重
-            balance.balances.AddRange(newBalances);
-            balance.balances = balance.balances.Where((x, i) => balance.balances.FindLastIndex(z => z.name == x.name) == i).ToList();
-
             var res = client.UpsertDocumentAsync(URI_BALANCE, balance).Result;
+        }
+
+        public List<TxReceipt> getReceipts(string userId, DateTime datetime)
+        {
+            var q = client.CreateDocumentQuery<TxReceipt>(URI_TXRECEIPT);
+            var result = from rec in q where rec.ownerId == userId && rec.datetime >= datetime select rec;
+
+            return result.ToList();
         }
 
         /// <summary>
@@ -329,6 +405,9 @@ namespace UW.Data
         {
             try
             {
+                Console.WriteLine(URI_TXRECEIPT.toJson());
+                Console.WriteLine(receipt.toJson());
+
                 var res = client.UpsertDocumentAsync(URI_TXRECEIPT, receipt).Result;
                 return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
             }
@@ -350,46 +429,59 @@ namespace UW.Data
         public string doTransfer(string fromId, string toId, string currency, decimal amount, string message)
         {
             var ok = false;
-            var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            var receiptId = F.NewGuid();
 
             //get user
             var fromUser = getUserByUserId(fromId);
             var toUser = getUserByUserId(toId);
 
             //get user's balance
-            var fromBSlot = getBalance(fromId)?.balances.Find(c => c.name.Equals(currency));
-            var toBSlot = getBalance(toId)?.balances.Find(c => c.name.Equals(currency));
+            var from_balance = getBalance(fromId).balances[currency];
+            var to_balance = getBalance(toId).balances[currency];
 
             //simulate transcation
-            if (fromBSlot != null && toBSlot != null && !fromId.Equals(toId))
+            if (!fromId.Equals(toId))
             {
-                var from_balance = Decimal.Parse(fromBSlot.balance);
-                var to_balance = Decimal.Parse(toBSlot.balance);
                 if (from_balance >= amount && amount > 0)
                 {
-                    fromBSlot.balance = (from_balance - amount).ToString();
-                    toBSlot.balance = (to_balance + amount).ToString();
+                    from_balance = from_balance - amount;
+                    to_balance = to_balance + amount;
 
-                    updateBalance(fromId, new List<BalanceSlot> { fromBSlot });
-                    updateBalance(toId, new List<BalanceSlot> { toBSlot });
+                    updateBalance(fromId, new Dictionary<string, decimal> { { currency, from_balance } });
+                    updateBalance(toId, new Dictionary<string, decimal> { { currency, to_balance } });
                     ok = true;
                 }
             }
 
-            //generate receipt
-            var receipt = new
+            //generate sender receipt
+            var param = new TxParams
+            {
+                sender = fromUser.userId,
+                receiver = toUser.userId,
+                currency = currency,
+                amount = amount
+            };
+            var sender_rec = new TxReceipt
             {
                 receiptId = receiptId,
-                action = "transfer",
-                status = ok ? 0 : -1,   //0 means done, <0 means failed(error code), other means processing
-                message, //user message
+                executorId = fromUser.userId,
+                ownerId = fromUser.userId,
                 currency = currency,
-                amount = amount,
-                fromUserId = fromUser.userId,
-                fromUserName = fromUser.name,
-                toUserId = toUser.userId,
-                toUserName = toUser.name
+                message = message,
+                isParent = true,
+
+                txType = TxType.TRANSFER,
+                statusCode = ok ? 0 : -1,
+                statusMsg = "",
+                txParams = param,
+                txResult = !ok ? null : new TxActResult
+                {
+                    outflow = true,
+                    amount = amount,
+                    balance = from_balance
+                }
             };
+            upsertReceipt(sender_rec);
 
             //simulate receipt notification
             Task.Run(() =>
@@ -397,13 +489,21 @@ namespace UW.Data
                 Task.Delay(200).Wait();
                 //notify sender
                 if (fromUser.ntfInfo != null)
-                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", "TX_RECEIPT", receipt);
+                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.toApiResult() } });
 
                 //notify receiver
-                if (ok)
+                if (ok && toUser.ntfInfo != null)
                 {
-                    if (toUser.ntfInfo != null)
-                        notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", "TX_RECEIPT", receipt);
+                    //generate receiver receipt
+                    var receiver_rec = sender_rec.derivative(sender_rec.currency, toUser.userId, new TxActResult
+                    {
+                        outflow = false,
+                        amount = amount,
+                        balance = to_balance
+                    });
+                    upsertReceipt(receiver_rec);
+
+                    notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.toApiResult() } });
                 }
             });
 
@@ -412,14 +512,14 @@ namespace UW.Data
         public string doExchange(string userId, string fromCurrency, string toCurrency, decimal fromAmount, decimal toAmount, string message)
         {
             var ok = false;
-            var receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            var receiptId = F.NewGuid();
 
             //get user
             var user = getUserByUserId(userId);
-            var fromBSlot = getBalance(userId)?.balances.Find(c => c.name.Equals(fromCurrency, StringComparison.OrdinalIgnoreCase));
-            var toBSlot = getBalance(userId)?.balances.Find(c => c.name.Equals(toCurrency, StringComparison.OrdinalIgnoreCase));
+            var from_balance = getBalance(userId).balances[fromCurrency];
+            var to_balance = getBalance(userId).balances[toCurrency];
 
-            if (user == null || fromBSlot == null || fromBSlot == null)
+            if (user == null)
                 throw new Exception();
 
             if (fromCurrency.Equals(toCurrency, StringComparison.OrdinalIgnoreCase))
@@ -427,8 +527,6 @@ namespace UW.Data
 
             //simulate transcation
             {
-                var from_balance = Decimal.Parse(fromBSlot.balance);
-                var to_balance = Decimal.Parse(toBSlot.balance);
                 if (from_balance < fromAmount)
                 {
                     ok = false;
@@ -436,22 +534,16 @@ namespace UW.Data
                 }
                 else
                 {
-                    fromBSlot.balance = (from_balance - fromAmount).ToString();
-                    toBSlot.balance = (to_balance + toAmount).ToString();
+                    from_balance = from_balance - fromAmount;
+                    to_balance = to_balance + toAmount;
 
-                    updateBalance(userId, new List<BalanceSlot> { fromBSlot });
-                    updateBalance(userId, new List<BalanceSlot> { toBSlot });
+                    updateBalance(userId, new Dictionary<string, decimal> { { fromCurrency, from_balance } });
+                    updateBalance(userId, new Dictionary<string, decimal> { { toCurrency, to_balance } });
                     ok = true;
                 }
             }
 
             //generate receipt
-            var param = new ExchangeParams
-            {
-                fromCurrency = fromCurrency,
-                toCurrency = toCurrency,
-                fromAmount = fromAmount
-            };
             var receipt = new TxReceipt
             {
                 receiptId = receiptId,
@@ -461,43 +553,39 @@ namespace UW.Data
                 message = message,
                 isParent = true,
 
-                txAction = (int)TxAction.EXCHANGE,
-                txStatusCode = ok ? 0 : -1,
-                txStatusMsg = "",
-                txParams = param,
-                txResult = new TxResult
+                txType = TxType.EXCHANGE,
+                statusCode = ok ? 0 : -1,
+                statusMsg = "",
+                txParams = new ExchangeParams
+                {
+                    sender = userId,
+                    receiver = userId,
+                    currency = fromCurrency,
+                    amount = fromAmount,
+                    toCurrency = toCurrency
+                },
+                txResult = !ok ? null : new TxActResult
                 {
                     outflow = true,
                     amount = fromAmount,
-                    // balance = 0,
+                    balance = from_balance,
                 }
             };
-            var receiptTo = new TxReceipt
-            {
-                receiptId = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
-                executorId = userId,
-                ownerId = userId,
-                currency = toCurrency,
-                message = message,
-                isParent = false,
 
-                txAction = (int)TxAction.EXCHANGE,
-                txStatusCode = ok ? 0 : -1,
-                txStatusMsg = "",
-                txParams = param,
-                txResult = new TxResult
-                {
-                    outflow = false,
-                    amount = toAmount,
-                    // balance = 0,
-                }
-            };
+            var receiptTo = receipt.derivative(toCurrency, userId, new TxActResult
+            {
+                outflow = false,
+                amount = toAmount,
+                balance = to_balance
+            });
+
             //暫時直接先將receipt寫入db
             //for from currency
             upsertReceipt(receipt);
 
             //for to currency
-            upsertReceipt(receiptTo);
+            if (ok)
+                upsertReceipt(receiptTo);
 
             //simulate receipt notification
             Task.Run(() =>
@@ -505,14 +593,17 @@ namespace UW.Data
                 Task.Delay(200).Wait();
                 //notify sender
                 if (user.ntfInfo != null)
-                    notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", "TX_RECEIPT", receipt);
+                {
+                    var list = new List<dynamic>() { receipt.toApiResult() };
+                    if (ok)
+                        list.Add(receiptTo);
+                    notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list });
+                }
             });
 
             return receiptId;
         }
 
-
     }
-
 
 }

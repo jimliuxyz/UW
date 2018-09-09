@@ -47,18 +47,8 @@ namespace UW
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidIssuer = R.JWT_ISSUER,
-                    ValidAudience = R.JWT_AUDIENCE,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(R.JWT_SECRET)),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    RequireExpirationTime = false,
-                };
-                // options.SecurityTokenValidators.Clear();
-                // options.SecurityTokenValidators.Add(new ApiTokenValidator()); //不需要額外建立Validator
+                options.SecurityTokenValidators.Clear();
+                options.SecurityTokenValidators.Add(new JwtValidator());
             });
 
             services.AddJsonRpc(config =>

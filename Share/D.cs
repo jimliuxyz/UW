@@ -5,16 +5,25 @@ namespace UW
     /// </summary>
     public class D
     {
-        public static readonly string NOTIFICATION_UID = "uid:";
-        public static readonly string NOTIFICATION_EVERYBODY = "everybody";
+        public static class NTFTAG
+        {
+            public static readonly string USER_PREFIX = "uid:";
+            public static readonly string EVERYBODY = "everybody";
+        }
+        public static class NTFTYPE
+        {
+            public static readonly string LOGOUT = "LOGOUT";
+            public static readonly string TXRECEIPT = "TX_RECEIPT";
+        }
 
-        public static readonly string NOTIFY_LOGOUT = "LOGOUT";
-
-
-        public static readonly string CLAIM_USERID = "userid";
-        public static readonly string CLAIM_TOKEN_RND = "tokenrnd";
+        public static class CLAIM
+        {
+            public static readonly string USERID = "userid";
+            public static readonly string TOKENRND = "tokenrnd";
+        }
 
         public static readonly string DOC_USER_NAME = "name";
+        public static readonly string DOC_USER_CURRENCIES = "currencies";
 
 
         // currency
