@@ -15,8 +15,6 @@ using System.Diagnostics;
 
 namespace UW.Data
 {
-
-
     class Settings
     {
         public string Uri { get; set; }
@@ -47,8 +45,8 @@ namespace UW.Data
         private static Uri URI_BALANCE = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_BALANCE);
 
         //receipts
-        private static string COL_RECEIPT = typeof(TxReceipt).Name;
-        private static Uri URI_TXRECEIPT = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_RECEIPT);
+        private static string COL_TXRECEIPT = typeof(TxReceipt).Name;
+        private static Uri URI_TXRECEIPT = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_TXRECEIPT);
 
 
         private Notifications notifications;
@@ -56,20 +54,36 @@ namespace UW.Data
         public readonly DocumentClient client;
         public Persistence(Notifications notifications)
         {
+            Console.WriteLine("====start db====");
             this.notifications = notifications;
 
             //get database client as a connection
             client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
 
-            // InitDB();
+            Console.WriteLine("====init====");
+            InitDB();
+
+            Console.WriteLine("====mockup====");
             Mockup();
+
+            // Console.WriteLine("====clear====");
             // ClearDB();
+
             Console.WriteLine("====end db====");
         }
 
-        public void InitDB()
+        private void InitDB()
         {
-            Console.WriteLine("====init db====");
+            try
+            {
+                this.client.ReadDatabaseAsync(URI_DB).Wait();
+                return;
+            }
+            catch (DocumentClientException de)
+            {
+                if (de.StatusCode != HttpStatusCode.NotFound)
+                    return;
+            }
             //create database
             client.CreateDatabaseIfNotExistsAsync(new Database { Id = R.DB_NAME }).Wait();
 
@@ -84,19 +98,17 @@ namespace UW.Data
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_BALANCE }, defReqOpts).Wait();
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
-                                new DocumentCollection { Id = COL_RECEIPT }, defReqOpts).Wait();
-
+                                new DocumentCollection { Id = COL_TXRECEIPT }, defReqOpts).Wait();
         }
-        public async void ClearDB()
+        private void ClearDB()
         {
-            Console.WriteLine("====clear db====");
             ClearCollection(URI_USER).Wait();
             ClearCollection(URI_BALANCE).Wait();
             ClearCollection(URI_CONTACT).Wait();
-            // ClearCollection(URI_RECEIPT).Wait();
+            ClearCollection(URI_TXRECEIPT).Wait();
         }
 
-        public async Task ClearCollection(Uri uri)
+        private async Task ClearCollection(Uri uri)
         {
             var docs = client.CreateDocumentQuery(uri, "select c._self, c.id from c", new FeedOptions() { EnableCrossPartitionQuery = true }).ToList();
 
@@ -106,7 +118,7 @@ namespace UW.Data
                 await client.DeleteDocumentAsync(doc._self);
             }
         }
-        public void Mockup()
+        private void Mockup()
         {
             var user1 = new
             {
