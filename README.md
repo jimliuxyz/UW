@@ -37,7 +37,6 @@
     "error": null
 }
 ```
-- 修改 Trading - transfer 新增參數`message`
 - 新增 Trading - getReceipts 取得交易紀錄
 - 修改 Trading 透過`通知`傳達的內容 改為與getReceipts相同
 - 新增 AzureFunc - reqSmsVerify 正確時回傳發送次數 超過發送次數也將回傳錯誤
@@ -80,7 +79,7 @@
 
 [EXCURRENCY - 匯率交易](./docs/EXCURRENCY.md)
 
-[各式`碼`定義](./docs/DEFINE.md)
+[各式**碼**定義](./docs/DEFINE.md)
 
 # Notification通知格式
 
