@@ -258,6 +258,7 @@ namespace UW.Data
 
         /// <summary>
         /// 檢查簡訊驗證碼是否相符
+        /// todo : 加加動作須確保`事務性` 避免程式攻擊
         /// </summary>
         /// <param name="phoneno"></param>
         /// <param name="passcode"></param>
@@ -312,7 +313,7 @@ namespace UW.Data
             {
                 passed,
                 error
-            }; ;
+            };
         }
 
         public Contacts getContact(string userId)
