@@ -10,7 +10,6 @@ namespace UW.Models.Collections
 
         public List<string> friendOf { get; set; }
         public List<Friend> friends { get; set; }
-        public List<string> recent { get; set; }
     }
 
     public class Friend
