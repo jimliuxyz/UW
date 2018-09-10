@@ -75,6 +75,34 @@ https://uwbackend-dev.azurewebsites.net/api/profile
 }
 ```
 
+# 更新貨幣設定
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "updateCurrencySetting",
+    "params": {
+    	"list": [
+			{
+                "name": "USD",
+                "order": 11,
+                "isDefault": false,
+                "isVisible": false
+            }
+    	]
+    },
+    "id": 99
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": true,
+    "error": null,
+    "id": 99,
+}
+```
+
 # 取得用戶資料
 
 取得用戶`進一步`的資料
@@ -107,30 +135,3 @@ https://uwbackend-dev.azurewebsites.net/api/profile
 }
 ```
 
-# 設定貨幣
-
-```js
-//送
-{
-    "jsonrpc": "2.0",
-    "method": "updateCurrencySetting",
-    "params": {
-    	"list": [
-			{
-                "name": "USD",
-                "order": 11,
-                "isDefault": false,
-                "isVisible": false
-            }
-    	]
-    },
-    "id": 99
-}
-//收
-{
-    "id": 99,
-    "jsonrpc": "2.0",
-    "result": null,
-    "error": null
-}
-```

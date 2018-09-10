@@ -21,7 +21,7 @@
 - 修改 Contacts - addFriends 改傳入`字串陣列`
 - 修改 Contacts - getContacts 回傳的contacts變數改為`list` (移除recent)
 
-- 新增 Profile - updateCurrencySetting 設定貨幣
+- 新增 Profile - updateCurrencySetting 更新貨幣設定
 
 - 修改 Trading - getBalance 回傳改用map型別
 ```js
