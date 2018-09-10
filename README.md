@@ -15,7 +15,7 @@
 
 # 更新內容(180909)
 - JsonRpc的params與result內都一律使用`物件{}`
-- JsonRpc中物件中單一陣列盡量以`list`命名
+- JsonRpc中物件中單一陣列盡量以`list`命名
 
 - 修改 Contacts - getAllUser與findUsersByphone 回傳`id更改為userId`
 - 修改 Contacts - addFriends 改傳入`字串陣列`

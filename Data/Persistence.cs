@@ -268,12 +268,12 @@ namespace UW.Data
             var passed = false;
             var error = RPCERR.PASSCODE_EXPIRED;
 
-            phoneno = phoneno.toHash(R.SALT_SMS);
-            passcode = passcode.toHash(R.SALT_SMS);
+            var phonenoHash = phoneno.toHash(R.SALT_SMS);
+            var passcodeHash = (phoneno+passcode).toHash(R.SALT_SMS);
 
             // 取得SmsPasscode
             var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
-            var result = from c in q where (c.phoneno == phoneno) select c;
+            var result = from c in q where (c.phoneno == phonenoHash) select c;
 
             if (result.Count() > 0)
             {
@@ -286,7 +286,7 @@ namespace UW.Data
                     if (sms.verifyCount < 3)
                     {
                         //是否正確
-                        if (passcode == sms.passcode)
+                        if (passcodeHash == sms.passcode)
                         {
                             passed = true;
 
