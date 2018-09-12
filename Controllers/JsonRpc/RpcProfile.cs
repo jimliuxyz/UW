@@ -46,7 +46,7 @@ namespace UW.Controllers.JsonRpc
 
                 return Ok(new
                 {
-                    id = user.userId,
+                    userId = user.userId,
                     name = user.name,
                     phoneno = user.phoneno,
                     avatar = user.avatar,
