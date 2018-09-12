@@ -16,7 +16,7 @@ https://uwbackend-dev.azurewebsites.net/api/profile
     "id": 99,
     "jsonrpc": "2.0",
     "result": {
-        "id": "040564a6-f5dd-4ba1-8d03-b428e4126b81",
+        "userId": "040564a6-f5dd-4ba1-8d03-b428e4126b81",
         "name": "test123",
         "phoneno": "test123",
         "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
@@ -123,7 +123,7 @@ https://uwbackend-dev.azurewebsites.net/api/profile
     "result": {
         "list": [
             {
-                "id": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
+                "userId": "c6e3cd69-9755-4506-8c3a-4c64b1ca1ebf",
                 "name": "Jim",
                 "phoneno": "test123",
                 "avatar": "http://..."

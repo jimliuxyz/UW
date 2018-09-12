@@ -1,4 +1,8 @@
 
+# 更新內容(180911)
+
+- 更正 Profile - getProfile/getUsersProfile 其中回傳的id欄位名改為userId
+
 # 函數編程(functional programming)
 在集合資料(Collection)轉換上可以善用`函數式編程(functional programming)`
 

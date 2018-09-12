@@ -72,7 +72,7 @@ namespace UW.Controllers.JsonRpc
             //重新map 排除隱私內容
             var users_ = users.Select(user => new
             {
-                id = user.userId,
+                userId = user.userId,
                 name = user.name,
                 phoneno = user.phoneno,
                 avatar = user.avatar
