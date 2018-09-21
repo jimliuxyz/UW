@@ -9,6 +9,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using UW.Services;
 
 namespace UW
 {
@@ -16,7 +17,11 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            // CreateWebHostBuilder(args).Build().Run();
+            var q = new QueueServ();
+            q.test().Wait();
+            Console.WriteLine("end...");
+            Console.ReadKey();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

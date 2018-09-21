@@ -32,8 +32,10 @@
         "JWT_ISSUER": "xinwang",
         "JWT_AUDIENCE": "uwallet",
         "JWT_SECRET": "F=a[s-vFRv(Rn~0MjXF!",
-        "SALT_SMS": "e^26rYS`}:~%E4`",
-        "END_OF_SETTING": "done"
+          "SALT_SMS": "e^26rYS`}:~%E4`",
+          "SBUS_QUEUE_NAME": "uwqueue",
+          "SBUS_CONN_STRING": "Endpoint=sb://uwqueue.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=0WQP0IqqUV+h7qRsImJu3HFeFCTqmfVfQi+UPOMkq/0=",
+          "END_OF_SETTING": "done"
       }
     }
   }
