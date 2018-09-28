@@ -91,7 +91,7 @@ namespace UW.Controllers.JsonRpc
 
             return Ok(new
             {
-                list = db.getReceipts(userId, fromDatetime).Select(rec => rec.toApiResult())
+                list = db.getReceipts(userId, fromDatetime).Select(rec => rec.ToApiResult())
             });
         }
     }

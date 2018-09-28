@@ -17,6 +17,7 @@ namespace UW
 
         public static readonly string DB_COL_SMSPASSCODE = "SmsPasscode";
         public static readonly string DB_COL_USER = "User";
+        public static readonly string QUEUE_CSTR;
 
         static R()
         {
@@ -33,6 +34,8 @@ namespace UW
 
             NTFHUB_NAME = Environment.GetEnvironmentVariable("NTFHUB_NAME");
             NTFHUB_CSTR = Environment.GetEnvironmentVariable("NTFHUB_CSTR");
+
+            QUEUE_CSTR = Environment.GetEnvironmentVariable("QUEUE_CSTR");
         }
     }
 }

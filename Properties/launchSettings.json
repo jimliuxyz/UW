@@ -26,15 +26,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DB_URI": "https://uwcosmos.documents.azure.com:443/",
         "DB_KEY": "ImS3ZxaO7N7hFBFdSJHzVkOVC22tZlibbxRcgOQAlpKKWLvN2PDfwrovIatjFW4v0Iiw9Tv5jtED6reWSUYgLw==",
-        "DB_NAME": "UWallet-dev",
+        "DB_NAME": "UWallet-jim",
         "NTFHUB_NAME": "U-wallet-ts",
         "NTFHUB_CSTR": "Endpoint=sb://mynotificationhub.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=GGu5X5TGyRBbAMMEPzyaA9HdTwTANBbvhCyHoGS4zLo=",
         "JWT_ISSUER": "xinwang",
         "JWT_AUDIENCE": "uwallet",
         "JWT_SECRET": "F=a[s-vFRv(Rn~0MjXF!",
           "SALT_SMS": "e^26rYS`}:~%E4`",
-          "SBUS_QUEUE_NAME": "uwqueue",
-          "SBUS_CONN_STRING": "Endpoint=sb://uwqueue.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=0WQP0IqqUV+h7qRsImJu3HFeFCTqmfVfQi+UPOMkq/0=",
+          "QUEUE_CSTR": "Endpoint=sb://uwqueue-sess.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=demykbfbZ98rIUI1wb5oU1SsPQIVYLwFp2Hr4GdhGD0=",
           "END_OF_SETTING": "done"
       }
     }

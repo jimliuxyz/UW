@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using UW.Models.Collections;
 
-namespace UW
+namespace UW.Shared
 {
     /// <summary>
     /// Shared Functions
@@ -22,12 +22,24 @@ namespace UW
 
     }
 
+    public static class StringExtensions
+    {
+        public static decimal ToNumber(this string str)
+        {
+            return decimal.Parse(str);
+        }
+        public static long ToLong(this string str)
+        {
+            return long.Parse(str);
+        }
+    }
+
     /// <summary>
     /// Extensions
     /// </summary>
     public static class Extensions
     {
-        public static string toHash(this string context, string salt)
+        public static string ToHash(this string context, string salt)
         {
             SHA256 sha256 = new SHA256CryptoServiceProvider();
             byte[] source = Encoding.Default.GetBytes(context + salt);
@@ -35,7 +47,7 @@ namespace UW
             return Convert.ToBase64String(crypto);
         }
 
-        public static string toJson(this object context)
+        public static string ToJson(this object context)
         {
             return JsonConvert.SerializeObject(context, Formatting.Indented);
         }
@@ -59,7 +71,7 @@ namespace UW
         /// <summary>
         /// 將Collection Model轉型為api回傳的結果
         /// </summary>
-        public static dynamic toApiResult(this TxReceipt receipt)
+        public static dynamic ToApiResult(this TxReceipt receipt)
         {
             return new
             {
@@ -75,7 +87,7 @@ namespace UW
             };
         }
 
-        public static TxReceipt derivative(this TxReceipt receipt, string currency, string ownerId, TxActResult txResult)
+        public static TxReceipt Derivative(this TxReceipt receipt, string currency, string ownerId, TxActResult txResult)
         {
             var rec = receipt.DeepClone();
             rec.receiptId = F.NewGuid();

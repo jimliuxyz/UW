@@ -268,8 +268,8 @@ namespace UW.Data
             var passed = false;
             var error = RPCERR.PASSCODE_EXPIRED;
 
-            var phonenoHash = phoneno.toHash(R.SALT_SMS);
-            var passcodeHash = (phoneno+passcode).toHash(R.SALT_SMS);
+            var phonenoHash = phoneno.ToHash(R.SALT_SMS);
+            var passcodeHash = (phoneno+passcode).ToHash(R.SALT_SMS);
 
             // 取得SmsPasscode
             var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
@@ -418,8 +418,8 @@ namespace UW.Data
         {
             try
             {
-                Console.WriteLine(URI_TXRECEIPT.toJson());
-                Console.WriteLine(receipt.toJson());
+                Console.WriteLine(URI_TXRECEIPT.ToJson());
+                Console.WriteLine(receipt.ToJson());
 
                 var res = client.UpsertDocumentAsync(URI_TXRECEIPT, receipt).Result;
                 return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
@@ -502,13 +502,13 @@ namespace UW.Data
                 Task.Delay(200).Wait();
                 //notify sender
                 if (fromUser.ntfInfo != null)
-                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.toApiResult() } });
+                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.ToApiResult() } });
 
                 //notify receiver
                 if (ok && toUser.ntfInfo != null)
                 {
                     //generate receiver receipt
-                    var receiver_rec = sender_rec.derivative(sender_rec.currency, toUser.userId, new TxActResult
+                    var receiver_rec = sender_rec.Derivative(sender_rec.currency, toUser.userId, new TxActResult
                     {
                         outflow = false,
                         amount = amount,
@@ -516,7 +516,7 @@ namespace UW.Data
                     });
                     upsertReceipt(receiver_rec);
 
-                    notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.toApiResult() } });
+                    notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.ToApiResult() } });
                 }
             });
 
@@ -585,7 +585,7 @@ namespace UW.Data
                 }
             };
 
-            var receiptTo = receipt.derivative(toCurrency, userId, new TxActResult
+            var receiptTo = receipt.Derivative(toCurrency, userId, new TxActResult
             {
                 outflow = false,
                 amount = toAmount,
@@ -607,7 +607,7 @@ namespace UW.Data
                 //notify sender
                 if (user.ntfInfo != null)
                 {
-                    var list = new List<dynamic>() { receipt.toApiResult() };
+                    var list = new List<dynamic>() { receipt.ToApiResult() };
                     if (ok)
                         list.Add(receiptTo);
                     notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list });
