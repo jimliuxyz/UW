@@ -18,7 +18,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UW.Data;
 using UW.Controllers.JsonRpc;
-using UW.Services;
+using UW.Shared;
+using UW.Shared.Services;
 
 namespace UW
 {
@@ -35,7 +36,7 @@ namespace UW
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<Notifications>();
+            services.AddSingleton<Ntfy>();
             services.AddSingleton<Persistence>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

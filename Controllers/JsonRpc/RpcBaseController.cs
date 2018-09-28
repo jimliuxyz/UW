@@ -1,5 +1,6 @@
 using EdjCase.JsonRpc.Router;
 using EdjCase.JsonRpc.Router.Defaults;
+using UW.Shared;
 
 namespace UW.Controllers
 {

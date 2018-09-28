@@ -9,12 +9,13 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System;
-using UW.Services;
 using UW.Data;
-using UW.Models.Collections;
+using UW.Shared.Persis.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
+using UW.Shared;
+using UW.Shared.Services;
 
 namespace UW.Controllers.JsonRpc
 {
@@ -34,9 +35,9 @@ namespace UW.Controllers.JsonRpc
     public class RpcExCurrency : RpcBaseController
     {
         private IHttpContextAccessor accessor;
-        private Notifications notifications;
+        private Ntfy notifications;
         private Persistence db;
-        public RpcExCurrency(IHttpContextAccessor accessor, Notifications notifications, Persistence db)
+        public RpcExCurrency(IHttpContextAccessor accessor, Ntfy notifications, Persistence db)
         {
             this.accessor = accessor;
             this.notifications = notifications;

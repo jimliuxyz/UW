@@ -5,15 +5,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using BasicSendReceiveQuickStart;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using UW.Models;
-using UW.MQueue.TxReq;
-using UW.Persis;
-using UW.Services;
+using UW.Shared.Models;
+using UW.Shared.MQueue.TxReq;
+using UW.Shared.Persis;
 
 namespace UW
 {
@@ -40,7 +38,7 @@ namespace UW
 
         public static async Task testdb()
         {
-            await Base.BuildDB();
+            await PersisBase.BuildDB();
 
             var user = new MemberID(1, "qwer1234");
 
@@ -53,9 +51,9 @@ namespace UW
             var sender = await TxReqSender.get();
 
             Console.WriteLine("1");
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 2; i++)
             {
-                // await sender.send(i);
+                await sender.send(i);
             }
             Console.WriteLine("2");
 

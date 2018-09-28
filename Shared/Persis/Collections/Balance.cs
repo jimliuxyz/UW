@@ -1,0 +1,21 @@
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace UW.Shared.Persis.Collections
+{
+    public class Balance //snapshot
+    {
+        [JsonProperty(PropertyName = "id")]
+        public string ownerId { get; set; }
+
+        public Dictionary<string, decimal> balances { get; set; }
+    }
+    public class BalanceSlot
+    {
+
+        // currency name
+        public string name { get; set; }
+        public string balance { get; set; }
+    }
+}

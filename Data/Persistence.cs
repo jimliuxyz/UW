@@ -4,14 +4,15 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 using Newtonsoft.Json;
-using UW.Models.Collections;
+using UW.Shared.Persis.Collections;
 using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using UW.Services;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using UW.Shared;
+using UW.Shared.Services;
 
 namespace UW.Data
 {
@@ -29,7 +30,7 @@ namespace UW.Data
         private static Uri URI_DB = UriFactory.CreateDatabaseUri(R.DB_NAME);
 
         //user
-        private static string COL_USER = typeof(UW.Models.Collections.User).Name;
+        private static string COL_USER = typeof(UW.Shared.Persis.Collections.User).Name;
         private static Uri URI_USER = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_USER);
 
         //sms passcode
@@ -49,10 +50,10 @@ namespace UW.Data
         private static Uri URI_TXRECEIPT = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_TXRECEIPT);
 
 
-        private Notifications notifications;
+        private Ntfy notifications;
 
         public readonly DocumentClient client;
-        public Persistence(Notifications notifications)
+        public Persistence(Ntfy notifications)
         {
             Console.WriteLine("====start db====");
             this.notifications = notifications;
@@ -135,7 +136,7 @@ namespace UW.Data
 
             foreach (var u in new dynamic[] { user1, user2 })
             {
-                var user = new Models.Collections.User()
+                var user = new UW.Shared.Persis.Collections.User()
                 {
                     userId = "tempid-" + u.phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
                     phoneno = u.phoneno,
@@ -181,9 +182,9 @@ namespace UW.Data
         /// 取得所有使用者
         /// </summary>
         /// <returns></returns>
-        public List<Models.Collections.User> getUsers()
+        public List<UW.Shared.Persis.Collections.User> getUsers()
         {
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var q = client.CreateDocumentQuery<UW.Shared.Persis.Collections.User>(URI_USER);
             var result = from user in q select user;
 
             return result.ToList();
@@ -194,9 +195,9 @@ namespace UW.Data
         /// </summary>
         /// <param name="phones"></param>
         /// <returns></returns>
-        public List<Models.Collections.User> findUsersByPhone(List<string> phones)
+        public List<UW.Shared.Persis.Collections.User> findUsersByPhone(List<string> phones)
         {
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var q = client.CreateDocumentQuery<UW.Shared.Persis.Collections.User>(URI_USER);
             var result = from user in q where phones.Contains(user.phoneno) select user;
 
             return result.ToList();
@@ -207,9 +208,9 @@ namespace UW.Data
         /// </summary>
         /// <param name="phoneno"></param>
         /// <returns></returns>
-        public Models.Collections.User getUserByPhone(string phoneno)
+        public UW.Shared.Persis.Collections.User getUserByPhone(string phoneno)
         {
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var q = client.CreateDocumentQuery<UW.Shared.Persis.Collections.User>(URI_USER);
             var result = from user in q where user.phoneno == phoneno select user;
 
             return (result.Count() > 0) ? result.ToList().First() : null;
@@ -220,17 +221,17 @@ namespace UW.Data
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Models.Collections.User getUserByUserId(string userId)
+        public UW.Shared.Persis.Collections.User getUserByUserId(string userId)
         {
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var q = client.CreateDocumentQuery<UW.Shared.Persis.Collections.User>(URI_USER);
             var result = from user in q where user.userId == userId select user;
 
             return (result.Count() > 0) ? result.ToList().First() : null;
         }
 
-        public List<Models.Collections.User> getUserByUserId(string[] userIds)
+        public List<UW.Shared.Persis.Collections.User> getUserByUserId(string[] userIds)
         {
-            var q = client.CreateDocumentQuery<Models.Collections.User>(URI_USER);
+            var q = client.CreateDocumentQuery<UW.Shared.Persis.Collections.User>(URI_USER);
             var result = from user in q where userIds.Contains(user.userId) select user;
 
             return result.ToList();
@@ -241,7 +242,7 @@ namespace UW.Data
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public bool upsertUser(Models.Collections.User user)
+        public bool upsertUser(UW.Shared.Persis.Collections.User user)
         {
             try
             {
