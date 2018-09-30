@@ -123,7 +123,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiSlRJc3RvV2Vza2lFNWpyR0x5YS9Ndz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.ic17cOyvzu7VDIR6AzuF-cPvi74JmatrE0Vh-8DM3sI",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
 							"type": "string"
 						}
 					]
@@ -481,7 +481,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMy0zIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InRlc3QtamltLTEyMy0zIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJpZCI6InRlbXBpZC10ZXN0LWppbS0xMjMtMyIsInRva2Vucm5kIjoiRGYzR0l0Y3hIRTZ3VWhQK0toTlRVZz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.FMjDdn8mBDAAoMMk6WQQCvpUI3LMnA7dQj9k6F507OU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
 							"type": "string"
 						}
 					]
@@ -496,6 +496,127 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getBalances\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/trading",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"name": "trading - deposit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deposit\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 100\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/trading",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"name": "trading - deposit Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deposit\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 100\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "https://uwbackend-dev.azurewebsites.net/api/trading",
+					"protocol": "https",
+					"host": [
+						"uwbackend-dev",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"name": "trading - withdraw",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"withdraw\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 25\n    },\n    \"id\": 99\n}"
 				},
 				"url": {
 					"raw": "http://localhost:5000/api/trading",
