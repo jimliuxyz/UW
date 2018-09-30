@@ -1,71 +1,8 @@
 
-# 更新內容(180911)
-
-- 更正 Profile - getProfile/getUsersProfile 其中回傳的id欄位名改為userId
-
-# 函數編程(functional programming)
-在集合資料(Collection)轉換上可以善用`函數式編程(functional programming)`
-
-關鍵字map/reduce/filter/sort
-
-[swift參考](https://medium.com/@mikru168/swift3-%E9%AB%98%E9%9A%8E%E5%87%BD%E6%95%B8-higher-order-function-a97cf4577a11)
-
-[kotlin參考](https://hk.saowen.com/a/e37e7e51f8f92225bdff9dbcb47ddfc9937a7af2bf3952385ff637ee34a6ee56)
-
-# 建議安裝postman
-可下載import [json檔](./docs/UWallet.postman_collection.json)做測試 (自行更改為遠端url)
-
-出現ssl問題可到setting將`SSL cerificate verification`關閉
-
-# 更新內容(180909)
-- JsonRpc的params與result內都一律使用`物件{}`
-- JsonRpc中物件中單一陣列盡量以`list`命名
-
-- 修改 Contacts - getAllUser與findUsersByphone 回傳`id更改為userId`
-- 修改 Contacts - addFriends 改傳入`字串陣列`
-- 修改 Contacts - getContacts 回傳的contacts變數改為`list` (移除recent)
-
-- 新增 Profile - updateCurrencySetting 更新貨幣設定
-
-- 修改 Trading - getBalance 回傳改用map型別
-```js
-{
-    "id": 99,
-    "jsonrpc": "2.0",
-    "result": {
-        "CNY": 1000,
-        "USD": 1000,
-        "BTC": 1000,
-        "ETH": 1000
-    },
-    "error": null
-}
-```
-- 新增 Trading - getReceipts 取得交易紀錄
-- 修改 Trading 透過`通知`傳達的內容 改為與getReceipts相同
-- 新增 AzureFunc - reqSmsVerify 正確時回傳發送次數 超過發送次數也將回傳錯誤
-- 新增 Auth - login 錯誤時將回傳錯誤
-- 新增 ErrorCode 定義相關於簡訊驗證的錯誤
-- 萬用passcode改為88888888(手機端無法輸入)
-
-# 更新內容(180905)
-
-- 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
-- 新增 ExCurrency 處理匯率交易 [參考](./docs/EXCURRENCY.md)
-- 新增[錯誤碼定義](./docs/DEFINE.md)
-- 當任何api回傳以下內容 請將user登出 重新導到登入頁
-```json
-{
-    "id": 99,
-    "jsonrpc": "2.0",
-    "result": null,
-    "error": {
-        "code": -32600,
-        "message": "Unauthorized",
-        "data": null
-    }
-}
-```
+# 更新內容(180930)
+- 會員預設頭像(avatar)連結改為空字串(empty)
+- 新增 Trading - deposit/withdraw 存提
+- 修改 交易動作 存提/轉帳/換匯時的回傳值加上`statusCode` 用以判別當下交易動作是否完成. 若回傳`-2(逾時)` 之後才會以`通知`方式回傳結果到用戶端
 
 # API Service (JsonRPC over https)
 
@@ -108,6 +45,74 @@ custom中的type若為null時 表示為`一般訊息`通知
 # 歷史更新
 
 
+
+### 更新內容(180911)
+
+- 更正 Profile - getProfile/getUsersProfile 其中回傳的id欄位名改為userId
+
+### 函數編程(functional programming)
+在集合資料(Collection)轉換上可以善用`函數式編程(functional programming)`
+
+關鍵字map/reduce/filter/sort
+
+[swift參考](https://medium.com/@mikru168/swift3-%E9%AB%98%E9%9A%8E%E5%87%BD%E6%95%B8-higher-order-function-a97cf4577a11)
+
+[kotlin參考](https://hk.saowen.com/a/e37e7e51f8f92225bdff9dbcb47ddfc9937a7af2bf3952385ff637ee34a6ee56)
+
+### 建議安裝postman
+可下載import [json檔](./docs/UWallet.postman_collection.json)做測試 (自行更改為遠端url)
+
+出現ssl問題可到setting將`SSL cerificate verification`關閉
+
+### 更新內容(180909)
+- JsonRpc的params與result內都一律使用`物件{}`
+- JsonRpc中物件中單一陣列盡量以`list`命名
+
+- 修改 Contacts - getAllUser與findUsersByphone 回傳`id更改為userId`
+- 修改 Contacts - addFriends 改傳入`字串陣列`
+- 修改 Contacts - getContacts 回傳的contacts變數改為`list` (移除recent)
+
+- 新增 Profile - updateCurrencySetting 更新貨幣設定
+
+- 修改 Trading - getBalance 回傳改用map型別
+```js
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": {
+        "CNY": 1000,
+        "USD": 1000,
+        "BTC": 1000,
+        "ETH": 1000
+    },
+    "error": null
+}
+```
+- 新增 Trading - getReceipts 取得交易紀錄
+- 修改 Trading 透過`通知`傳達的內容 改為與getReceipts相同
+- 新增 AzureFunc - reqSmsVerify 正確時回傳發送次數 超過發送次數也將回傳錯誤
+- 新增 Auth - login 錯誤時將回傳錯誤
+- 新增 ErrorCode 定義相關於簡訊驗證的錯誤
+- 萬用passcode改為88888888(手機端無法輸入)
+
+### 更新內容(180905)
+
+- 修改 Trading - transfer 參數加上message 供轉帳交易時紀錄訊息
+- 新增 ExCurrency 處理匯率交易 [參考](./docs/EXCURRENCY.md)
+- 新增[錯誤碼定義](./docs/DEFINE.md)
+- 當任何api回傳以下內容 請將user登出 重新導到登入頁
+```json
+{
+    "id": 99,
+    "jsonrpc": "2.0",
+    "result": null,
+    "error": {
+        "code": -32600,
+        "message": "Unauthorized",
+        "data": null
+    }
+}
+```
 
 ### 更新內容(180903)
 

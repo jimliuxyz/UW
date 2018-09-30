@@ -20,20 +20,15 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            // CreateWebHostBuilder(args).Build().Run();
-            // var q = new QueueServ();
-            // q.test().Wait();
+            CreateWebHostBuilder(args).Build().Run();
 
-            // ProgramTest.Main2(new string[]{"-ConnectionString", "Endpoint=sb://uwqueue-sess.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=demykbfbZ98rIUI1wb5oU1SsPQIVYLwFp2Hr4GdhGD0=", "-QueueName", "myqueue"});
-
-            // ProgramTest.MainAsync("Endpoint=sb://uwqueue.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=0WQP0IqqUV+h7qRsImJu3HFeFCTqmfVfQi+UPOMkq/0=", "myqueue2").Wait();
             // test().Wait();
-            testdb().Wait();
+            // testdb().Wait();
             // test2().Wait();
 
 
-            Console.WriteLine("end...");
-            Console.ReadKey();
+            // Console.WriteLine("end...");
+            // Console.ReadKey();
         }
 
         public static async Task test2()

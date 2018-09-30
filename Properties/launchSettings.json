@@ -26,7 +26,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DB_URI": "https://uwcosmos.documents.azure.com:443/",
         "DB_KEY": "ImS3ZxaO7N7hFBFdSJHzVkOVC22tZlibbxRcgOQAlpKKWLvN2PDfwrovIatjFW4v0Iiw9Tv5jtED6reWSUYgLw==",
-        "DB_NAME": "UWallet-jim",
+        "DB_NAME": "UWallet-dev",
         "NTFHUB_NAME": "U-wallet-ts",
         "NTFHUB_CSTR": "Endpoint=sb://mynotificationhub.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=GGu5X5TGyRBbAMMEPzyaA9HdTwTANBbvhCyHoGS4zLo=",
         "JWT_ISSUER": "xinwang",

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using UW.Shared;
 using UW.Shared.Services;
+using System.Threading;
 
 namespace UW.Data
 {
@@ -121,6 +122,18 @@ namespace UW.Data
         }
         private void Mockup()
         {
+            var userEM = new
+            {
+                phoneno = "BANK",
+                name = "BANK",
+                avatar = "https://images.vexels.com/media/users/3/135318/isolated/preview/45939241515a561751ed6222f2012003-bank-square-icon-by-vexels.png"
+            };
+            var userGPK = new
+            {
+                phoneno = "GPK",
+                name = "GPK",
+                avatar = "https://www.bankatunited.com/UnitedBank/media/Homepage-Promos/small-business-icon.png?width=200&height=200&ext=.png"
+            };
             var user1 = new
             {
                 phoneno = "886986123456",
@@ -134,7 +147,7 @@ namespace UW.Data
                 avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
             };
 
-            foreach (var u in new dynamic[] { user1, user2 })
+            foreach (var u in new dynamic[] { userEM, user1, user2 })
             {
                 var user = new UW.Shared.Persis.Collections.User()
                 {
@@ -270,7 +283,7 @@ namespace UW.Data
             var error = RPCERR.PASSCODE_EXPIRED;
 
             var phonenoHash = phoneno.ToHash(R.SALT_SMS);
-            var passcodeHash = (phoneno+passcode).ToHash(R.SALT_SMS);
+            var passcodeHash = (phoneno + passcode).ToHash(R.SALT_SMS);
 
             // 取得SmsPasscode
             var q = client.CreateDocumentQuery<SmsPasscode>(URI_SMSPCODE);
@@ -419,8 +432,8 @@ namespace UW.Data
         {
             try
             {
-                Console.WriteLine(URI_TXRECEIPT.ToJson());
-                Console.WriteLine(receipt.ToJson());
+                // Console.WriteLine(URI_TXRECEIPT.ToJson());
+                // Console.WriteLine(receipt.ToJson());
 
                 var res = client.UpsertDocumentAsync(URI_TXRECEIPT, receipt).Result;
                 return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
@@ -432,6 +445,129 @@ namespace UW.Data
             return false;
         }
 
+        public async Task<bool> doWithdraw(string userId, string receiptId, string currency, decimal amount)
+        {
+            var ok = false;
+            var message = "withdraw...";
+            var fromUser = getUserByUserId(userId);
+            var toUser = getUserByPhone("BANK");
+
+            string fromId = fromUser.userId;
+            string toId = toUser.userId;
+
+            return await doTransfer(fromId, toId, receiptId, currency, amount, message);
+
+            // var from_balance = getBalance(fromUser.userId).balances[currency];
+            // var to_balance = getBalance(toUser.userId).balances[currency];
+            // if (amount > 0 && from_balance >= amount)
+            // {
+            //     from_balance -= amount;
+            //     updateBalance(fromUser.userId, new Dictionary<string, decimal> { { currency, from_balance } });
+            //     ok = true;
+            // }
+
+            // //generate sender receipt
+            // var param = new TxParams
+            // {
+            //     sender = fromUser.userId,
+            //     receiver = toUser.userId,
+            //     currency = currency,
+            //     amount = amount
+            // };
+            // var sender_rec = new TxReceipt
+            // {
+            //     receiptId = receiptId,
+            //     executorId = fromUser.userId,
+            //     ownerId = fromUser.userId,
+            //     currency = currency,
+            //     message = message,
+            //     isParent = true,
+
+            //     txType = TxType.WITHDRAW,
+            //     statusCode = ok ? 0 : -1,
+            //     statusMsg = "",
+            //     txParams = param,
+            //     txResult = !ok ? null : new TxActResult
+            //     {
+            //         outflow = true,
+            //         amount = amount,
+            //         balance = from_balance
+            //     }
+            // };
+            // upsertReceipt(sender_rec);
+
+            // var receiver_rec = sender_rec.Derivative(sender_rec.currency, toUser.userId, new TxActResult
+            // {
+            //     outflow = false,
+            //     amount = amount,
+            //     balance = to_balance
+            // });
+            // upsertReceipt(receiver_rec);
+
+            // return sender_rec;
+        }
+        public async Task<bool> doDeposit(string userId, string receiptId, string currency, decimal amount)
+        {
+            var ok = false;
+            var message = "deposit...";
+            var fromUser = getUserByPhone("BANK");
+            var toUser = getUserByUserId(userId);
+
+            string fromId = fromUser.userId;
+            string toId = toUser.userId;
+
+            return await doTransfer(fromId, toId, receiptId, currency, amount, message);
+
+            // var from_balance = getBalance(fromUser.userId).balances[currency];
+            // var to_balance = getBalance(toUser.userId).balances[currency];
+            // if (amount > 0)
+            // {
+            //     to_balance += amount;
+            //     ok = true;
+            //     updateBalance(toUser.userId, new Dictionary<string, decimal> { { currency, to_balance } });
+            // }
+
+            // //generate sender receipt
+            // var param = new TxParams
+            // {
+            //     sender = fromUser.userId,
+            //     receiver = toUser.userId,
+            //     currency = currency,
+            //     amount = amount
+            // };
+            // var sender_rec = new TxReceipt
+            // {
+            //     receiptId = receiptId,
+            //     executorId = toUser.userId,
+            //     ownerId = toUser.userId,
+            //     currency = currency,
+            //     message = message,
+            //     isParent = true,
+
+            //     txType = TxType.DEPOSIT,
+            //     statusCode = ok ? 0 : -1,
+            //     statusMsg = "",
+            //     txParams = param,
+            //     txResult = !ok ? null : new TxActResult
+            //     {
+            //         outflow = true,
+            //         amount = amount,
+            //         balance = from_balance
+            //     }
+            // };
+            // upsertReceipt(sender_rec);
+
+            // var receiver_rec = sender_rec.Derivative(sender_rec.currency, toUser.userId, new TxActResult
+            // {
+            //     outflow = false,
+            //     amount = amount,
+            //     balance = to_balance
+            // });
+            // upsertReceipt(receiver_rec);
+
+            // return receiver_rec;
+        }
+
         /// <summary>
         /// 轉帳(付款)
         /// </summary>
@@ -440,10 +576,9 @@ namespace UW.Data
         /// <param name="currency"></param>
         /// <param name="amount"></param>
         /// <returns>receiptId</returns>
-        public string doTransfer(string fromId, string toId, string currency, decimal amount, string message)
+        public async Task<bool> doTransfer(string fromId, string toId, string receiptId, string currency, decimal amount, string message)
         {
             var ok = false;
-            var receiptId = F.NewGuid();
 
             //get user
             var fromUser = getUserByUserId(fromId);
@@ -456,9 +591,9 @@ namespace UW.Data
             //simulate transcation
             if (!fromId.Equals(toId))
             {
-                if (from_balance >= amount && amount > 0)
+                if (amount > 0 && (from_balance >= amount))
                 {
-                    from_balance = from_balance - amount;
+                    from_balance = from_balance - (fromUser.phoneno == "BANK" ? 0 : amount);
                     to_balance = to_balance + amount;
 
                     updateBalance(fromId, new Dictionary<string, decimal> { { currency, from_balance } });
@@ -498,12 +633,12 @@ namespace UW.Data
             upsertReceipt(sender_rec);
 
             //simulate receipt notification
-            Task.Run(() =>
+            new Thread(() =>
             {
-                Task.Delay(200).Wait();
+                Task.Delay(10).Wait();
                 //notify sender
-                if (fromUser.ntfInfo != null)
-                    notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.ToApiResult() } });
+                // if (fromUser.ntfInfo != null)
+                //     notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.ToApiResult() } });
 
                 //notify receiver
                 if (ok && toUser.ntfInfo != null)
@@ -519,14 +654,13 @@ namespace UW.Data
 
                     notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.ToApiResult() } });
                 }
-            });
+            }).Start();
 
-            return receiptId;
+            return ok;
         }
-        public string doExchange(string userId, string fromCurrency, string toCurrency, decimal fromAmount, decimal toAmount, string message)
+        public async Task<bool> doExchange(string userId, string fromCurrency, string receiptId, string toCurrency, decimal fromAmount, decimal toAmount, string message)
         {
             var ok = false;
-            var receiptId = F.NewGuid();
 
             //get user
             var user = getUserByUserId(userId);
@@ -602,20 +736,20 @@ namespace UW.Data
                 upsertReceipt(receiptTo);
 
             //simulate receipt notification
-            Task.Run(() =>
-            {
-                Task.Delay(200).Wait();
-                //notify sender
-                if (user.ntfInfo != null)
-                {
-                    var list = new List<dynamic>() { receipt.ToApiResult() };
-                    if (ok)
-                        list.Add(receiptTo);
-                    notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list });
-                }
-            });
+            // Task.Run(() =>
+            // {
+            //     Task.Delay(200).Wait();
+            //     //notify sender
+            //     if (user.ntfInfo != null)
+            //     {
+            //         var list = new List<dynamic>() { receipt.ToApiResult() };
+            //         if (ok)
+            //             list.Add(receiptTo);
+            //         notifications.sendMessage(userId, user.ntfInfo.pns, $"exchange({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list });
+            //     }
+            // });
 
-            return receiptId;
+            return ok;
         }
 
     }

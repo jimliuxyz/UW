@@ -86,7 +86,8 @@ namespace UW.Controllers.JsonRpc
                         userId = "tempid-" + phoneno, //todo : 暫時以phoneno綁定id 便於識別 (日後移除)
                         phoneno = phoneno,
                         name = phoneno,
-                        avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
+                        // avatar = "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-woody.png",
+                        avatar = "", //empty for default
                         currencies = new List<CurrencySettings>{
                                 new CurrencySettings{
                                     name = D.CNY,

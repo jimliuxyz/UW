@@ -10,6 +10,8 @@
 -1002 | Action failed | 動作(操作)失敗
 -1003 | Passcode expired | 驗證碼已過時效
 -1004 | Passcode verify limit Exceeded | 驗證碼超過驗證次數
+-1005 | Passcode mismatch | 驗證碼不符
+-1006 | Action timeout | 動作逾時
 
 # 標準錯誤
 
@@ -29,3 +31,10 @@
 2 | 提款
 3 | 轉帳
 4 | 換匯
+
+# 交易狀態 (txStatusCode)
+碼 | 描述
+--- | ---
+0 | 完成
+-1 | 失敗
+-2 | 逾時(未必失敗,成功後將以`通知`告知用戶端)

@@ -51,17 +51,68 @@ namespace UW.Controllers.JsonRpc
         /// 存錢
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult deposit(string currency, decimal amount)
+        public async Task<IRpcMethodResult> deposit(string currency, decimal amount)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
 
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
-            var balance = db.getBalance(userId);
+            var receiptId = F.NewGuid();
 
-            db.updateBalance(userId, balance.balances);
-            return Ok();
+            int timeout = 1000;
+            var task = db.doDeposit(userId, receiptId, currency, amount);
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                var ok = task.Result;
+                return Ok(new
+                {
+                    receiptId = receiptId,
+                    statusCode = ok ? 0 : -1
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    receiptId = receiptId,
+                    statusCode = -2 //TIMEOUT
+                });
+            }
+        }
+
+        /// <summary>
+        /// 提錢
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IRpcMethodResult> withdraw(string currency, decimal amount)
+        {
+            if (amount <= 0)
+                return ERROR_ACT_FAILED;
+
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
+
+            var receiptId = F.NewGuid();
+
+            int timeout = 1000;
+            var task = db.doWithdraw(userId, receiptId, currency, amount);
+            if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+            {
+                var ok = task.Result;
+                return Ok(new
+                {
+                    receiptId = receiptId,
+                    statusCode = ok ? 0 : -1
+                });
+            }
+            else
+            {
+                return Ok(new
+                {
+                    receiptId = receiptId,
+                    statusCode = -2 //TIMEOUT
+                });
+            }
         }
 
         /// <summary>
@@ -73,18 +124,19 @@ namespace UW.Controllers.JsonRpc
         /// <param name="toUserId"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public IRpcMethodResult transfer(string toUserId, string currency, decimal amount, string message)
+        public async Task<IRpcMethodResult> transfer(string toUserId, string currency, decimal amount, string message)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
-            var receiptId = db.doTransfer(userId, toUserId, currency, amount, message);
+            var receiptId = F.NewGuid();
+            var ok = await db.doTransfer(userId, toUserId, receiptId, currency, amount, message);
 
             return Ok(new
             {
-                receiptId = receiptId
+                receiptId = receiptId,
+                statusCode = ok ? 0 : -1
             });
         }
-
 
         public IRpcMethodResult getReceipts(DateTime fromDatetime)
         {

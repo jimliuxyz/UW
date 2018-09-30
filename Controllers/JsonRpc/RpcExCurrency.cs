@@ -79,18 +79,21 @@ namespace UW.Controllers.JsonRpc
             return Ok(rates);
         }
 
-        public IRpcMethodResult doExFrom(string fromCurrency, string toCurrency, decimal fromAmount, string message)
+        public async Task<IRpcMethodResult> doExFrom(string fromCurrency, string toCurrency, decimal fromAmount, string message)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
 
             try
             {
                 var toAmount = _estimateExFrom(fromCurrency, toCurrency, fromAmount);
-                var receiptId = db.doExchange(userId, fromCurrency, toCurrency, fromAmount, toAmount, message);
+                var receiptId = F.NewGuid();
+
+                var ok = await db.doExchange(userId, receiptId, fromCurrency, toCurrency, fromAmount, toAmount, message);
 
                 return Ok(new
                 {
-                    receiptId
+                    receiptId,
+                    statusCode = ok ? 0 : -1
                 });
             }
             catch (System.Exception)

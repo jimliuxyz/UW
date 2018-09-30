@@ -91,13 +91,21 @@ https://uwbackend-dev.azurewebsites.net/api/trading
 }
 ```
 
-#### txType
-```js
-DEPOSIT = 1,    //存款
-WITHDRAW = 2,   //提款
-TRANSFER = 3,   //轉帳
-EXCHANGE = 4    //換匯
-```
+#### 交易類型 (txType)
+碼 | 描述
+--- | ---
+1 | 存款
+2 | 提款
+3 | 轉帳
+4 | 換匯
+
+#### 交易狀態 (txStatusCode)
+碼 | 描述
+--- | ---
+0 | 完成
+-1 | 失敗
+-2 | 持續中/逾時 (未必失敗,成功後將以`通知`告知用戶端)
+
 
 # 付款/轉帳
 
@@ -119,14 +127,15 @@ EXCHANGE = 4    //換匯
 {
     "jsonrpc": "2.0",
     "result": {
-        "receiptId": "...."
+        "receiptId": "....",
+        "statusCode": 0
     },
     "error": null,
     "id": 99,
 }
 ```
 
-叫用後立即回傳receiptId, 之後再透過notification方式傳送交易結果
+當statusCode出現`逾時`,將以`通知`方式將交易結果回傳到用戶端
 
 ```js
 //以apple為例 用以下格式通知
@@ -166,7 +175,7 @@ EXCHANGE = 4    //換匯
 }
 ```
 
-# 存錢 (未實作)
+# 存錢
 
 ```js
 //送
@@ -174,7 +183,7 @@ EXCHANGE = 4    //換匯
     "jsonrpc": "2.0",
     "method": "deposit",
     "params": {
-        "currency": "cny",
+        "currency": "USD",
         "amount": "1000"
     }
     "error": null
@@ -183,7 +192,36 @@ EXCHANGE = 4    //換匯
 //收
 {
     "jsonrpc": "2.0",
-    "result": null,
+    "result": {
+        "receiptId": "....",
+        "statusCode": 0
+    },
+    "error": null,
+    "id": 99,
+}
+```
+
+# 提錢
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "withdraw",
+    "params": {
+        "currency": "USD",
+        "amount": "1000"
+    }
+    "error": null
+    "id": 99,
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "receiptId": "....",
+        "statusCode": 0
+    },
     "error": null,
     "id": 99,
 }

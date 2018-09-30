@@ -21,9 +21,6 @@ namespace UW.Shared.Persis.Collections
         public string parentId { get; set; }    //該收據源自於哪個receiptId
         public string executorId { get; set; }  //執行者的userId
         public string ownerId { get; set; } //該收據屬於userId
-
-        public string senderId { get; set; }    //client端透過id自行找到user資訊
-        public string receiverId { get; set; }
         public string message { get; set; }
         public string currency { get; set; }
 

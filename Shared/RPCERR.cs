@@ -9,6 +9,8 @@ namespace UW.Shared
         public static readonly RPCERR PASSCODE_EXPIRED = new RPCERR(-1003, "Passcode expired");
         public static readonly RPCERR PASSCODE_VERIFY_EXCEEDED = new RPCERR(-1004, "Passcode verify limit Exceeded");
         public static readonly RPCERR PASSCODE_MISMATCH = new RPCERR(-1005, "Passcode mismatch");
+        public static readonly RPCERR ACTION_TIMEOUT = new RPCERR(-1006, "Action timeout");
+
     }
 
 
