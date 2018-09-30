@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,6 +21,35 @@ namespace UW.Shared
             byte[] source = Encoding.Default.GetBytes(context + salt);
             byte[] crypto = sha256.ComputeHash(source);
             return Convert.ToBase64String(crypto);
+        }
+
+        public static string Scramble(this string context, int seed = 0)
+        {
+            char[] chars = context.ToArray();
+            Random r = new Random(seed);
+            for (int i = 0; i < chars.Length; i++)
+            {
+                int randomIndex = r.Next(0, chars.Length);
+                char temp = chars[randomIndex];
+                chars[randomIndex] = chars[i];
+                chars[i] = temp;
+            }
+            return new string(chars);
+        }
+
+
+        public static string Descramble(this string context, int seed = 0)
+        {
+            char[] chars = context.ToArray();
+            Random r = new Random(seed);
+            for (int i = 0; i < chars.Length; i++)
+            {
+                int randomIndex = r.Next(0, chars.Length);
+                char temp = chars[randomIndex];
+                chars[randomIndex] = chars[i];
+                chars[i] = temp;
+            }
+            return new string(chars);
         }
     }
 }

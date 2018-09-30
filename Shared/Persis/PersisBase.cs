@@ -37,7 +37,7 @@ namespace UW.Shared.Persis
         public static readonly Uri URI_TXLOCKER = UriFactory.CreateDocumentCollectionUri(R.DB_NAME, COL_TXLOCKER);
 
 
-        public static readonly RequestOptions DefReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
+        public static readonly RequestOptions DEFREQ_OPTS = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
 
         public static async Task BuildDB()
         {
@@ -68,18 +68,11 @@ namespace UW.Shared.Persis
                 // await client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                 //                     new DocumentCollection { Id = COL_TXRECEIPT }, DefReqOpts);
 
-                DocumentCollection collectionDefinition = new DocumentCollection { Id = COL_TXLOCKER, DefaultTimeToLive = 60 };
-                collectionDefinition.IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) { Precision = -1 });
-                collectionDefinition.PartitionKey.Paths.Add("/pk");
-                collectionDefinition.UniqueKeyPolicy = new UniqueKeyPolicy
-                {
-                    UniqueKeys =
-                    new Collection<UniqueKey>
-                    {
-                        new UniqueKey { Paths = new Collection<string> { "/memId" }},
-                    }
-                };
-                await client.CreateDocumentCollectionIfNotExistsAsync(URI_DB, collectionDefinition, DefReqOpts);
+
+
+
+                await client.CreateDocumentCollectionIfNotExistsAsync(
+                    TxLocker._URI_DB, TxLocker._SPEC, DEFREQ_OPTS);
 
             }
         }

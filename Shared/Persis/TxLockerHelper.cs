@@ -31,13 +31,13 @@ namespace UW.Shared.Persis
             var obj = new TxLocker()
             {
                 id = F.NewGuid(),
-                memId = memberId.ToString(),
+                memId = memberId.ToString()+F.NewGuid(),
                 pk = "Vol-" + memberId.Volume
             };
             Console.WriteLine(obj.ToJson());
 
-            await client.CreateDocumentAsync(URI_TXLOCKER, obj);
-
+            var res = await client.CreateDocumentAsync(URI_TXLOCKER, obj);
+            Console.WriteLine(String.Format("RU: {0}", res.RequestCharge));
 
             return false;
         }
