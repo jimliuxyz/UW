@@ -2,6 +2,11 @@ using System;
 using System.Linq;
 using Microsoft.Azure.Documents.Client;
 
+/*
+more sample queries
+https://github.com/Azure/azure-cosmosdb-dotnet/blob/master/samples/code-samples/Queries/Program.cs
+*/
+
 namespace UW.Shared.Persis
 {
     public static class DocumentClientExt
@@ -21,7 +26,7 @@ namespace UW.Shared.Persis
             // LINQ
             count = client.CreateDocumentQuery(collectionUri, DefaultOptions)
                 .Where(doc => true)
-                .Count();
+                .Count(); //todo : LongCount
 
             return count;
         }
