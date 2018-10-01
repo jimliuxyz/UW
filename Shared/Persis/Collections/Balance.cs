@@ -4,10 +4,10 @@ using Newtonsoft.Json.Converters;
 
 namespace UW.Shared.Persis.Collections
 {
-    public class Balance //snapshot
+    public class Balance //snapshot (this may replace with Redis)
     {
         [JsonProperty(PropertyName = "id")]
-        public string ownerId { get; set; }
+        public string userId { get; set; }
 
         public Dictionary<string, decimal> balances { get; set; }
     }

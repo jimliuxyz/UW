@@ -14,8 +14,8 @@ namespace UW.Shared.Persis.Collections
         [JsonProperty(PropertyName = "id")]
         public string id { get; set; }
         public string memId { get; set; }
-        public long time = DateTime.UtcNow.ToFileTimeUtc();
         public string pk { get; set; }
+        public long time = DateTime.UtcNow.ToFileTimeUtc();
     }
 
     public partial class TxLocker

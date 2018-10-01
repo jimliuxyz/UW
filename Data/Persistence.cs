@@ -333,7 +333,7 @@ namespace UW.Data
         public Contacts getContact(string userId)
         {
             var q = client.CreateDocumentQuery<Contacts>(URI_CONTACT);
-            var result = from contact in q where contact.ownerId == userId select contact;
+            var result = from contact in q where contact.userId == userId select contact;
 
             return (result.Count() > 0) ? result.ToList().First() : null;
         }
@@ -359,7 +359,7 @@ namespace UW.Data
             if (contact == null)
             {
                 contact = new Contacts();
-                contact.ownerId = userId;
+                contact.userId = userId;
                 contact.friends = new List<Friend>();
             }
 
@@ -376,7 +376,7 @@ namespace UW.Data
             if (contact == null)
             {
                 contact = new Contacts();
-                contact.ownerId = userId;
+                contact.userId = userId;
                 contact.friends = new List<Friend>();
             }
 
@@ -388,7 +388,7 @@ namespace UW.Data
         public Balance getBalance(string userId)
         {
             var q = client.CreateDocumentQuery<Balance>(URI_BALANCE);
-            var result = from contact in q where contact.ownerId == userId select contact;
+            var result = from contact in q where contact.userId == userId select contact;
 
             return (result.Count() > 0) ? result.ToList().First() : null;
         }
@@ -404,7 +404,7 @@ namespace UW.Data
                     {D.USD, 1000},
                 };
                 balance = new Balance();
-                balance.ownerId = userId;
+                balance.userId = userId;
                 balance.balances = init_balance;
             }
             foreach (var kp in newBalances)

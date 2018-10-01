@@ -17,6 +17,7 @@ namespace UW.Shared.Persis.Collections
     {
         [JsonProperty(PropertyName = "id")]
         public string receiptId { get; set; }
+        // public string pk { get; set; }
         public bool isParent { get; set; }
         public string parentId { get; set; }    //該收據源自於哪個receiptId
         public string executorId { get; set; }  //執行者的userId
@@ -26,10 +27,12 @@ namespace UW.Shared.Persis.Collections
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime datetime = DateTime.UtcNow;
+        // public long datetime = DateTime.UtcNow.ToFileTimeUtc();
         public int statusCode { get; set; }
         public string statusMsg { get; set; }
 
         public TxType txType { get; set; }
+        // public bool isOffline { get; set; }
         public dynamic txParams { get; set; }
         public dynamic txResult { get; set; }
     }
