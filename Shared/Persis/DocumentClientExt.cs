@@ -13,20 +13,27 @@ namespace UW.Shared.Persis
     {
         private static readonly FeedOptions DefaultOptions = new FeedOptions { EnableCrossPartitionQuery = true };
 
-        public static decimal GetDocsCount(this DocumentClient client, Uri collectionUri)
+
+        /// <summary>
+        /// Get document count of collection
+        /// todo : someone says this may not work in huge collection
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="collectionUri"></param>
+        /// <returns></returns>
+        public static long GetDocsCount(this DocumentClient client, Uri collectionUri)
         {
             // SQL
-            int count = client.CreateDocumentQuery<int>(
+            long count = client.CreateDocumentQuery<long>(
                 collectionUri,
-                // "SELECT VALUE COUNT(f) FROM Families f WHERE f.LastName = 'Andersen'",
                 "SELECT VALUE COUNT(1) FROM c",
                 DefaultOptions)
                 .AsEnumerable().First();
 
             // LINQ
-            count = client.CreateDocumentQuery(collectionUri, DefaultOptions)
-                .Where(doc => true)
-                .Count(); //todo : LongCount
+            // count = client.CreateDocumentQuery(collectionUri, DefaultOptions)
+            //     .Where(doc => true)
+            //     .LongCount();
 
             return count;
         }

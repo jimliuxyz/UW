@@ -23,25 +23,28 @@ namespace UW.Shared.Persis
         private readonly DocumentClient client;
         public TxLockerHelper()
         {
-            client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
+            client = GetClient();
         }
 
-        public async Task<bool> TryLock(MemberID memberId)
+        public async Task<bool> TryLock(PkGuid memberId)
         {
             var obj = new TxLocker()
             {
                 id = F.NewGuid(),
                 memId = memberId.ToString()+F.NewGuid(),
-                pk = "Vol-" + memberId.Volume
+                pk = "Vol-" + F.NewGuid()
             };
             Console.WriteLine(obj.ToJson());
 
             var res = await client.CreateDocumentAsync(URI_TXLOCKER, obj);
             Console.WriteLine(String.Format("RU: {0}", res.RequestCharge));
 
+
+            Console.WriteLine(String.Format("GetDocsCount: {0}", client.GetDocsCount(TxLocker._URI_COL)));
+
             return false;
         }
-        public async Task<bool> UnLock(MemberID memberId)
+        public async Task<bool> UnLock(PkGuid memberId)
         {
             return false;
         }

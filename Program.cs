@@ -20,15 +20,15 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            // CreateWebHostBuilder(args).Build().Run();
 
             // test().Wait();
-            // testdb().Wait();
+            testdb().Wait();
             // test2().Wait();
 
 
-            // Console.WriteLine("end...");
-            // Console.ReadKey();
+            Console.WriteLine("end...");
+            Console.ReadKey();
         }
 
         public static async Task test2()
@@ -78,10 +78,20 @@ namespace UW
         {
             await PersisBase.BuildDB();
 
-            var user = new MemberID(1, "qwer1234");
+            // var user = new PkGuid(1, "qwer1234");
 
-            var locker = new TxLockerHelper();
-            await locker.TryLock(user);
+            // var locker = new TxLockerHelper();
+            // await locker.TryLock(user);
+
+            // var user2 = new PkGuid(1, "aaa");
+            // await locker.TryLock(user2);
+
+
+            var userHelper = new UserHelper();
+            await userHelper.Create();
+            await userHelper.Create();
+            await userHelper.Create();
+
         }
 
         public static async Task test()

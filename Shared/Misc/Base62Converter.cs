@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace UW.Shared.Misc
 {
-    public static class Base62
+    public class Base62Converter
     {
-        private static readonly int RND_SEED = 235249;
-        private static readonly string CUSTOM_BASE62_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private readonly string BASE62_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private readonly string CUSTOM_BASE62_CHARSET;
 
-        public static string Encode(string value)
+        public Base62Converter(int seed){
+            CUSTOM_BASE62_CHARSET = BASE62_CHARSET.Scramble(seed);
+        }
+        public string Encode(string value)
         {
             var arr = new int[value.Length];
             for (var i = 0; i < arr.Length; i++)
@@ -19,7 +23,7 @@ namespace UW.Shared.Misc
             return Encode(arr);
         }
 
-        public static string Decode(string value)
+        public string Decode(string value)
         {
             var arr = new int[value.Length];
             for (var i = 0; i < arr.Length; i++)
@@ -30,7 +34,7 @@ namespace UW.Shared.Misc
             return Decode(arr);
         }
 
-        private static string Encode(int[] value)
+        public string Encode(int[] value)
         {
             var converted = BaseConvert(value, 256, 62);
             var builder = new StringBuilder();
@@ -39,6 +43,11 @@ namespace UW.Shared.Misc
                 builder.Append(CUSTOM_BASE62_CHARSET[converted[i]]);
             }
             return builder.ToString();
+        }
+        public string Encode(byte[] value)
+        {
+            int[] bytesAsInts = Array.ConvertAll(value, c => (int)c);
+            return Encode(bytesAsInts);
         }
 
         private static string Decode(int[] value)

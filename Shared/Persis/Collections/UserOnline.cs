@@ -5,10 +5,10 @@ using Newtonsoft.Json.Converters;
 
 namespace UW.Shared.Persis.Collections
 {
-    public class MemberOnline
+    public class UserOnline
     {
         [JsonProperty(PropertyName = "id")]
-        public string memId { get; set; }
+        public string userId { get; set; }
         public string pk { get; set; }
         public long createdTime = DateTime.UtcNow.ToFileTimeUtc();
 

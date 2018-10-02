@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using UW.Shared.Persis.Collections;
+using User = UW.Shared.Persis.Collections.User;
 
 namespace UW.Shared.Persis
 {
@@ -38,6 +39,15 @@ namespace UW.Shared.Persis
 
 
         public static readonly RequestOptions DEFREQ_OPTS = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
+
+        /// <summary>
+        /// get client by arranged
+        /// </summary>
+        private static DocumentClient _client = null;
+        public static DocumentClient GetClient()
+        {
+            return _client ?? new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
+        }
 
         public static async Task BuildDB()
         {
@@ -73,6 +83,9 @@ namespace UW.Shared.Persis
 
                 await client.CreateDocumentCollectionIfNotExistsAsync(
                     TxLocker._URI_DB, TxLocker._SPEC, DEFREQ_OPTS);
+
+                await client.CreateDocumentCollectionIfNotExistsAsync(
+                    User._URI_DB, User._SPEC, DEFREQ_OPTS);
 
             }
         }
