@@ -10,8 +10,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using UW.Shared.Models;
-using UW.Shared.MQueue.TxReq;
+using UW.Shared.Misc;
+using UW.Shared.MQueue;
 using UW.Shared.Persis;
 
 namespace UW
@@ -23,8 +23,10 @@ namespace UW
             // CreateWebHostBuilder(args).Build().Run();
 
             // test().Wait();
-            testdb().Wait();
+            // testdb().Wait();
             // test2().Wait();
+
+            MQBusBuilder.Example().Wait();
 
 
             Console.WriteLine("end...");
@@ -89,49 +91,10 @@ namespace UW
 
             var userHelper = new UserHelper();
             await userHelper.Create();
-            await userHelper.Create();
-            await userHelper.Create();
+            // await userHelper.Create();
+            // await userHelper.Create();
 
         }
 
-        public static async Task test()
-        {
-            var sender = await TxReqSender.get();
-
-            Console.WriteLine("1");
-            for (int i = 0; i < 2; i++)
-            {
-                await sender.send(i);
-            }
-            Console.WriteLine("2");
-
-            var receiver_ = await TxReqReceiver.get();
-            await receiver_.StartPeek();
-
-            // var receiver = await TxReqReceiver.get();
-            Task.Run(async () =>
-            {
-                var receiver = await TxReqReceiver.get();
-                receiver.StartReceive();
-            });
-            Task.Run(async () =>
-            {
-                var receiver = await TxReqReceiver.get();
-                receiver.StartReceive();
-            });
-
-            // Task.Run(async () =>
-            // {
-            //     var receiver = await TxReqSessReceiver.get();
-            //      receiver.StartReceive();
-            // });
-            // Task.Run(async () =>
-            // {
-            //     var receiver = await TxReqSessReceiver.get();
-            //      receiver.StartReceive();
-            // });
-            await Task.Delay(1000000);
-
-        }
     }
 }

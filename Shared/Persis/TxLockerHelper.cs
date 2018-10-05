@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using UW.Shared.Models;
+using UW.Shared.Misc;
 
 namespace UW.Shared.Persis
 {

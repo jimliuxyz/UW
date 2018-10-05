@@ -1,6 +1,10 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents.Linq;
+using UW.Shared.Misc;
 
 /*
 more sample queries
@@ -36,6 +40,34 @@ namespace UW.Shared.Persis
             //     .LongCount();
 
             return count;
+        }
+
+        /// <summary>
+        /// Clear all documents of the collection
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="collectionUri"></param>
+        /// <returns></returns>
+        public static async Task ClearCollectionAsync(this DocumentClient client, Uri collectionUri)
+        {
+            var sqlquery = "SELECT * FROM c";
+            var results = client.CreateDocumentQuery<DocumentWithPk>(collectionUri, sqlquery, new FeedOptions{
+                EnableCrossPartitionQuery = true,
+                MaxItemCount = 100
+            }).AsDocumentQuery();
+
+            var cnt = 0;
+            while (results.HasMoreResults)
+            {
+                // Console.WriteLine($"Has more({cnt})...");
+                foreach (DocumentWithPk doc in await results.ExecuteNextAsync())
+                {
+                    await client.DeleteDocumentAsync(doc.SelfLink, new RequestOptions{
+                        PartitionKey = new PartitionKey(doc.pk)
+                    });
+                }
+                cnt++;
+            }
         }
     }
 }

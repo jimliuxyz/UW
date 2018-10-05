@@ -51,5 +51,13 @@ namespace UW.Shared
             }
             return new string(chars);
         }
+
+        public static int GetSum(this string guid)
+        {
+            return guid.ToCharArray().Aggregate(0, (sum, next) =>
+            {
+                return sum + next;
+            });
+        }
     }
 }
