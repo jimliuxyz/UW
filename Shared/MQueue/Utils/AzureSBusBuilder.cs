@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Core;
 using Newtonsoft.Json;
-using static UW.Shared.MQueue.MQBus;
+using static UW.Shared.MQueue.Utils.AzureSBus;
 
-namespace UW.Shared.MQueue
+namespace UW.Shared.MQueue.Utils
 {
-    public class MQBusBuilder
+    public class AzureSBusBuilder
     {
         public static async Task TestHandler(HandlerPack pack)
         {
@@ -29,14 +30,14 @@ namespace UW.Shared.MQueue
                 uid = F.NewGuid()
             };
 
-            var mqbus = MQBus.Builder(D.QN.TXREQ, "bus1")
+            var mqbus = AzureSBus.Builder(D.QN.TXREQ, "bus1")
                 .SetReceiveMode(ReceiveMode.PeekLock)
                 .UseSender()
                 .AddMessageHandlerChain(label, TestHandler)
                 .AddMessageHandlerChain(label, async (pack) =>
                 {
                     Console.WriteLine("test2...");
-                    Console.WriteLine(pack.payload);
+                    Console.WriteLine(pack.data);
                 })
                 .build();
 
@@ -47,68 +48,57 @@ namespace UW.Shared.MQueue
         private string queueName;
         private string busId;
         private bool useSession;
+        private List<string> sessionIds = new List<string>();
         private bool useSender;
         private int prefetchCount;
         private ReceiveMode receiveMode;
-        private RetryPolicy receiveRetryPolicy;
-        private RetryPolicy senderRetryPolicy;
+        private RetryPolicy receiveRetryPolicy = RetryPolicy.Default;
+        private RetryPolicy senderRetryPolicy = RetryPolicy.Default;
 
-        public MQBusBuilder(string queueName, string busId)
+        public AzureSBusBuilder(string queueName, string busId)
         {
             this.queueName = queueName;
             this.busId = busId;
         }
 
-
-        public MQBusBuilder SetReceiveMode(ReceiveMode receiveMode)
+        public AzureSBusBuilder SetReceiveMode(ReceiveMode receiveMode)
         {
             this.receiveMode = receiveMode;
             return this;
         }
-        public MQBusBuilder SetReceiveRetryPolicy(RetryPolicy receiveRetryPolicy)
+        public AzureSBusBuilder SetReceiveRetryPolicy(RetryPolicy receiveRetryPolicy)
         {
             this.receiveRetryPolicy = receiveRetryPolicy;
             return this;
         }
-        public MQBusBuilder UseSession()
+        public AzureSBusBuilder UseSession(params string[] sessionIds)
         {
-            this.useSession = true;
+            useSession = true;
+            this.sessionIds.AddRange(sessionIds);
             return this;
         }
-        public MQBusBuilder UseSender()
+        public AzureSBusBuilder UseSender()
         {
             this.useSender = true;
             return this;
         }
-        public MQBusBuilder SetPrefetchCount(int prefetchCount)
+        public AzureSBusBuilder SetPrefetchCount(int prefetchCount)
         {
             this.prefetchCount = prefetchCount;
             return this;
         }
-        public MQBusBuilder AddMessageHandlerChain(string msgType, MQHandler handler)
+        public AzureSBusBuilder AddMessageHandlerChain(string label, params MQHandler[] handlers)
         {
-            if (!messageHandlers.ContainsKey(msgType))
-                messageHandlers[msgType] = new List<MQHandler>();
+            if (!messageHandlers.ContainsKey(label))
+                messageHandlers[label] = new List<MQHandler>();
 
-            messageHandlers[msgType].Add(handler);
+            messageHandlers[label].AddRange(handlers);
             return this;
         }
 
-
-        public MQBus build()
+        public AzureSBus build()
         {
-            ClientEntity receiver, sender = null;
-
-            if (useSession)
-                receiver = new SessionClient(R.QUEUE_CSTR, queueName, receiveMode, receiveRetryPolicy, prefetchCount);
-            else
-                receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, receiveMode, receiveRetryPolicy, prefetchCount);
-
-            if (useSender)
-                sender = new MessageSender(R.QUEUE_CSTR, queueName);
-
-
-            var qmbus = new MQBus(queueName, busId, receiver, sender, messageHandlers);
+            var qmbus = new AzureSBus(queueName, busId, useSession, receiveRetryPolicy, senderRetryPolicy, receiveMode, prefetchCount, sessionIds, messageHandlers);
             return qmbus;
         }
 

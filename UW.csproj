@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EdjCase.JsonRpc.Router" Version="2.1.9" />
+    <PackageReference Include="EdjCase.JsonRpc.Client" Version="3.0.2" />
+    <PackageReference Include="EdjCase.JsonRpc.Router" Version="3.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="1.9.1" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="2.0.0-preview1" />

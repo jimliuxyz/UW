@@ -21,6 +21,8 @@ using UW.Controllers.JsonRpc;
 using UW.Shared;
 using UW.Shared.Services;
 
+using Microsoft.AspNetCore.Builder;
+
 namespace UW
 {
     public class Startup
@@ -52,13 +54,23 @@ namespace UW
                 options.SecurityTokenValidators.Add(new JwtValidator());
             });
 
-            services.AddJsonRpc(config =>
-            {
-                config.ShowServerExceptions = true;
-            });
+            services.AddJsonRpc()
+                .WithOptions(config =>
+                {
+                    config.ShowServerExceptions = true;
+                    config.BatchRequestLimit = null;
+                });
 
             services.AddMvc().AddControllersAsServices();
             services.AddTransient<RpcNotification>();
+
+            services.AddLogging(builder =>
+            {
+                builder.AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddFilter("EdjCase", LogLevel.Warning)
+                    .AddConsole();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,12 +84,12 @@ namespace UW
             else
             {
                 app.UseHsts();
+                // app.UseHttpsRedirection();
             }
 
             // app.UseMvc();
 
             app.UseAuthentication();
-            app.UseHttpsRedirection();
 
             app.Map("/api", rpcApp =>
             {

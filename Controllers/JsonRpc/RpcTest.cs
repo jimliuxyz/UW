@@ -16,9 +16,14 @@ using System.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
+using UW.Shared.MQueue;
+using System.Threading;
+using UW.Shared.Misc;
+using UW.Shared.MQueue.Handlers;
 
 namespace UW.Controllers.JsonRpc
 {
+
     public class RpcTest : RpcBaseController
     {
         public RpcTest()
@@ -27,7 +32,15 @@ namespace UW.Controllers.JsonRpc
 
         public async Task<IRpcMethodResult> test()
         {
-            return this.Ok(true);
+            var res = await MQTesting1.SendAndWaitReply();
+            // await MQCreateUser.SendWithReply("12345");
+
+            // var waiter = MQReplyCenter.NewWaiter("12345");
+
+            // var res = await waiter.wait();
+
+            return this.Ok(res);
+            // return this.Ok(true);
         }
 
     }

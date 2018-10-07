@@ -5,13 +5,17 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using EdjCase.JsonRpc.Client;
+using EdjCase.JsonRpc.Core;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using UW.Shared.Misc;
 using UW.Shared.MQueue;
+using UW.Shared.MQueue.Handlers;
 using UW.Shared.Persis;
 
 namespace UW
@@ -20,17 +24,35 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            // CreateWebHostBuilder(args).Build().Run();
+            queueDeamon().Wait();
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                HttpClientTester.Start();
+            });
+
+            CreateWebHostBuilder(args).Build().Run();
 
             // test().Wait();
             // testdb().Wait();
             // test2().Wait();
 
-            MQBusBuilder.Example().Wait();
+            // MQBusBuilder.Example().Wait();
 
 
-            Console.WriteLine("end...");
-            Console.ReadKey();
+            // Console.WriteLine("end...");
+            // Console.ReadKey();
+        }
+
+        public static async Task queueDeamon()
+        {
+            await MQReplyCenter.CreateMessageHandler();
+
+            for (var i = 0; i < 1; i++)
+            {
+                await MQTesting1.CreateMessageHandler();
+            }
         }
 
         public static async Task test2()
