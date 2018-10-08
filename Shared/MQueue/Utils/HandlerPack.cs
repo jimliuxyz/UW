@@ -17,18 +17,18 @@ namespace UW.Shared.MQueue.Utils
 
         public dynamic data;
         public dynamic custom;
-        public Func<Task> next; // invoke next function of handler chain
+        public Func<Task> next; // next function of handler chain
         public Action terminate; // terminate the handler chain
 
         public async Task completeAsync()
         {
             terminate.Invoke();
-            await receiver.CompleteAsync(message.SystemProperties.LockToken);
+            /*await*/ receiver.CompleteAsync(message.SystemProperties.LockToken);
         }
         public async Task abandonAsync()
         {
             terminate.Invoke();
-            await receiver.AbandonAsync(message.SystemProperties.LockToken);
+            /*await*/ receiver.AbandonAsync(message.SystemProperties.LockToken);
         }
     }
 }

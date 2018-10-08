@@ -20,10 +20,11 @@ using UW.Shared.MQueue;
 using System.Threading;
 using UW.Shared.Misc;
 using UW.Shared.MQueue.Handlers;
+using UW.Shared;
+using UW.Shared.MQueue.MQException;
 
 namespace UW.Controllers.JsonRpc
 {
-
     public class RpcTest : RpcBaseController
     {
         public RpcTest()
@@ -32,15 +33,15 @@ namespace UW.Controllers.JsonRpc
 
         public async Task<IRpcMethodResult> test()
         {
-            var res = await MQTesting1.SendAndWaitReply();
-            // await MQCreateUser.SendWithReply("12345");
-
-            // var waiter = MQReplyCenter.NewWaiter("12345");
-
-            // var res = await waiter.wait();
-
-            return this.Ok(res);
-            // return this.Ok(true);
+            try
+            {
+                var res = await MQTesting1.SendAndWaitReply(5000);
+                return this.Ok(res);
+            }
+            catch (MQReplyTimeoutException)
+            {
+                return Bad(RPCERR.ACTION_TIMEOUT);
+            }
         }
 
     }

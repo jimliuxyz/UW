@@ -13,51 +13,39 @@ namespace UW.Shared.MQueue.Utils
     public class AzureSBus
     {
         public delegate Task MQHandler(HandlerPack msgPack);
-        public static AzureSBusBuilder Builder(string queueName, string busId = "")
+        public static AzureSBusBuilder Builder(string queueName, string stationId = "")
         {
-            return new AzureSBusBuilder(queueName, busId);
+            return new AzureSBusBuilder(queueName, stationId);
         }
 
+        public readonly string queueName;
+        public readonly string stationId;
 
-        private Dictionary<string, List<MQHandler>> messageHandlers = new Dictionary<string, List<MQHandler>>();
-        private List<string> sessionIds = new List<string>();
-        private string queueName;
-        private string stationId;
-
-        private RetryPolicy receiveRetryPolicy;
-        private RetryPolicy sendRetryPolicy;
-        private ReceiveMode receiveMode;
         private ClientEntity receiver;
         private ClientEntity sender;
 
-        public AzureSBus(string queueName, string stationId, bool useSession, RetryPolicy receiveRetryPolicy, RetryPolicy sendRetryPolicy, ReceiveMode receiveMode, int prefetchCount, List<string> sessionIds, Dictionary<string, List<MQHandler>> messageHandlers)
+        private AzureSBusSetting setting;
+
+        public AzureSBus(AzureSBusSetting setting)
         {
-            this.queueName = queueName;
-            this.stationId = stationId;
-            this.receiveRetryPolicy = receiveRetryPolicy;
-            this.sendRetryPolicy = sendRetryPolicy;
-            this.receiveMode = receiveMode;
-            this.sessionIds = sessionIds;
-            this.messageHandlers = messageHandlers;
+            this.setting = setting;
+            this.queueName = setting.queueName;
+            this.stationId = setting.stationId;
 
-            CreateQueue(queueName, useSession).Wait();
+            CreateAzureQueue(setting.queueName, setting.useSession).Wait();
 
-            if (useSession)
-                receiver = new SessionClient(R.QUEUE_CSTR, queueName, receiveMode, receiveRetryPolicy, prefetchCount);
+            if (setting.useSession)
+                receiver = new SessionClient(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
             else
-                receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, receiveMode, receiveRetryPolicy, prefetchCount);
+                receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
 
-            if (messageHandlers.Count > 0)
+            if (setting.messageHandlers.Count > 0)
             {
-                var thread = new Thread(() =>
-                {
-                    StartReceiver().Wait();
-                });
-                thread.Start();
+                Task.Factory.StartNew(StartReceiver, TaskCreationOptions.LongRunning);
             }
         }
 
-        private static async Task CreateQueue(string queueName, bool isRequiresSession = false)
+        private static async Task CreateAzureQueue(string queueName, bool isRequiresSession = false)
         {
             var nm = new ManagementClient(R.QUEUE_CSTR);
 
@@ -65,7 +53,8 @@ namespace UW.Shared.MQueue.Utils
             {
                 var desc = new QueueDescription(queueName)
                 {
-                    RequiresSession = isRequiresSession
+                    RequiresSession = isRequiresSession,
+                    DefaultMessageTimeToLive = TimeSpan.FromMinutes(5)
                 };
                 await nm.CreateQueueAsync(desc);
             }
@@ -90,9 +79,9 @@ namespace UW.Shared.MQueue.Utils
                 var _client = receiver as SessionClient;
 
                 var tasks = new List<Task>();
-                foreach (var sessionId in sessionIds)
+                foreach (var sessionId in setting.sessionIds)
                 {
-                    var task = Task.Factory.StartNew(() =>
+                    var task = Task.Factory.StartNew(async () =>
                     {
                         var client = _client.AcceptMessageSessionAsync(sessionId).Result;
                         while (true)
@@ -101,7 +90,7 @@ namespace UW.Shared.MQueue.Utils
                             {
                                 Message message = client.ReceiveAsync().Result;
                                 if (message != null)
-                                    DispatchMessage(message, client).Wait();
+                                    await DispatchMessage(message, client);
                             }
                             catch (System.AggregateException e)
                             {
@@ -123,7 +112,7 @@ namespace UW.Shared.MQueue.Utils
                                 break;
                             }
                         }
-                    });
+                    }, TaskCreationOptions.LongRunning);
                     tasks.Add(task);
                 }
                 Task.WaitAll(tasks.ToArray());
@@ -139,7 +128,7 @@ namespace UW.Shared.MQueue.Utils
                 lock (this)
                 {
                     if (sender == null)
-                        sender = new MessageSender(R.QUEUE_CSTR, queueName, sendRetryPolicy);
+                        sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
                 }
             }
 
@@ -162,11 +151,11 @@ namespace UW.Shared.MQueue.Utils
         ///dispatch by message label
         private async Task DispatchMessage(Message message, IMessageReceiver receiver)
         {
-            var handlers = messageHandlers[message.Label];
+            var handlers = setting.messageHandlers[message.Label];
             if (handlers == null || handlers.Count == 0)
             {
                 // don't have to wait the call
-                receiver.AbandonAsync(message.SystemProperties.LockToken);
+                /*await*/ receiver.AbandonAsync(message.SystemProperties.LockToken);
                 return;
             }
             var hId = -1;

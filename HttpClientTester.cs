@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -22,31 +23,45 @@ namespace UW
 {
     public class HttpClientTester
     {
-        public static async Task Start()
+        private static Uri endPoint = new Uri("http://localhost:5000/api/test");
+
+        public static async Task Start(int count)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             Console.WriteLine("HttpClientTester start");
-            var list = new List<Thread>();
-            for (int i = 0; i < 11; i++)
+            var tasks = new List<Task>();
+            for (int i = 0; i < count; i++)
             {
-                var th = new Thread(() =>
-                {
-                    RpcClient client = new RpcClient(new Uri("http://localhost:5000/api/test"));
-                    RpcRequest req = new RpcRequest(0, "test");
-                    var response = client.SendRequestAsync<dynamic>(req).Result;
-
-                    Console.WriteLine(response.Result);
-                });
-
-                th.Start();
-                list.Add(th);
+                var task = Task1();
+                tasks.Add(task);
             }
 
-            foreach (var th in list)
-            {
-                th.Join();
-            }
-            Console.WriteLine("HttpClientTester done");
+            await Task.WhenAll(tasks);
+            Console.WriteLine($"HttpClientTester done ({watch.Elapsed.TotalSeconds}s)");
         }
 
+        private static async Task Task1()
+        {
+            RpcClient client = new RpcClient(endPoint);
+            RpcRequest req = new RpcRequest(0, "test");
+
+            var response = client.SendRequestAsync<dynamic>(req).Result;
+            await Task.Delay(1000);
+
+            var tasks = new List<Task>();
+            for (int i = 0; i < 3; i++)
+            {
+                var task = Task.Run(() =>
+                {
+                    var res = client.SendRequestAsync<dynamic>(req).Result;
+                    // Console.WriteLine(res.HasError ? res.Error.Message : res.Result);
+                });
+                tasks.Add(task);
+            }
+
+            await Task.WhenAll(tasks);
+        }
     }
 }

@@ -24,12 +24,14 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            queueDeamon().Wait();
+            ThreadPool.SetMinThreads(100, 100);
+
+            queueDaemon().Wait();
 
             Task.Run(async () =>
             {
                 await Task.Delay(3000);
-                HttpClientTester.Start();
+                HttpClientTester.Start(50);
             });
 
             CreateWebHostBuilder(args).Build().Run();
@@ -45,14 +47,11 @@ namespace UW
             // Console.ReadKey();
         }
 
-        public static async Task queueDeamon()
+        public static async Task queueDaemon()
         {
-            await MQReplyCenter.CreateMessageHandler();
+            MQReplyCenter.StartReceiving(1);
 
-            for (var i = 0; i < 1; i++)
-            {
-                await MQTesting1.CreateMessageHandler();
-            }
+            MQTesting1.StartReceiving(10);
         }
 
         public static async Task test2()

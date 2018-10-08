@@ -30,7 +30,7 @@ namespace UW.Shared.MQueue.Handlers
             }
         }
 
-        public static void WakeUpWaiter(string callerId, dynamic data=null)
+        public static void WakeUpWaiter(string callerId, dynamic data = null)
         {
             lock (waiters)
             {
@@ -40,6 +40,10 @@ namespace UW.Shared.MQueue.Handlers
                     waiters.Remove(callerId);
                 }
             }
+        }
+        public static void CancelWaiter(string callerId)
+        {
+            WakeUpWaiter(callerId);
         }
 
         private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSession().UseSender().build();
@@ -55,17 +59,21 @@ namespace UW.Shared.MQueue.Handlers
             await sender.Send(MSG_LABEL, data, session: toInstanceId, replyTo: toCallerId);
         }
 
-        public async static Task CreateMessageHandler()
+        public static void StartReceiving(int count)
         {
-            var mqbus = AzureSBus.Builder(QUEUE_NAME, "(reply)")
-                .SetReceiveMode(ReceiveMode.PeekLock)
-                .UseSession(INSTANCE_ID)
-                .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
-                {
-                    // Console.WriteLine("Got Reply...");
-                    // Console.WriteLine(pack.data);
-                }, Flow1)
-                .build();
+            for (int i = 0; i < count; i++)
+            {
+                var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver-" + i)
+                    .SetReceiveMode(ReceiveMode.PeekLock)
+                    .UseSession(INSTANCE_ID)
+                    .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
+                    {
+                        // Console.WriteLine("Got Reply...");
+                        // Console.WriteLine(pack.data);
+                    }, Flow1)
+                    .SetPrefetchCount(10)
+                    .build();
+            }
         }
 
         private static async Task Flow1(HandlerPack pack)
@@ -73,7 +81,8 @@ namespace UW.Shared.MQueue.Handlers
             // wake up the result waiter to end the query
             WakeUpWaiter(pack.message.ReplyTo, pack.data);
 
-            await pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
+            // 'await' makes the reply queue slow!!
+            /*await*/ pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
         }
 
     }
