@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
@@ -17,13 +18,17 @@ namespace UW.Shared.MQueue.Handlers
 
         private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSender().build();
 
+        static Dictionary<string, string> dict = new Dictionary<string, string>();
         public async static Task Send()
         {
             var data = new
             {
                 msg = "hello",
             };
-
+            lock (QUEUE_NAME)
+            {
+                ++cnt;
+            }
             await sender.Send(MSG_LABEL, data);
         }
 
@@ -33,7 +38,10 @@ namespace UW.Shared.MQueue.Handlers
             {
                 msg = "hello",
             };
-
+            lock (QUEUE_NAME)
+            {
+                ++cnt;
+            }
             return await MQUtils.SendAndWaitReply(sender, MSG_LABEL, data, timeout);
         }
     }
@@ -54,13 +62,19 @@ namespace UW.Shared.MQueue.Handlers
                         // Console.WriteLine("start...");
                         // Console.WriteLine(pack.data);
                     }, Flow1, Flow2)
-                    .SetPrefetchCount(10)
+                    .SetPrefetchCount(5)
                     .build();
             }
         }
 
+        static int cnt = 0;
         private static async Task Flow1(HandlerPack pack)
         {
+            lock (QUEUE_NAME)
+            {
+                Console.WriteLine("" + (--cnt) + " : " + pack.stationId);
+            }
+
             // await Task.Delay(2000);
         }
 
@@ -76,10 +90,12 @@ namespace UW.Shared.MQueue.Handlers
                     echo = pack.data.msg,
                     error = (object)null
                 };
-                /*await*/ MQReplyCenter.SendReply(pack.message.ReplyToSessionId, pack.message.ReplyTo, replyData);
+                /*await*/
+                MQReplyCenter.SendReply(pack.message.ReplyToSessionId, pack.message.ReplyTo, replyData);
             }
 
-            /*await*/ pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
+            /*await*/
+            pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
         }
     }
 }

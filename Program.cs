@@ -24,14 +24,14 @@ namespace UW
     {
         public static void Main(string[] args)
         {
-            ThreadPool.SetMinThreads(100, 100);
+            ThreadPool.SetMinThreads(1000, 1000);
 
             queueDaemon().Wait();
 
             Task.Run(async () =>
             {
                 await Task.Delay(3000);
-                HttpClientTester.Start(50);
+                HttpClientTester.Start(1);
             });
 
             CreateWebHostBuilder(args).Build().Run();

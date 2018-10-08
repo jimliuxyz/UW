@@ -35,8 +35,10 @@ namespace UW.Controllers.JsonRpc
         {
             try
             {
-                var res = await MQTesting1.SendAndWaitReply(5000);
-                return this.Ok(res);
+                await MQTesting1.Send();
+                return this.Ok(true);
+                // var res = await MQTesting1.SendAndWaitReply(60000);
+                // return this.Ok(res);
             }
             catch (MQReplyTimeoutException)
             {

@@ -23,6 +23,7 @@ namespace UW.Shared.MQueue.Utils
 
         private ClientEntity receiver;
         private ClientEntity sender;
+        private List<ClientEntity> senders = new List<ClientEntity>();
 
         private AzureSBusSetting setting;
 
@@ -33,6 +34,23 @@ namespace UW.Shared.MQueue.Utils
             this.stationId = setting.stationId;
 
             CreateAzureQueue(setting.queueName, setting.useSession).Wait();
+
+            if (setting.useSender)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    var sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
+                    senders.Add(sender);
+
+                    var message = new Message()
+                    {
+                        SessionId = "_",
+                        TimeToLive = TimeSpan.FromMinutes(1)
+                    };
+                    sender.SendAsync(message).Wait();
+                }
+            }
+
 
             if (setting.useSession)
                 receiver = new SessionClient(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
@@ -58,6 +76,34 @@ namespace UW.Shared.MQueue.Utils
                 };
                 await nm.CreateQueueAsync(desc);
             }
+        }
+
+        public async Task Send(string label, dynamic data, string replyTo = null, string session = null, string replyToSessionId = null)
+        {
+            // if (sender == null)
+            // {
+            //     lock (this)
+            //     {
+            //         if (sender == null)
+            //             sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
+            //     }
+            // }
+
+            // var client = sender as MessageSender;
+            var idx = new Random().Next(0, senders.Count);
+            var client = (senders[idx]) as MessageSender;
+
+            var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)))
+            {
+                SessionId = session,                   //the sessionId of this message
+                Label = label,
+                ReplyToSessionId = replyToSessionId,    //the sessionId for reply(send back)
+                ReplyTo = replyTo,
+                ContentType = "application/json",
+                // MessageId = j.ToString(),
+                // TimeToLive = TimeSpan.FromMinutes(2)
+            };
+            await client.SendAsync(message);
         }
 
         private async Task StartReceiver()
@@ -121,33 +167,6 @@ namespace UW.Shared.MQueue.Utils
             Console.WriteLine("StartReceive end " + stationId);
         }
 
-        public async Task Send(string label, dynamic data, string replyTo = null, string session = null, string replyToSessionId = null)
-        {
-            if (sender == null)
-            {
-                lock (this)
-                {
-                    if (sender == null)
-                        sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
-                }
-            }
-
-            var client = sender as MessageSender;
-
-            var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)))
-            {
-                SessionId = session,                   //the sessionId of this message
-                Label = label,
-                ReplyToSessionId = replyToSessionId,    //the sessionId for reply(send back)
-                ReplyTo = replyTo,
-                ContentType = "application/json",
-                // MessageId = j.ToString(),
-                // TimeToLive = TimeSpan.FromMinutes(2)
-            };
-            await client.SendAsync(message);
-        }
-
-
         ///dispatch by message label
         private async Task DispatchMessage(Message message, IMessageReceiver receiver)
         {
@@ -155,7 +174,8 @@ namespace UW.Shared.MQueue.Utils
             if (handlers == null || handlers.Count == 0)
             {
                 // don't have to wait the call
-                /*await*/ receiver.AbandonAsync(message.SystemProperties.LockToken);
+                /*await*/
+                receiver.AbandonAsync(message.SystemProperties.LockToken);
                 return;
             }
             var hId = -1;
@@ -181,7 +201,15 @@ namespace UW.Shared.MQueue.Utils
 
             while (hId < handlers.Count)
             {
-                await pack.next();
+                try
+                {
+                    await pack.next();
+                }
+                catch (System.Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    throw;
+                }
             }
 
 

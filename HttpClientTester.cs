@@ -51,10 +51,11 @@ namespace UW
             await Task.Delay(1000);
 
             var tasks = new List<Task>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 150; i++)
             {
                 var task = Task.Run(() =>
                 {
+                    // client.SendRequestAsync<dynamic>(req);
                     var res = client.SendRequestAsync<dynamic>(req).Result;
                     // Console.WriteLine(res.HasError ? res.Error.Message : res.Result);
                 });
