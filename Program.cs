@@ -49,9 +49,8 @@ namespace UW
 
         public static async Task queueDaemon()
         {
-            MQReplyCenter.StartReceiving(1);
-
-            MQTesting1.StartReceiving(10);
+            Console.WriteLine(MQReplyCenter.INSTANCE_ID);
+            MQTesting1.StartReceiving(20);
         }
 
         public static async Task test2()

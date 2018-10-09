@@ -11,7 +11,7 @@ namespace UW.Shared.MQueue.Utils
         public string stationId;
         public bool useSession;
         public List<string> sessionIds = new List<string>();
-        public bool useSender;
+        public int useSender = 0;
         public int prefetchCount;
         public int ttl;    //time to live
         public ReceiveMode receiveMode;

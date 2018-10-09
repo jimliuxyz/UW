@@ -22,7 +22,6 @@ namespace UW.Shared.MQueue.Utils
         public readonly string stationId;
 
         private ClientEntity receiver;
-        private ClientEntity sender;
         private List<ClientEntity> senders = new List<ClientEntity>();
 
         private AzureSBusSetting setting;
@@ -33,30 +32,31 @@ namespace UW.Shared.MQueue.Utils
             this.queueName = setting.queueName;
             this.stationId = setting.stationId;
 
+            // create azure queue
             CreateAzureQueue(setting.queueName, setting.useSession).Wait();
 
-            if (setting.useSender)
+            // create sender
+            for (int i = 0; i < (setting.useSender); i++)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    var sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
-                    senders.Add(sender);
+                var sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
+                senders.Add(sender);
 
-                    var message = new Message()
-                    {
-                        SessionId = "_",
-                        TimeToLive = TimeSpan.FromMinutes(1)
-                    };
-                    sender.SendAsync(message).Wait();
-                }
+                var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { })))
+                {
+                    SessionId = setting.useSession ? "_" : null,
+                    ContentType = "application/json",
+                    TimeToLive = TimeSpan.FromSeconds(1)
+                };
+                sender.SendAsync(message).Wait();
             }
 
-
+            // create receiver
             if (setting.useSession)
                 receiver = new SessionClient(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
             else
                 receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
 
+            // start receiving
             if (setting.messageHandlers.Count > 0)
             {
                 Task.Factory.StartNew(StartReceiver, TaskCreationOptions.LongRunning);
@@ -78,37 +78,38 @@ namespace UW.Shared.MQueue.Utils
             }
         }
 
+        /// <summary>
+        /// send a message
+        /// </summary>
+        /// <param name="session">訊息所處的session</param>
+        /// <param name="label">用來分辨handler chain</param>
+        /// <param name="data"></param>
+        /// <param name="replyTo">盼回傳給某特定識別ID</param>
+        /// <param name="replyToSessionId">盼回傳到某特定session</param>
+        /// <param name="data">挾帶的內容</param>
+        /// <returns></returns>
         public async Task Send(string label, dynamic data, string replyTo = null, string session = null, string replyToSessionId = null)
         {
-            // if (sender == null)
-            // {
-            //     lock (this)
-            //     {
-            //         if (sender == null)
-            //             sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
-            //     }
-            // }
-
-            // var client = sender as MessageSender;
-            var idx = new Random().Next(0, senders.Count);
-            var client = (senders[idx]) as MessageSender;
+            var client = (senders[F.Random(0, senders.Count)]) as MessageSender;
 
             var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)))
             {
+                // MessageId = j.ToString(),
                 SessionId = session,                   //the sessionId of this message
                 Label = label,
                 ReplyToSessionId = replyToSessionId,    //the sessionId for reply(send back)
                 ReplyTo = replyTo,
                 ContentType = "application/json",
-                // MessageId = j.ToString(),
-                // TimeToLive = TimeSpan.FromMinutes(2)
             };
+            if (setting.ttl > 0)
+                message.TimeToLive = TimeSpan.FromMilliseconds(setting.ttl);
+
             await client.SendAsync(message);
         }
 
         private async Task StartReceiver()
         {
-            Console.WriteLine("StartReceive start " + stationId);
+            Console.WriteLine($"MQ({queueName}) start receiving : {stationId}");
             if (receiver is MessageReceiver)
             {
                 var client = receiver as MessageReceiver;
@@ -116,8 +117,16 @@ namespace UW.Shared.MQueue.Utils
                 while (true)
                 {
                     Message message = await client.ReceiveAsync();
-                    if (message != null)
-                        await DispatchMessage(message, client);
+                    try
+                    {
+                        if (message != null)
+                            await DispatchMessage(message, client);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Task.Delay(1000).Wait();
+                        Console.WriteLine(e.Message);
+                    }
                 }
             }
             else if (receiver is SessionClient)
@@ -154,7 +163,7 @@ namespace UW.Shared.MQueue.Utils
                             catch (System.Exception e)
                             {
                                 Task.Delay(1000).Wait();
-                                Console.WriteLine(e.GetType());
+                                Console.WriteLine(e.Message);
                                 break;
                             }
                         }
@@ -164,58 +173,87 @@ namespace UW.Shared.MQueue.Utils
                 Task.WaitAll(tasks.ToArray());
             }
 
-            Console.WriteLine("StartReceive end " + stationId);
+            Console.WriteLine($"MQ({queueName}) stop receiving : {stationId}");
         }
 
-        ///dispatch by message label
+        /// <summary>
+        /// dispatch message by its label
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="receiver"></param>
+        /// <returns></returns>
         private async Task DispatchMessage(Message message, IMessageReceiver receiver)
         {
-            var handlers = setting.messageHandlers[message.Label];
-            if (handlers == null || handlers.Count == 0)
+            if (message.Label == null || !setting.messageHandlers.ContainsKey(message.Label))
             {
                 // don't have to wait the call
                 /*await*/
                 receiver.AbandonAsync(message.SystemProperties.LockToken);
                 return;
             }
-            var hId = -1;
 
-            var pack = new HandlerPack();
-            pack.stationId = stationId;
-            pack.receiver = receiver;
-            pack.message = message;
-            pack.data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message.Body));
-            pack.terminate = () =>
+            var handlers = setting.messageHandlers[message.Label];
+            if (handlers.Count == 0)
             {
-                hId = handlers.Count;
-            };
-            pack.next = async () =>
-            {
-                hId++;
-                if (hId < handlers.Count)
-                {
-                    var handler = handlers[hId];
-                    await handler.Invoke(pack);
-                }
-            };
-
-            while (hId < handlers.Count)
-            {
-                try
-                {
-                    await pack.next();
-                }
-                catch (System.Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    throw;
-                }
+                // don't have to wait the call
+                /*await*/
+                receiver.CompleteAsync(message.SystemProperties.LockToken);
+                return;
             }
 
+            try
+            {
+                var hId = -1;
+                var pack = new HandlerPack();
+                pack.stationId = stationId;
+                pack.receiver = receiver;
+                pack.message = message;
+                pack.data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message.Body));
+                pack.terminate = () =>
+                {
+                    hId = handlers.Count;
+                };
+                pack.next = async () =>
+                {
+                    hId++;
+                    if (hId < handlers.Count)
+                    {
+                        var handler = handlers[hId];
+                        await handler.Invoke(pack);
+                    }
+                };
+
+                // start handler function chain
+                while (hId < handlers.Count)
+                {
+                    try
+                    {
+                        await pack.next();
+                    }
+                    catch (System.Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        throw;
+                    }
+                }
+                return;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            // for any uncatched exception
+            try
+            {
+                receiver.AbandonAsync(message.SystemProperties.LockToken);
+            }
+            catch (System.Exception e)
+            {
+                throw;
+            }
 
         }
-
-
 
     }
 }

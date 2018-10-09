@@ -47,11 +47,8 @@ namespace UW
             RpcClient client = new RpcClient(endPoint);
             RpcRequest req = new RpcRequest(0, "test");
 
-            var response = client.SendRequestAsync<dynamic>(req).Result;
-            await Task.Delay(1000);
-
             var tasks = new List<Task>();
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 100; i++)
             {
                 var task = Task.Run(() =>
                 {

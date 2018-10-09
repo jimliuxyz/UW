@@ -13,12 +13,12 @@ namespace UW.Shared.MQueue.Handlers
     /// </summary>
     public partial class MQTesting1
     {
-        private static readonly string QUEUE_NAME = "teseting";
+        public static readonly string QUEUE_NAME = "teseting";
         private static readonly string MSG_LABEL = "default";
 
-        private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSender().build();
+        private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSender(1).build();
 
-        static Dictionary<string, string> dict = new Dictionary<string, string>();
+        public static Dictionary<string, string> dict = new Dictionary<string, string>();
         public async static Task Send()
         {
             var data = new
@@ -27,7 +27,7 @@ namespace UW.Shared.MQueue.Handlers
             };
             lock (QUEUE_NAME)
             {
-                ++cnt;
+                Console.WriteLine("cnt="+(++cnt));
             }
             await sender.Send(MSG_LABEL, data);
         }
@@ -40,7 +40,7 @@ namespace UW.Shared.MQueue.Handlers
             };
             lock (QUEUE_NAME)
             {
-                ++cnt;
+                Console.WriteLine("cnt="+(++cnt));
             }
             return await MQUtils.SendAndWaitReply(sender, MSG_LABEL, data, timeout);
         }
@@ -67,15 +67,13 @@ namespace UW.Shared.MQueue.Handlers
             }
         }
 
-        static int cnt = 0;
+        public static int cnt = 0;
         private static async Task Flow1(HandlerPack pack)
         {
             lock (QUEUE_NAME)
             {
-                Console.WriteLine("" + (--cnt) + " : " + pack.stationId);
+                Console.WriteLine("cnt=" + (--cnt) + " : " + pack.stationId);
             }
-
-            // await Task.Delay(2000);
         }
 
         private static async Task Flow2(HandlerPack pack)

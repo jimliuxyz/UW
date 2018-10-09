@@ -11,11 +11,14 @@ namespace UW.Shared.MQueue.Handlers
 {
     public abstract class MQUtils
     {
-        public async static Task<object> SendAndWaitReply(List<AzureSBus> senders, string msgLabel, dynamic data, int timeout = 1000)
-        {
-            return null;
-        }
-
+        /// <summary>
+        /// send and wait reply
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="msgLabel"></param>
+        /// <param name="data"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public async static Task<object> SendAndWaitReply(AzureSBus sender, string msgLabel, dynamic data, int timeout = 1000)
         {
             var watch = new Stopwatch();
@@ -25,12 +28,11 @@ namespace UW.Shared.MQueue.Handlers
             var replyTo = F.NewGuid();
             var waiter = MQReplyCenter.NewWaiter(replyTo);
 
-            /*await*/ sender.Send(msgLabel, data, replyToSessionId: MQReplyCenter.INSTANCE_ID, replyTo: replyTo);
+            // sent the data to queue
+            await sender.Send(msgLabel, data, replyToSessionId: MQReplyCenter.GetReplySessionId(), replyTo: replyTo);
 
-            // var res = await waiter.wait();
-
+            // get a waiter and waiting
             var task = waiter.wait();
-
             if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
             {
                 Console.WriteLine("Queue Communication Elapsed : " + watch.Elapsed.TotalSeconds);
@@ -38,16 +40,16 @@ namespace UW.Shared.MQueue.Handlers
             }
             else
             {
+                //timeout
                 MQReplyCenter.CancelWaiter(replyTo);
+
+                var e = new MQReplyTimeoutException(sender.queueName, msgLabel, timeout);
+
+                Console.ForegroundColor = System.ConsoleColor.DarkRed;
+                Console.WriteLine(e);
+                Console.ResetColor();
+                throw e;
             }
-
-            var e = new MQReplyTimeoutException(sender.queueName, msgLabel, timeout);
-
-            Console.ForegroundColor = System.ConsoleColor.DarkRed;
-            Console.WriteLine(e);
-            Console.ResetColor();
-
-            throw e;
         }
     }
 }

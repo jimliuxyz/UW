@@ -42,11 +42,23 @@ namespace UW.Shared.MQueue.Utils
             setting.sessionIds.AddRange(sessionIds);
             return this;
         }
-        public AzureSBusBuilder UseSender()
+
+        /// <summary>
+        /// set number of sender.
+        /// </summary>
+        /// <param name="count">(設定>1對效能並沒有提升)</param>
+        /// <returns></returns>
+        public AzureSBusBuilder UseSender(int count = 1)
         {
-            setting.useSender = true;
+            setting.useSender = count;
             return this;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prefetchCount">設定值須考慮任務執行時間長短</param>
+        /// <returns></returns>
         public AzureSBusBuilder SetPrefetchCount(int prefetchCount)
         {
             setting.prefetchCount = prefetchCount;

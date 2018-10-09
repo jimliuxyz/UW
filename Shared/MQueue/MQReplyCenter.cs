@@ -7,11 +7,65 @@ using UW.Shared.MQueue.Utils;
 
 namespace UW.Shared.MQueue.Handlers
 {
-    public class MQReplyCenter
+
+    /**
+    運作邏輯:
+    reply queue啟動時監聽N組sessionId (INSTANCE_ID-0 ~ INSTANCE_ID-N)
+
+    當任何訊息欲能回傳結果 (以下動作是運作在caller與handler兩個實體間)
+    1. 必須先透過`MQReplyCenter.GetReplySessionId()`取得一sessionId 設定到message.replyToSessionId
+    2. 透過`MQReplyCenter.NewWaiter()`取得一waiter 即可異步等待回傳結果
+    3. 訊息處理完透過`MQReplyCenter.SendReply()`即可將訊息回傳到reply queue
+
+     */
+
+    public partial class MQReplyCenter
     {
         public static readonly string INSTANCE_ID = F.NewGuid(); //當下執行時隨機產生實體ID
         private static readonly string QUEUE_NAME = "reply";
         private static readonly string MSG_LABEL = "default";
+
+        private static readonly int INSTANCE_COUNT = 10;
+        private static readonly int PREFETCH_COUNT = 50;
+
+        private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSession().UseSender(1).build();
+
+        /// <summary>
+        /// Send reply to a `session queue`
+        /// </summary>
+        /// <param name="toInstanceId">給哪個執行實體</param>
+        /// <param name="toCallerId">給執行實體中的哪個呼叫者</param>
+        /// <returns></returns>
+        public async static Task SendReply(string toInstanceId, string toCallerId, dynamic data = null)
+        {
+            await sender.Send(MSG_LABEL, data, session: toInstanceId, replyTo: toCallerId);
+        }
+    }
+
+    public partial class MQReplyCenter
+    {
+        private static List<string> insIds = new List<string>();
+
+        /// <summary>
+        /// Start Replay Receiver
+        /// </summary>
+        static MQReplyCenter()
+        {
+            for (int i = 0; i < INSTANCE_COUNT; i++)
+            {
+                insIds.Add(INSTANCE_ID + "-" + i);
+            }
+            StartReceiving();
+        }
+
+        /// <summary>
+        /// get one of reply session as ID (random)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetReplySessionId()
+        {
+            return insIds[F.Random(0, insIds.Count)];
+        }
 
         private static Dictionary<string, ResultWaiter> waiters = new Dictionary<string, ResultWaiter>();
 
@@ -30,6 +84,11 @@ namespace UW.Shared.MQueue.Handlers
             }
         }
 
+        /// <summary>
+        /// set data and then wake up waiter(caller)
+        /// </summary>
+        /// <param name="callerId"></param>
+        /// <param name="data"></param>
         public static void WakeUpWaiter(string callerId, dynamic data = null)
         {
             lock (waiters)
@@ -41,39 +100,25 @@ namespace UW.Shared.MQueue.Handlers
                 }
             }
         }
+        /// <summary>
+        /// wake up waiter(caller) and do nothing
+        /// </summary>
+        /// <param name="callerId"></param>
         public static void CancelWaiter(string callerId)
         {
             WakeUpWaiter(callerId);
         }
 
-        private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSession().UseSender().build();
-
-        /// <summary>
-        /// Send message reply to a `session queue`
-        /// </summary>
-        /// <param name="toInstanceId">給哪個執行實體</param>
-        /// <param name="toCallerId">給執行實體中的哪個呼叫者</param>
-        /// <returns></returns>
-        public async static Task SendReply(string toInstanceId, string toCallerId, dynamic data = null)
+        private static void StartReceiving()
         {
-            await sender.Send(MSG_LABEL, data, session: toInstanceId, replyTo: toCallerId);
-        }
-
-        public static void StartReceiving(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver-" + i)
-                    .SetReceiveMode(ReceiveMode.PeekLock)
-                    .UseSession(INSTANCE_ID)
-                    .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
-                    {
-                        // Console.WriteLine("Got Reply...");
-                        // Console.WriteLine(pack.data);
-                    }, Flow1)
-                    .SetPrefetchCount(10)
-                    .build();
-            }
+            var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver")
+                .SetReceiveMode(ReceiveMode.PeekLock)
+                .UseSession(insIds.ToArray())
+                .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
+                {
+                }, Flow1)
+                .SetPrefetchCount(PREFETCH_COUNT)
+                .build();
         }
 
         private static async Task Flow1(HandlerPack pack)
@@ -82,7 +127,8 @@ namespace UW.Shared.MQueue.Handlers
             WakeUpWaiter(pack.message.ReplyTo, pack.data);
 
             // 'await' makes the reply queue slow!!
-            /*await*/ pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
+            /*await*/
+            pack.receiver.CompleteAsync(pack.message.SystemProperties.LockToken);
         }
 
     }
