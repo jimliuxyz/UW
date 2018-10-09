@@ -9,13 +9,19 @@ namespace UW.Shared.Persis
     public class UserHelper : PersisBase
     {
         private readonly DocumentClient client;
-        private static readonly PkGuidGen guidGen = new PkGuidGen().SetPkVolume(5);
+        private static readonly PkuidGen userIdGen = new PkuidGen().SetPkVolume(5);
         public UserHelper()
         {
             client = GetClient();
         }
 
-        public async Task<User> Create()
+        public async Task<Pkuid> GenUid()
+        {
+            var amount = client.GetDocsCount(User._URI_COL);
+            return userIdGen.Generate(amount);
+        }
+
+        public async Task<User> Create(Pkuid guid)
         {
             // var amount = client.GetDocsCount(User._URI_COL);
             // var guid = guidGen.Generate(amount);

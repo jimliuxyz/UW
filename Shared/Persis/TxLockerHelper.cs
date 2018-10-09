@@ -26,7 +26,7 @@ namespace UW.Shared.Persis
             client = GetClient();
         }
 
-        public async Task<bool> TryLock(PkGuid memberId)
+        public async Task<bool> TryLock(Pkuid memberId)
         {
             var obj = new TxLocker()
             {
@@ -44,7 +44,7 @@ namespace UW.Shared.Persis
 
             return false;
         }
-        public async Task<bool> UnLock(PkGuid memberId)
+        public async Task<bool> UnLock(Pkuid memberId)
         {
             return false;
         }

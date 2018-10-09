@@ -22,6 +22,7 @@ using UW.Shared.Misc;
 using UW.Shared.MQueue.Handlers;
 using UW.Shared;
 using UW.Shared.MQueue.MQException;
+using UW.Shared.Persis;
 
 namespace UW.Controllers.JsonRpc
 {
@@ -31,7 +32,7 @@ namespace UW.Controllers.JsonRpc
         {
         }
 
-        public async Task<IRpcMethodResult> test()
+        public async Task<IRpcMethodResult> testQueue()
         {
             try
             {
@@ -46,6 +47,21 @@ namespace UW.Controllers.JsonRpc
             }
         }
 
+        public async Task<IRpcMethodResult> test()
+        {
+            try
+            {
+                var helper = new UserHelper();
+                var guid = await helper.GenUid();
+
+                var res = await MQUserCreate.CreateUser(guid.ToString());
+                return this.Ok(res);
+            }
+            catch (MQReplyTimeoutException)
+            {
+                return Bad(RPCERR.ACTION_TIMEOUT);
+            }
+        }
     }
 }
 

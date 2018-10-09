@@ -19,7 +19,7 @@ namespace UW.Shared.MQueue.Handlers
         /// <param name="data"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public async static Task<object> SendAndWaitReply(AzureSBus sender, string msgLabel, dynamic data, int timeout = 1000)
+        public async static Task<object> SendAndWaitReply(AzureSBus sender, string msgLabel, dynamic data, int timeout = 10000)
         {
             var watch = new Stopwatch();
             watch.Start();

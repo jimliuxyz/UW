@@ -49,7 +49,7 @@ namespace UW.Shared.MQueue.Handlers
         /// <summary>
         /// Start Replay Receiver
         /// </summary>
-        static MQReplyCenter()
+        public static void Start()
         {
             for (int i = 0; i < INSTANCE_COUNT; i++)
             {

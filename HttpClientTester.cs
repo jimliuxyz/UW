@@ -45,7 +45,7 @@ namespace UW
         private static async Task Task1()
         {
             RpcClient client = new RpcClient(endPoint);
-            RpcRequest req = new RpcRequest(0, "test");
+            RpcRequest req = new RpcRequest(0, "testQueue");
 
             var tasks = new List<Task>();
             for (int i = 0; i < 100; i++)

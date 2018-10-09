@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace UW.Shared.Misc
 {
-    public class PkGuid
+    public class Pkuid
     {
         public readonly long PkIdx;
         public readonly string Prefix;
         public readonly string Guid;
 
-        public PkGuid(long pkIdx, string prefix, string guid = null)
+        public Pkuid(long pkIdx, string prefix, string guid = null)
         {
             this.PkIdx = pkIdx;
             this.Prefix = prefix;
@@ -28,7 +28,7 @@ namespace UW.Shared.Misc
             return $"{Math.Abs(asInt) % size}";
         }
     }
-    public class PkGuidGen
+    public class PkuidGen
     {
         private static readonly int ModeVol = 0;
         private static readonly int ModeRandom = 1;
@@ -36,14 +36,14 @@ namespace UW.Shared.Misc
 
         private int VolSize;
         private int RandomStart, RandomEnd;
-        public PkGuidGen() { }
+        public PkuidGen() { }
 
         /// <summary>
         /// 設定每個pk的容量 pk=(amount/volume)
         /// </summary>
         /// <param name="volSize"></param>
         /// <returns></returns>
-        public PkGuidGen SetPkVolume(int volSize)
+        public PkuidGen SetPkVolume(int volSize)
         {
             mode = ModeVol;
             VolSize = volSize;
@@ -56,7 +56,7 @@ namespace UW.Shared.Misc
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public PkGuidGen SetRandomRange(int start, int end)
+        public PkuidGen SetRandomRange(int start, int end)
         {
             mode = ModeRandom;
             RandomStart = start;
@@ -77,7 +77,7 @@ namespace UW.Shared.Misc
         /// </summary>
         /// <param name="amount">搭配SetPkVolume時使用</param>
         /// <returns></returns>
-        public PkGuid Generate(long amount = 0, string guid = null, long pkIdx = -1)
+        public Pkuid Generate(long amount = 0, string guid = null, long pkIdx = -1)
         {
             guid = guid ?? F.NewGuid();
             var seed = guid.GetSum();
@@ -87,13 +87,13 @@ namespace UW.Shared.Misc
             else if (mode == ModeVol)
                 pkIdx = AmountToVolume(amount);
             else if (mode == ModeRandom)
-                pkIdx = new Random().Next(RandomStart, RandomEnd);
+                pkIdx = F.Random(RandomStart, RandomEnd);
 
             var prefix = "PK:" + pkIdx;
 
             var prefix_encoded = b62c.Encode(prefix.ToString());
 
-            return new PkGuid(pkIdx, prefix_encoded, guid);
+            return new Pkuid(pkIdx, prefix_encoded, guid);
         }
 
 
@@ -102,7 +102,7 @@ namespace UW.Shared.Misc
         /// </summary>
         /// <param name="memberId">Format : Encode(PK:pkidx)-Guid</param>
         /// <returns></returns>
-        public PkGuid Parse(string memberId)
+        public static Pkuid Parse(string memberId)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace UW.Shared.Misc
 
                 var pkIdx = long.Parse(part[1]);
 
-                return new PkGuid(pkIdx, prefix, guid);
+                return new Pkuid(pkIdx, prefix, guid);
             }
             catch (System.Exception)
             {
