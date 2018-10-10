@@ -33,7 +33,7 @@ namespace UW.Shared.MQueue.Handlers
 
         private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSender(1).build();
 
-        public async static Task<Object> CreateUser(string userId, string name = null, string phoneno = null, string avatar = null)
+        public async static Task<Object> CreateUser(string userId, string phoneno, string name = null, string avatar = null)
         {
             var data = new MsgUserCreate
             {
@@ -62,26 +62,26 @@ namespace UW.Shared.MQueue.Handlers
                     {
                         // Console.WriteLine("start...");
                         // Console.WriteLine(pack.data);
-                    }, Flow1, CompleteAsync)
+                    }, CheckMessage, Flow1, CompleteAsync)
                     .SetPrefetchCount(5)
                     .build();
             }
         }
 
         public static int cnt = 0;
+        private static async Task CheckMessage(HandlerPack pack)
+        {
+            pack.param["msg"] = JsonConvert.DeserializeObject<MsgUserCreate>(Encoding.UTF8.GetString(pack.message.Body));
+        }
         private static async Task Flow1(HandlerPack pack)
         {
-            Console.WriteLine("got " + pack.data);
-
-            // var data = (MsgUserCreate)pack.data;
-            // var data = pack.data as MsgUserCreate;
-            var data = JsonConvert.DeserializeObject<MsgUserCreate>(Encoding.UTF8.GetString(pack.message.Body));
+            var msg = pack.param["msg"] as MsgUserCreate;
 
             var helper = new UserHelper();
 
-            var pkgid = PkuidGen.Parse(data.userId);
-            Console.WriteLine("got " + pkgid.ToJson());
+            var pkgid = UserHelper.IdGen.Parse(msg.userId);
 
+            await helper.Create(pkgid, msg.phoneno);
         }
 
         private static async Task CompleteAsync(HandlerPack pack)
@@ -93,7 +93,7 @@ namespace UW.Shared.MQueue.Handlers
                 {
                     stationId = pack.stationId,
                     threadHashCode = Thread.CurrentThread.GetHashCode(),
-                    echo = pack.data.msg,
+                    echo = pack.param,
                     error = (object)null
                 };
                 /*await*/

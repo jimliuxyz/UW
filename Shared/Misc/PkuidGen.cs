@@ -8,18 +8,19 @@ namespace UW.Shared.Misc
 {
     public class Pkuid
     {
+        public string PK {get { return Prefix + "-" + PkIdx; } }
         public readonly long PkIdx;
         public readonly string Prefix;
         public readonly string Guid;
 
-        public Pkuid(long pkIdx, string prefix, string guid = null)
+        override public string ToString() => Guid;
+
+        public Pkuid(long pkIdx, string prefix, string guid)
         {
             this.PkIdx = pkIdx;
             this.Prefix = prefix;
             this.Guid = guid;
         }
-
-        override public string ToString() => $"{Prefix}-{Guid}";
 
         public string Mod(int size)
         {
@@ -34,9 +35,10 @@ namespace UW.Shared.Misc
         private static readonly int ModeRandom = 1;
         private int mode = ModeVol;
 
+        private readonly string Prefix;
         private int VolSize;
         private int RandomStart, RandomEnd;
-        public PkuidGen() { }
+        public PkuidGen(string Prefix) { this.Prefix = Prefix; }
 
         /// <summary>
         /// 設定每個pk的容量 pk=(amount/volume)
@@ -77,57 +79,55 @@ namespace UW.Shared.Misc
         /// </summary>
         /// <param name="amount">搭配SetPkVolume時使用</param>
         /// <returns></returns>
-        public Pkuid Generate(long amount = 0, string guid = null, long pkIdx = -1)
+        public Pkuid Generate(long amount = 0)
         {
-            guid = guid ?? F.NewGuid();
-            var seed = guid.GetSum();
+            var part = new string[2];
+
+            part[1] = F.NewGuid();
+
+            var seed =  part[1].GetSum();
             var b62c = new Base62Converter(seed);
 
-            if (pkIdx >= 0) { }
-            else if (mode == ModeVol)
+            long pkIdx = 0;
+            if (mode == ModeVol)
                 pkIdx = AmountToVolume(amount);
             else if (mode == ModeRandom)
                 pkIdx = F.Random(RandomStart, RandomEnd);
 
-            var prefix = "PK:" + pkIdx;
+            part[0] = b62c.Encode(Prefix + ":" + pkIdx);
+            var guid = part[0] + "-" + part[1];
 
-            var prefix_encoded = b62c.Encode(prefix.ToString());
-
-            return new Pkuid(pkIdx, prefix_encoded, guid);
+            return new Pkuid(pkIdx, Prefix, guid);
         }
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="memberId">Format : Encode(PK:pkidx)-Guid</param>
+        /// <param name="guid">Format : Encode(PK:pkidx)-Guid</param>
         /// <returns></returns>
-        public static Pkuid Parse(string memberId)
+        public Pkuid Parse(string guid)
         {
             try
             {
-                var part = memberId.Trim().Split("-");
+                var part = guid.Trim().Split("-");
 
-                var guid = part[1];
-                var seed = guid.GetSum();
+                var seed = part[1].GetSum();
                 var b62c = new Base62Converter(seed);
 
-                var prefix = b62c.Decode(part[0].ToString());
-
-                part = prefix.Split(":");
-                if (part[0] != "PK")
+                var part0 = b62c.Decode(part[0]).Split(":");
+                if (part0[0] != Prefix)
                     throw new Exception();
 
-                var pkIdx = long.Parse(part[1]);
+                var pkIdx = long.Parse(part0[1]);
 
-                return new Pkuid(pkIdx, prefix, guid);
+                return new Pkuid(pkIdx, Prefix, guid);
             }
             catch (System.Exception)
             {
                 throw new Exception("Unknown member id format!");
             }
         }
-
         public long AmountToVolume(long amount) => (long)Math.Floor((decimal)amount / VolSize);
     }
 

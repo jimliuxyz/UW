@@ -84,7 +84,7 @@ namespace UW.Shared.MQueue.Handlers
                 {
                     stationId = pack.stationId,
                     threadHashCode = Thread.CurrentThread.GetHashCode(),
-                    echo = pack.data.msg,
+                    echo = pack.param,
                     error = (object)null
                 };
                 /*await*/

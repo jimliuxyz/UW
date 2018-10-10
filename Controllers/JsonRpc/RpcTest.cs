@@ -54,7 +54,12 @@ namespace UW.Controllers.JsonRpc
                 var helper = new UserHelper();
                 var guid = await helper.GenUid();
 
-                var res = await MQUserCreate.CreateUser(guid.ToString());
+                var phoneno = "XXX" + F.Random(100000000, 999999999);
+
+                var res = await MQUserCreate.CreateUser(guid.ToString(), phoneno);
+
+                // await Task.Delay(1000);
+                res = await MQUserCreate.CreateUser(guid.ToString(), phoneno);
                 return this.Ok(res);
             }
             catch (MQReplyTimeoutException)

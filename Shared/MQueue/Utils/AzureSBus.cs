@@ -141,6 +141,7 @@ namespace UW.Shared.MQueue.Utils
                         var client = _client.AcceptMessageSessionAsync(sessionId).Result;
                         while (true)
                         {
+                            var reConn = false;
                             try
                             {
                                 Message message = client.ReceiveAsync().Result;
@@ -150,12 +151,13 @@ namespace UW.Shared.MQueue.Utils
                             catch (System.AggregateException e)
                             {
                                 Task.Delay(1000).Wait();
-                                Console.WriteLine(e.Message);
+                                Console.WriteLine(e.GetType() + " : " + e.Message);
+                                reConn = true;
                             }
                             catch (SessionLockLostException e)
                             {
                                 Task.Delay(1000).Wait();
-                                Console.WriteLine(e.GetType());
+                                Console.WriteLine("b " + e.GetType());
                                 Console.WriteLine("RenewSessionLockAsync...");
 
                                 client.RenewSessionLockAsync().Wait();
@@ -163,9 +165,24 @@ namespace UW.Shared.MQueue.Utils
                             catch (System.Exception e)
                             {
                                 Task.Delay(1000).Wait();
-                                Console.WriteLine(e.Message);
+                                Console.WriteLine("c " + e.Message);
                                 break;
                             }
+
+                            if (reConn)
+                            {
+                                try
+                                {
+                                    await client.CloseAsync();
+                                }
+                                catch (System.Exception) { }
+                                try
+                                {
+                                    client = _client.AcceptMessageSessionAsync(sessionId).Result;
+                                }
+                                catch (System.Exception) { }
+                            }
+
                         }
                     }, TaskCreationOptions.LongRunning);
                     tasks.Add(task);
@@ -208,7 +225,6 @@ namespace UW.Shared.MQueue.Utils
                 pack.stationId = stationId;
                 pack.receiver = receiver;
                 pack.message = message;
-                pack.data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message.Body));
                 pack.terminate = () =>
                 {
                     hId = handlers.Count;
@@ -232,8 +248,11 @@ namespace UW.Shared.MQueue.Utils
                     }
                     catch (System.Exception e)
                     {
+                        Console.WriteLine("============");
                         Console.WriteLine(e.ToString());
-                        throw;
+
+                        receiver.DeadLetterAsync(message.SystemProperties.LockToken);
+                        break;
                     }
                 }
                 return;

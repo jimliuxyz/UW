@@ -25,6 +25,7 @@ namespace UW
     {
         public static void Main(string[] args)
         {
+            TestPkuid();
             ThreadPool.SetMinThreads(1000, 1000);
 
             StartQueueDaemon().Wait();
@@ -48,12 +49,11 @@ namespace UW
 
         public static void TestPkuid()
         {
-            PkuidGen guidGen = new PkuidGen().SetPkVolume(5);
-            var guid = guidGen.Generate(1000);
+            var guid = UserHelper.IdGen.Generate(1000);
             Console.WriteLine(guid.ToJson());
 
-            var guid2 = PkuidGen.Parse(guid.ToString());
-            Console.WriteLine(guid.ToJson());
+            var guid2 = UserHelper.IdGen.Parse(guid.ToString());
+            Console.WriteLine(guid2.ToJson());
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

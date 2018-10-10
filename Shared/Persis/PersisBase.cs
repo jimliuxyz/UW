@@ -46,7 +46,8 @@ namespace UW.Shared.Persis
         private static DocumentClient _client = null;
         public static DocumentClient GetClient()
         {
-            return _client ?? new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
+            // return _client ?? new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
+            return new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
         }
 
         public static async Task BuildDB()

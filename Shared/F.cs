@@ -16,7 +16,7 @@ namespace UW.Shared
     public static class F
     {
         private static readonly Base62Converter B62 = new Base62Converter(1454); //default base62
-        public static readonly Random Rnd = new Random(2544);   //default
+        public static readonly Random Rnd = new Random();   //default
 
         /// <summary>
         /// Guid in base64 format

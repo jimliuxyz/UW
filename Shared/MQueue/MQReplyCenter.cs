@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
 using UW.Shared.Misc;
 using UW.Shared.MQueue.Utils;
 
@@ -13,9 +15,9 @@ namespace UW.Shared.MQueue.Handlers
     reply queue啟動時監聽N組sessionId (INSTANCE_ID-0 ~ INSTANCE_ID-N)
 
     當任何訊息欲能回傳結果 (以下動作是運作在caller與handler兩個實體間)
-    1. 必須先透過`MQReplyCenter.GetReplySessionId()`取得一sessionId 設定到message.replyToSessionId
-    2. 透過`MQReplyCenter.NewWaiter()`取得一waiter 即可異步等待回傳結果
-    3. 訊息處理完透過`MQReplyCenter.SendReply()`即可將訊息回傳到reply queue
+    1. caller req送出前必須先透過`MQReplyCenter.GetReplySessionId()`取得一sessionId 設定到message.replyToSessionId
+    2. 再透過`MQReplyCenter.NewWaiter()`取得一waiter 即可異步等待回傳結果
+    3. handler處理完透過`MQReplyCenter.SendReply()`即可將訊息回傳到reply queue
 
      */
 
@@ -123,8 +125,10 @@ namespace UW.Shared.MQueue.Handlers
 
         private static async Task Flow1(HandlerPack pack)
         {
+            pack.param["return"] = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(pack.message.Body));
+
             // wake up the result waiter to end the query
-            WakeUpWaiter(pack.message.ReplyTo, pack.data);
+            WakeUpWaiter(pack.message.ReplyTo, pack.param["return"]);
 
             // 'await' makes the reply queue slow!!
             /*await*/
