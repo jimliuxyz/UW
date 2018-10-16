@@ -15,7 +15,7 @@ namespace UW.Shared
         {
             return long.Parse(str);
         }
-        public static string ToHash(this string context, string salt)
+        public static string ToHash(this string context, string salt = "")
         {
             SHA256 sha256 = new SHA256CryptoServiceProvider();
             byte[] source = Encoding.Default.GetBytes(context + salt);

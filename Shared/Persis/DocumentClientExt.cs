@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -19,6 +20,45 @@ namespace UW.Shared.Persis
     {
         private static readonly FeedOptions DefaultOptions = new FeedOptions { EnableCrossPartitionQuery = true };
 
+        public static void GetPartitionInfo(this DocumentClient client, Uri collectionUri)
+        {
+            DocumentCollection collection = client.ReadDocumentCollectionAsync(collectionUri,
+                new RequestOptions { PopulatePartitionKeyRangeStatistics = true }).Result;
+
+            foreach (var partitionKeyRangeStatistics in collection.PartitionKeyRangeStatistics)
+            {
+                Console.WriteLine("PartitionKeyRangeId : " + partitionKeyRangeStatistics.PartitionKeyRangeId);
+                Console.WriteLine("DocumentCount : " + partitionKeyRangeStatistics.DocumentCount);
+                Console.WriteLine("SizeInKB : " + partitionKeyRangeStatistics.SizeInKB);
+
+                foreach (var partitionKeyStatistics in partitionKeyRangeStatistics.PartitionKeyStatistics)
+                {
+                    Console.WriteLine($" PartitionKey : {partitionKeyStatistics.PartitionKey}  {partitionKeyStatistics.SizeInKB}KB");
+                }
+            }
+        }
+
+        public static async Task<List<T>> ToListAsync<T>(this IDocumentQuery<T> queryable)
+        {
+            var watch = new Stopwatch();
+            watch.Start();
+
+            var list = new List<T>();
+            var ru = 0.0;
+            while (queryable.HasMoreResults)
+            {   //Note that ExecuteNextAsync can return many records in each call
+                var response = await queryable.ExecuteNextAsync<T>();
+                list.AddRange(response);
+                ru += response.RequestCharge;
+            }
+            Console.WriteLine(String.Format("queryable.ToListAsync / RU: {0} / Elapsed: {1}", ru, watch.Elapsed.TotalSeconds));
+
+            return list;
+        }
+        public static async Task<List<T>> ToListAsync<T>(this IQueryable<T> query)
+        {
+            return await query.AsDocumentQuery().ToListAsync();
+        }
 
         /// <summary>
         /// Get document count of collection
@@ -43,6 +83,26 @@ namespace UW.Shared.Persis
             //     .Where(doc => true)
             //     .LongCount();
             Console.WriteLine("GetDocsCount : " + timer.Elapsed.TotalSeconds);
+
+
+            var query = client.CreateDocumentQuery<object>(collectionUri, new SqlQuerySpec("SELECT VALUE count(c.id) FROM c"), DefaultOptions).AsDocumentQuery();
+            // FeedResponse<object> queryResult = await query.ExecuteNextAsync<object>();
+            FeedResponse<long> queryResult = query.ExecuteNextAsync<long>().Result;
+            double requestCharge = queryResult.RequestCharge;
+            Console.WriteLine("GetDocsCount2 : " + timer.Elapsed.TotalSeconds);
+            Console.WriteLine("requestCharge : " + requestCharge);
+            Console.WriteLine("queryResult : " + queryResult.First());
+
+
+            // var documentQuery = client.CreateDocumentQuery(collectionUri
+            //                     , new FeedOptions()
+            //                     {
+            //                         MaxItemCount = -1,
+            //                         MaxDegreeOfParallelism = -1,
+            //                         EnableCrossPartitionQuery = true,
+            //             // PartitionKey = new PartitionKey(guid.PK)
+            //         }, "SELECT VALUE COUNT(1) FROM c")
+            //                     .AsDocumentQuery();
 
             return count;
         }
@@ -80,41 +140,5 @@ namespace UW.Shared.Persis
             Console.WriteLine(String.Format("ClearCollectionAsync RU: {0}", ruamount));
         }
 
-        public static async Task<ResourceResponse<Document>> CreateDocumentIfNotExists(this DocumentClient client, string dbId, string collectionId, string docId, object doc, string pk)
-        {
-            var docUri = UriFactory.CreateDocumentUri(dbId, collectionId, docId);
-
-            try
-            {
-                var res = await client.ReadDocumentAsync(docUri, new RequestOptions()
-                {
-                    PartitionKey = new PartitionKey(pk)
-                });
-                return res;
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == HttpStatusCode.NotFound)
-                {
-                }
-                else
-                {
-                    // HttpStatusCode.TooManyRequests //must retry
-                    Console.WriteLine("DocumentClientException : " + e.StatusCode);
-                    throw e;
-                }
-            }
-
-            try
-            {
-                var res = await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(dbId, collectionId), doc);
-
-                return res;
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-        }
     }
 }

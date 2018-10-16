@@ -1,30 +1,40 @@
-
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace UW.Shared.Persis.Collections
 {
-    //todo : 預計ttl維持24H 當genCount>=3 且 attemptCount>=3時 則待清除後才能被reset,再度使用
-    public partial class SmsPasscode : Resource
+    public partial class UserNoPK
     {
-        public string id { get; set; }
-        public string pk { get; set; }
-        public string phoneno { get; set; }
-        public string passcode { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string userId { get; set; }
 
-        public int resendCount { get; set; }   // passcode連續產生的次數
-        public int verifyCount { get; set; }   // 當下passcode被嘗試的次數
-        public DateTime verifyAvailTime { get; set; }
+        public string pk { get; set; }
+
+        public long createdTime { get; set; }
+        public string alias { get; set; }   //Unique Key in whole collection
+
+        public bool allowDiscover = true;
+        public string name { get; set; }
+
+        public string phoneno { get; set; }
+
+        public string avatar { get; set; }
+        public string tokenRnd { get; set; }    //deprecated
+        public string jwtHash { get; set; }    //用來驗證會員最後建立的JWT
+
+        public List<CurrencySettings> currencies { get; set; } = new List<CurrencySettings>();
+
+        public NtfInfo ntfInfo { get; set; } = new NtfInfo();
     }
 
-
-    public partial class SmsPasscode
+    public partial class UserNoPK
     {
-        public static readonly string _COLLECTION_NAME = "SmsPasscode";
-        public static readonly string _PK = "/pk";
-
+        public static readonly string _COLLECTION_NAME = "User_NoPK";
 
         public static readonly string _DB_NAME = R.DB_NAME;
         public static readonly Uri _URI_DB = UriFactory.CreateDatabaseUri(_DB_NAME);
@@ -33,7 +43,6 @@ namespace UW.Shared.Persis.Collections
         public static readonly DocumentCollection _SPEC = new DocumentCollection
         {
             Id = _COLLECTION_NAME,
-            DefaultTimeToLive = 60 * 60,    // 60min
             IndexingPolicy = new IndexingPolicy(
                 new RangeIndex(DataType.String) { Precision = -1 }
             )
@@ -48,12 +57,33 @@ namespace UW.Shared.Persis.Collections
                         }
                     },
                     new IncludedPath {
-                        Path = "/phoneno/*",
+                        Path = "/id/*",
                         Indexes = new Collection<Index>()
                         {
                             new RangeIndex(DataType.Number) { Precision = -1 }
                         }
                     },
+                    new IncludedPath {
+                        Path = "/createdTime/*",
+                        Indexes = new Collection<Index>()
+                        {
+                            new RangeIndex(DataType.Number) { Precision = -1 }
+                        }
+                    },
+                    new IncludedPath {
+                        Path = "/alias/*",
+                        Indexes = new Collection<Index>()
+                        {
+                            new HashIndex(DataType.String) { Precision = -1 }
+                        }
+                    },
+                    new IncludedPath {
+                        Path = "/allowDiscover/*",
+                        Indexes = new Collection<Index>()
+                        {
+                            new HashIndex(DataType.String) { Precision = -1 }
+                        }
+                    }
                 },
                 ExcludedPaths = new Collection<ExcludedPath>{
                     new ExcludedPath {
@@ -65,12 +95,12 @@ namespace UW.Shared.Persis.Collections
             {
                 UniqueKeys = new Collection<UniqueKey>
                 {
+                    new UniqueKey { Paths = new Collection<string> { "/alias" }},
                     new UniqueKey { Paths = new Collection<string> { "/phoneno" }},
                 }
             },
             PartitionKey = new PartitionKeyDefinition
             {
-                Paths = new Collection<string> { _PK }
             }
         };
     }

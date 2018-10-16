@@ -16,20 +16,20 @@ using System.Linq;
 using Newtonsoft.Json;
 using UW.Shared;
 using UW.Shared.Services;
+using UW.Shared.Persis;
+using UW.Shared.Persis.Helper;
 
-namespace UW.Controllers.JsonRpc
+namespace UW.Controllers.JsonRpc2
 {
     [Authorize]
     public class RpcNotification : RpcBaseController
     {
         private IHttpContextAccessor accessor;
         private Ntfy notifications;
-        private Persistence db;
-        public RpcNotification(IHttpContextAccessor accessor, Ntfy notifications, Persistence db)
+        public RpcNotification(IHttpContextAccessor accessor, Ntfy notifications)
         {
             this.accessor = accessor;
             this.notifications = notifications;
-            this.db = db;
         }
 
         /// <summary>
@@ -42,25 +42,14 @@ namespace UW.Controllers.JsonRpc
         {
             pnsToken = pnsToken.Trim();
 
-            if (user == null)
-            {
-                var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
-                user = db.getUserByUserId(userId);
-            }
+            var uid = (user != null) ? UserHelper.IdGen.Parse(user.userId) : UserHelper.IdGen.Parse(this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value);
 
-            if (user != null)
-            {
-                var regId = await this.notifications.updateRegId(user.userId, pns, pnsToken);
+            var azureRegId = await this.notifications.updateRegId(uid.Guid, pns, pnsToken);
 
-                user.ntfInfo = user.ntfInfo ?? new NtfInfo();
-                user.ntfInfo.pns = pns;
-                user.ntfInfo.pnsRegId = pnsToken;
-                user.ntfInfo.azureRegId = regId;
+            var userHelper = new UserHelper();
+            await userHelper.UpdateNtfInfo(uid, pns, pnsToken, azureRegId);
 
-                if (db.upsertUser(user))
-                    return Ok(null);
-            }
-            return ERROR_ACT_FAILED;
+            return Ok();
         }
 
         /// <summary>
@@ -72,9 +61,13 @@ namespace UW.Controllers.JsonRpc
         /// <returns></returns>
         public async Task<IRpcMethodResult> sendMessage(string userId, string message)
         {
-            var user = db.getUserByUserId(userId);
+            var uid = UserHelper.IdGen.Parse(userId);
 
-            await notifications.sendMessage(userId, user.ntfInfo.pns, message);
+            var userHelper = new UserHelper();
+
+            var user = await userHelper.GetById(uid);
+
+            await notifications.sendMessage(user.userId, user.ntfInfo.pns, message);
             return Ok();
         }
 

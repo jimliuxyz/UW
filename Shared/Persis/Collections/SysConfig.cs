@@ -1,28 +1,63 @@
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
 
 namespace UW.Shared.Persis.Collections
 {
-    //todo : 預計ttl維持24H 當genCount>=3 且 attemptCount>=3時 則待清除後才能被reset,再度使用
-    public partial class SmsPasscode : Resource
+    public partial class SysConfig
     {
-        public string id { get; set; }
-        public string pk { get; set; }
-        public string phoneno { get; set; }
-        public string passcode { get; set; }
-
-        public int resendCount { get; set; }   // passcode連續產生的次數
-        public int verifyCount { get; set; }   // 當下passcode被嘗試的次數
-        public DateTime verifyAvailTime { get; set; }
+        public string id { get; set; } = "SysConfig";
+        public string pk { get; set; } = "SysConfig";
+        public bool disableTx { get; set; } = false;
+        public List<CurrencyConfig> currencies { get; set; } = DefCurrencyConfig;
     }
 
-
-    public partial class SmsPasscode
+    public partial class ServConfig
     {
-        public static readonly string _COLLECTION_NAME = "SmsPasscode";
+        public string id { get; set; }
+        public string pk { get; set; } = "ServConfig";
+        public bool disable { get; set; } = false;
+
+        [JsonProperty(PropertyName = "ttl", NullValueHandling = NullValueHandling.Ignore)]
+        public int? TimeToLive { get; set; } = 3 * 60;
+    }
+
+    public class CurrencyConfig
+    {
+        public string name { get; set; }
+        public string icon { get; set; } = "";
+    }
+
+    public partial class SysConfig
+    {
+        static List<CurrencyConfig> DefCurrencyConfig = new List<CurrencyConfig>
+        {
+            new CurrencyConfig{
+                name = D.CNY,
+                icon = ""
+            },
+            new CurrencyConfig{
+                name = D.USD,
+                icon = ""
+            },
+            new CurrencyConfig{
+                name = D.BTC,
+                icon = ""
+            },
+            new CurrencyConfig{
+                name = D.ETH,
+                icon = ""
+            }
+        };
+    }
+
+    public partial class SysConfig
+    {
+        public static readonly string _COLLECTION_NAME = "SysConfig";
         public static readonly string _PK = "/pk";
 
 
@@ -33,7 +68,7 @@ namespace UW.Shared.Persis.Collections
         public static readonly DocumentCollection _SPEC = new DocumentCollection
         {
             Id = _COLLECTION_NAME,
-            DefaultTimeToLive = 60 * 60,    // 60min
+            DefaultTimeToLive = -1,
             IndexingPolicy = new IndexingPolicy(
                 new RangeIndex(DataType.String) { Precision = -1 }
             )
@@ -42,13 +77,6 @@ namespace UW.Shared.Persis.Collections
                 IncludedPaths = new Collection<IncludedPath>{
                     new IncludedPath {
                         Path = "/pk/*",
-                        Indexes = new Collection<Index>()
-                        {
-                            new RangeIndex(DataType.Number) { Precision = -1 }
-                        }
-                    },
-                    new IncludedPath {
-                        Path = "/phoneno/*",
                         Indexes = new Collection<Index>()
                         {
                             new RangeIndex(DataType.Number) { Precision = -1 }
@@ -65,7 +93,6 @@ namespace UW.Shared.Persis.Collections
             {
                 UniqueKeys = new Collection<UniqueKey>
                 {
-                    new UniqueKey { Paths = new Collection<string> { "/phoneno" }},
                 }
             },
             PartitionKey = new PartitionKeyDefinition

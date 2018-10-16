@@ -56,6 +56,7 @@ namespace UW.Data
         public readonly DocumentClient client;
         public Persistence(Ntfy notifications)
         {
+            return;
             Console.WriteLine("====start db====");
             this.notifications = notifications;
 
@@ -633,7 +634,7 @@ namespace UW.Data
             upsertReceipt(sender_rec);
 
             //simulate receipt notification
-            new Thread(() =>
+            Task.Run(async () =>
             {
                 Task.Delay(10).Wait();
                 //notify sender
@@ -652,7 +653,7 @@ namespace UW.Data
                     });
                     upsertReceipt(receiver_rec);
 
-                    notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.ToApiResult() } });
+                    await notifications.sendMessage(toId, toUser.ntfInfo.pns, "transfer in", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { receiver_rec.ToApiResult() } });
                 }
             }).Start();
 

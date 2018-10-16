@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
 using UW.Shared.MQueue.Utils;
 
 namespace UW.Shared.MQueue.Handlers
@@ -24,10 +26,7 @@ namespace UW.Shared.MQueue.Handlers
             {
                 msg = "hello",
             };
-            lock (QUEUE_NAME)
-            {
-                Console.WriteLine("cnt="+(++cnt));
-            }
+            Console.WriteLine("cnt+1=" + Interlocked.Increment(ref cnt));
             await sender.Send(MSG_LABEL, data);
         }
 
@@ -37,10 +36,7 @@ namespace UW.Shared.MQueue.Handlers
             {
                 msg = "hello",
             };
-            lock (QUEUE_NAME)
-            {
-                Console.WriteLine("cnt="+(++cnt));
-            }
+            Console.WriteLine("cnt+1=" + Interlocked.Increment(ref cnt));
             return await MQUtils.SendAndWaitReply(sender, MSG_LABEL, data, timeout);
         }
     }
@@ -52,31 +48,42 @@ namespace UW.Shared.MQueue.Handlers
     {
         public static void StartReceiving(int count)
         {
+            var tasks = new List<Task>();
             for (int i = 0; i < count; i++)
             {
-                var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver-" + i)
-                    .SetReceiveMode(ReceiveMode.PeekLock)
-                    .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
-                    {
-                        // Console.WriteLine("start...");
-                        // Console.WriteLine(pack.data);
-                    }, Flow1, Flow2)
-                    .SetPrefetchCount(5)
-                    .build();
+                var task = Task.Run(() =>
+                {
+                    NewReceiver();
+                });
+                tasks.Add(task);
             }
+            Task.WaitAll(tasks.ToArray());
+        }
+
+        private static int receiverCounter = 0;
+        private static void NewReceiver()
+        {
+            var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver-" + Interlocked.Increment(ref receiverCounter))
+                .SetReceiveMode(ReceiveMode.PeekLock)
+                .SetPrefetchCount(5)
+                .AddMessageHandlerChain(MSG_LABEL, async (pack) =>
+                {
+                    // Console.WriteLine("start...");
+                    // Console.WriteLine(pack.data);
+                }, Flow1, Flow2)
+                .build();
         }
 
         public static int cnt = 0;
         private static async Task Flow1(HandlerPack pack)
         {
-            lock (QUEUE_NAME)
-            {
-                Console.WriteLine("cnt=" + (--cnt) + " : " + pack.stationId);
-            }
+            Console.WriteLine("cnt-1=" + Interlocked.Decrement(ref cnt) + " : " + pack.stationId);
         }
 
         private static async Task Flow2(HandlerPack pack)
         {
+            var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(pack.message.Body));
+
             // reply to MQReplyCenter
             if (pack.message.ReplyToSessionId != null)
             {
@@ -84,7 +91,7 @@ namespace UW.Shared.MQueue.Handlers
                 {
                     stationId = pack.stationId,
                     threadHashCode = Thread.CurrentThread.GetHashCode(),
-                    echo = pack.param,
+                    echo = data,
                     error = (object)null
                 };
                 /*await*/

@@ -25,30 +25,30 @@ namespace UW
     {
         private static Uri endPoint = new Uri("http://localhost:5000/api/test");
 
-        public static async Task Start(int count)
+        public static async Task Start(int clientCount, int requestCount)
         {
             var watch = new Stopwatch();
             watch.Start();
 
             Console.WriteLine("HttpClientTester start");
             var tasks = new List<Task>();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < clientCount; i++)
             {
-                var task = Task1();
+                var task = Task1(requestCount);
                 tasks.Add(task);
             }
 
             await Task.WhenAll(tasks);
-            Console.WriteLine($"HttpClientTester done ({watch.Elapsed.TotalSeconds}s)");
+            Console.WriteLine($"HttpClientTester done ({watch.Elapsed.TotalSeconds}s)===================");
         }
 
-        private static async Task Task1()
+        private static async Task Task1(int requestCount)
         {
             RpcClient client = new RpcClient(endPoint);
             RpcRequest req = new RpcRequest(0, "testQueue");
 
             var tasks = new List<Task>();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < requestCount; i++)
             {
                 var task = Task.Run(() =>
                 {
@@ -59,7 +59,16 @@ namespace UW
                 tasks.Add(task);
             }
 
-            await Task.WhenAll(tasks);
+            var all = Task.WhenAll(tasks);
+            if (await Task.WhenAny(all, Task.Delay(60000)) == all)
+            {
+                Console.WriteLine("compelet!");
+            }
+            else
+            {
+                Console.WriteLine("timeout!");
+            }
+
         }
     }
 }

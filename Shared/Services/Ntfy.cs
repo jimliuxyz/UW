@@ -26,19 +26,19 @@ namespace UW.Shared.Services
         /// <param name="message"></param>
         /// <param name="type">自訂動作</param>
         /// <param name="payload">自訂資料</param>
-        public void sendMessage(string userId, PNS pns, string message, string type=null, object payload=null){
+        public async Task sendMessage(string userId, PNS pns, string message, string type=null, object payload=null){
             var userTag = getUserTag(userId);
-            sendToTag(userTag, pns, message, type, payload);
+            await sendToTag(userTag, pns, message, type, payload);
         }
 
         /// <summary>
         /// 以廣播方式發送訊息
         /// </summary>
         /// <param name="message"></param>
-        public void broadcast(string message){
+        public async Task broadcast(string message){
             // 分別對每個PNS發送
             foreach(PNS pns in Enum.GetValues(typeof(PNS))){
-                sendToTag(D.NTFTAG.EVERYBODY, pns, message);
+                await sendToTag(D.NTFTAG.EVERYBODY, pns, message);
             }
         }
 
@@ -50,7 +50,7 @@ namespace UW.Shared.Services
         /// <param name="message"></param>
         /// <param name="type">自訂動作</param>
         /// <param name="payload">自訂資料</param>
-        private void sendToTag(string tag, PNS pns, string message, string type=null, object payload=null)
+        private async Task sendToTag(string tag, PNS pns, string message, string type=null, object payload=null)
         {
             var notif = "";
             var custom = new {
@@ -62,11 +62,11 @@ namespace UW.Shared.Services
             {
                 case PNS.apns:
                     notif = "{ \"aps\" : {\"alert\":\"" + message + "\"}, " + custom_json + "}";
-                    hub.SendAppleNativeNotificationAsync(notif, new string[] { tag });
+                    await hub.SendAppleNativeNotificationAsync(notif, new string[] { tag });
                     break;
                 case PNS.gcm:
                     notif = "{ \"data\" : {\"message\":\"" + message + "\"}, " + custom_json + "}";
-                    hub.SendGcmNativeNotificationAsync(notif, new string[] { tag });
+                    await hub.SendGcmNativeNotificationAsync(notif, new string[] { tag });
                     break;
                 default:
                     break;
@@ -127,7 +127,7 @@ namespace UW.Shared.Services
             string tag = getUserTag(userId);
 
             //取得或新建azure regId
-            string regId = getRegIdAsync(tag).Result;
+            string regId = await getRegIdAsync(tag);
 
             //依pns類型建立註冊描述
             RegistrationDescription registration = null;

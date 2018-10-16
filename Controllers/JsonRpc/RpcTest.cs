@@ -23,6 +23,7 @@ using UW.Shared.MQueue.Handlers;
 using UW.Shared;
 using UW.Shared.MQueue.MQException;
 using UW.Shared.Persis;
+using UW.Shared.Persis.Helper;
 
 namespace UW.Controllers.JsonRpc
 {
@@ -36,9 +37,7 @@ namespace UW.Controllers.JsonRpc
         {
             try
             {
-                // await MQTesting1.Send();
-                // return this.Ok(true);
-                var res = await MQTesting1.SendAndWaitReply(3000);
+                var res = await MQTesting1.SendAndWaitReply(60000);
                 return this.Ok(res);
             }
             catch (MQReplyTimeoutException)
@@ -52,7 +51,7 @@ namespace UW.Controllers.JsonRpc
             try
             {
                 var helper = new UserHelper();
-                var guid = await helper.GenUid();
+                var guid = helper.GenUid();
 
                 var phoneno = "XXX" + F.Random(100000000, 999999999);
 

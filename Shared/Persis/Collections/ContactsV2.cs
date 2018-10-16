@@ -1,28 +1,35 @@
-
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
 
 namespace UW.Shared.Persis.Collections
 {
-    //todo : 預計ttl維持24H 當genCount>=3 且 attemptCount>=3時 則待清除後才能被reset,再度使用
-    public partial class SmsPasscode : Resource
+    public partial class Contacts
     {
+        [JsonProperty(PropertyName = "id")]
         public string id { get; set; }
         public string pk { get; set; }
-        public string phoneno { get; set; }
-        public string passcode { get; set; }
+        public string userId { get; set; }  //unique key
+        public int vol { get; set; }  //unique key
 
-        public int resendCount { get; set; }   // passcode連續產生的次數
-        public int verifyCount { get; set; }   // 當下passcode被嘗試的次數
-        public DateTime verifyAvailTime { get; set; }
+        public List<string> friendOf { get; set; } = new List<string>();  //怎麼限制數量?
+        public List<Friend> friends { get; set; } = new List<Friend>();
+    }
+
+    public class Friend
+    {
+        public string userId { get; set; }
+        public string name { get; set; }
+        public string avatar { get; set; }
     }
 
 
-    public partial class SmsPasscode
+    public partial class Contacts
     {
-        public static readonly string _COLLECTION_NAME = "SmsPasscode";
+        public static readonly string _COLLECTION_NAME = "Contacts";
         public static readonly string _PK = "/pk";
 
 
@@ -33,7 +40,6 @@ namespace UW.Shared.Persis.Collections
         public static readonly DocumentCollection _SPEC = new DocumentCollection
         {
             Id = _COLLECTION_NAME,
-            DefaultTimeToLive = 60 * 60,    // 60min
             IndexingPolicy = new IndexingPolicy(
                 new RangeIndex(DataType.String) { Precision = -1 }
             )
@@ -48,10 +54,10 @@ namespace UW.Shared.Persis.Collections
                         }
                     },
                     new IncludedPath {
-                        Path = "/phoneno/*",
+                        Path = "/userId/*",
                         Indexes = new Collection<Index>()
                         {
-                            new RangeIndex(DataType.Number) { Precision = -1 }
+                            new HashIndex(DataType.String) { Precision = -1 }
                         }
                     },
                 },
@@ -65,7 +71,7 @@ namespace UW.Shared.Persis.Collections
             {
                 UniqueKeys = new Collection<UniqueKey>
                 {
-                    new UniqueKey { Paths = new Collection<string> { "/phoneno" }},
+                    new UniqueKey { Paths = new Collection<string> { "/userId/vol" }},
                 }
             },
             PartitionKey = new PartitionKeyDefinition
@@ -74,5 +80,4 @@ namespace UW.Shared.Persis.Collections
             }
         };
     }
-
 }

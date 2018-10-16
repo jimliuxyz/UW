@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using UW.Shared.Misc;
 using UW.Shared.MQueue.Utils;
 using UW.Shared.Persis;
+using UW.Shared.Persis.Helper;
 
 namespace UW.Shared.MQueue.Handlers
 {
@@ -33,7 +34,7 @@ namespace UW.Shared.MQueue.Handlers
 
         private static AzureSBus sender = AzureSBus.Builder(QUEUE_NAME).UseSender(1).build();
 
-        public async static Task<Object> CreateUser(string userId, string phoneno, string name = null, string avatar = null)
+        public async static Task<object> CreateUser(string userId, string phoneno, string name = null, string avatar = null)
         {
             var data = new MsgUserCreate
             {
@@ -58,18 +59,18 @@ namespace UW.Shared.MQueue.Handlers
             {
                 var mqbus = AzureSBus.Builder(QUEUE_NAME, QUEUE_NAME + "-Receiver-" + i)
                     .SetReceiveMode(ReceiveMode.PeekLock)
+                    .SetPrefetchCount(5)
                     .AddMessageHandlerChain(LABEL_USER_CREATE, async (pack) =>
                     {
                         // Console.WriteLine("start...");
                         // Console.WriteLine(pack.data);
-                    }, CheckMessage, Flow1, CompleteAsync)
-                    .SetPrefetchCount(5)
+                    }, Unpack, Flow1, CompleteAsync)
                     .build();
             }
         }
 
         public static int cnt = 0;
-        private static async Task CheckMessage(HandlerPack pack)
+        private static async Task Unpack(HandlerPack pack)
         {
             pack.param["msg"] = JsonConvert.DeserializeObject<MsgUserCreate>(Encoding.UTF8.GetString(pack.message.Body));
         }
@@ -81,7 +82,7 @@ namespace UW.Shared.MQueue.Handlers
 
             var pkgid = UserHelper.IdGen.Parse(msg.userId);
 
-            await helper.Create(pkgid, msg.phoneno);
+            await helper.Create(pkgid, "", msg.phoneno);
         }
 
         private static async Task CompleteAsync(HandlerPack pack)

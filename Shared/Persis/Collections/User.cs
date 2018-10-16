@@ -17,7 +17,7 @@ namespace UW.Shared.Persis.Collections
 
         public string pk { get; set; }
 
-        public long createdTime { get; set; }
+        public long createdTime = DateTime.UtcNow.ToFileTimeUtc();
         public string alias { get; set; }   //Unique Key in whole collection
 
         public bool allowDiscover = true;
@@ -26,11 +26,12 @@ namespace UW.Shared.Persis.Collections
         public string phoneno { get; set; }
 
         public string avatar { get; set; }
-        public string tokenRnd { get; set; }    //用來驗證會員最後建立的JWT
+        public string tokenRnd { get; set; }    //deprecated
+        public string jwtHash { get; set; }    //用來驗證會員最後建立的JWT
 
-        public List<CurrencySettings> currencies { get; set; }
+        public List<CurrencySettings> currencies { get; set; } = new List<CurrencySettings>();
 
-        public NtfInfo ntfInfo { get; set; }
+        public NtfInfo ntfInfo { get; set; } = new NtfInfo();
     }
 
     public class CurrencySettings
@@ -71,6 +72,20 @@ namespace UW.Shared.Persis.Collections
             {
                 IndexingMode = IndexingMode.Consistent,
                 IncludedPaths = new Collection<IncludedPath>{
+                    new IncludedPath {
+                        Path = "/pk/*",
+                        Indexes = new Collection<Index>()
+                        {
+                            new RangeIndex(DataType.Number) { Precision = -1 }
+                        }
+                    },
+                    new IncludedPath {
+                        Path = "/phoneno/*",
+                        Indexes = new Collection<Index>()
+                        {
+                            new RangeIndex(DataType.Number) { Precision = -1 }
+                        }
+                    },
                     new IncludedPath {
                         Path = "/createdTime/*",
                         Indexes = new Collection<Index>()

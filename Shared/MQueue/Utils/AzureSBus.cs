@@ -32,42 +32,56 @@ namespace UW.Shared.MQueue.Utils
             this.queueName = setting.queueName;
             this.stationId = setting.stationId;
 
-            // create azure queue
-            CreateAzureQueue(setting.queueName, setting.useSession).Wait();
-
-            // create sender
-            for (int i = 0; i < (setting.useSender); i++)
+            try
             {
-                var sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
-                senders.Add(sender);
 
-                var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { })))
+                // create azure queue
+                CreateAzureQueue(setting.queueName, setting.useSession).Wait();
+
+                // create sender
+                for (int i = 0; i < (setting.useSender); i++)
                 {
-                    SessionId = setting.useSession ? "_" : null,
-                    ContentType = "application/json",
-                    TimeToLive = TimeSpan.FromSeconds(1)
-                };
-                sender.SendAsync(message).Wait();
+                    Console.WriteLine(".");
+                    var sender = new MessageSender(R.QUEUE_CSTR, queueName, setting.sendRetryPolicy);
+                    senders.Add(sender);
+
+                    var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { })))
+                    {
+                        SessionId = setting.useSession ? "_" : null,
+                        ContentType = "application/json",
+                        TimeToLive = TimeSpan.FromSeconds(1)
+                    };
+                    sender.SendAsync(message).Wait();
+                }
+
+                // create receiver
+                if (setting.useSession)
+                    receiver = new SessionClient(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
+                else
+                    receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
+
+                // start receiving
+                if (setting.messageHandlers.Count > 0)
+                {
+                    // Task.Factory.StartNew(StartReceiver, TaskCreationOptions.LongRunning);
+                    Task.Run(StartReceiver);
+                }
             }
-
-            // create receiver
-            if (setting.useSession)
-                receiver = new SessionClient(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
-            else
-                receiver = new MessageReceiver(R.QUEUE_CSTR, queueName, setting.receiveMode, setting.receiveRetryPolicy, setting.prefetchCount);
-
-            // start receiving
-            if (setting.messageHandlers.Count > 0)
+            catch (System.Exception e)
             {
-                Task.Factory.StartNew(StartReceiver, TaskCreationOptions.LongRunning);
+                Console.WriteLine(e.Message);
+                throw;
             }
+
         }
+
+        private static Dictionary<string, string> existedQueue = new Dictionary<string, string>();
 
         private static async Task CreateAzureQueue(string queueName, bool isRequiresSession = false)
         {
             var nm = new ManagementClient(R.QUEUE_CSTR);
 
-            if (!await nm.QueueExistsAsync(queueName))
+            if (!existedQueue.ContainsKey(queueName) && !await nm.QueueExistsAsync(queueName))
             {
                 var desc = new QueueDescription(queueName)
                 {
@@ -75,8 +89,10 @@ namespace UW.Shared.MQueue.Utils
                     DefaultMessageTimeToLive = TimeSpan.FromMinutes(5)
                 };
                 await nm.CreateQueueAsync(desc);
+                existedQueue.Add(queueName, queueName);
             }
         }
+
 
         /// <summary>
         /// send a message
@@ -90,21 +106,29 @@ namespace UW.Shared.MQueue.Utils
         /// <returns></returns>
         public async Task Send(string label, dynamic data, string replyTo = null, string session = null, string replyToSessionId = null)
         {
-            var client = (senders[F.Random(0, senders.Count)]) as MessageSender;
-
-            var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)))
+            try
             {
-                // MessageId = j.ToString(),
-                SessionId = session,                   //the sessionId of this message
-                Label = label,
-                ReplyToSessionId = replyToSessionId,    //the sessionId for reply(send back)
-                ReplyTo = replyTo,
-                ContentType = "application/json",
-            };
-            if (setting.ttl > 0)
-                message.TimeToLive = TimeSpan.FromMilliseconds(setting.ttl);
+                var client = (senders[F.Random(0, senders.Count)]) as MessageSender;
 
-            await client.SendAsync(message);
+                var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)))
+                {
+                    // MessageId = j.ToString(),
+                    SessionId = session,                   //the sessionId of this message
+                    Label = label,
+                    ReplyToSessionId = replyToSessionId,    //the sessionId for reply(send back)
+                    ReplyTo = replyTo,
+                    ContentType = "application/json",
+                };
+                if (setting.ttl > 0)
+                    message.TimeToLive = TimeSpan.FromMilliseconds(setting.ttl);
+
+                await client.SendAsync(message);
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
         private async Task StartReceiver()
@@ -136,7 +160,8 @@ namespace UW.Shared.MQueue.Utils
                 var tasks = new List<Task>();
                 foreach (var sessionId in setting.sessionIds)
                 {
-                    var task = Task.Factory.StartNew(async () =>
+                    // var task = Task.Factory.StartNew(async () =>
+                    var task = Task.Run(async () =>
                     {
                         var client = _client.AcceptMessageSessionAsync(sessionId).Result;
                         while (true)
@@ -184,7 +209,7 @@ namespace UW.Shared.MQueue.Utils
                             }
 
                         }
-                    }, TaskCreationOptions.LongRunning);
+                    });
                     tasks.Add(task);
                 }
                 Task.WaitAll(tasks.ToArray());

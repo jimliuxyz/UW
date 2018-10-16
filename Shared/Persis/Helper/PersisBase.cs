@@ -7,9 +7,9 @@ using Microsoft.Azure.Documents.Client;
 using UW.Shared.Persis.Collections;
 using User = UW.Shared.Persis.Collections.User;
 
-namespace UW.Shared.Persis
+namespace UW.Shared.Persis.Helper
 {
-    public abstract class PersisBase
+    public abstract class BaseHelper
     {
         public static readonly Uri URI_DB = UriFactory.CreateDatabaseUri(R.DB_NAME);
 
@@ -50,6 +50,11 @@ namespace UW.Shared.Persis
             return new DocumentClient(new Uri(R.DB_URI), R.DB_KEY);
         }
 
+        public BaseHelper()
+        {
+            BuildDB().Wait();
+        }
+
         public static async Task BuildDB()
         {
             using (var client = new DocumentClient(new Uri(R.DB_URI), R.DB_KEY))
@@ -82,8 +87,8 @@ namespace UW.Shared.Persis
 
 
 
-                await client.CreateDocumentCollectionIfNotExistsAsync(
-                    TxLocker._URI_DB, TxLocker._SPEC, DEFREQ_OPTS);
+                // await client.CreateDocumentCollectionIfNotExistsAsync(
+                //     TxLocker._URI_DB, TxLocker._SPEC, DEFREQ_OPTS);
 
                 await client.CreateDocumentCollectionIfNotExistsAsync(
                     User._URI_DB, User._SPEC, DEFREQ_OPTS);

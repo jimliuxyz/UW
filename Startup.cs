@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UW.Data;
-using UW.Controllers.JsonRpc;
+using UW.Controllers.JsonRpc2;
 using UW.Shared;
 using UW.Shared.Services;
 
@@ -98,11 +98,11 @@ namespace UW
                     builder.RegisterController<RpcAuth>("auth");
                     builder.RegisterController<RpcContacts>("contacts");
                     builder.RegisterController<RpcProfile>("profile");
-                    builder.RegisterController<RpcPlatform>("platform");
+                    // builder.RegisterController<RpcPlatform>("platform");
                     builder.RegisterController<RpcNotification>("notification");
-                    builder.RegisterController<RpcTrading>("trading");
-                    builder.RegisterController<RpcExCurrency>("excurrency");
-                    builder.RegisterController<RpcTest>("test");
+                    // builder.RegisterController<RpcTrading>("trading");
+                    // builder.RegisterController<RpcExCurrency>("excurrency");
+                    // builder.RegisterController<RpcTest>("test");
                 });
             });
         }

@@ -63,9 +63,9 @@ namespace UW.Controllers.JsonRpc
                     var ntfInfo = user.ntfInfo;
                     if (ntfInfo != null && (ntfInfo.pns != pns || ntfInfo.pnsRegId != pnsToken))
                     {
-                        await Task.Run(() =>
+                        await Task.Run(async () =>
                         {
-                            notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", D.NTFTYPE.LOGOUT);
+                            await notifications.sendMessage(user.userId, ntfInfo.pns, "someone logged into your account\\nyou've got to logout!(t1)", D.NTFTYPE.LOGOUT);
                             // 避免rpc時間差可能造成regPnsToken在sendMessage之前
                             Task.Delay(3000).Wait();
                         });

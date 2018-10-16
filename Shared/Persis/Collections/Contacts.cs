@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace UW.Shared.Persis.Collections
 {
-    public class Contacts
+    public class Contacts_v1
     {
         [JsonProperty(PropertyName = "id")]
         public string id { get; set; }
@@ -12,10 +12,10 @@ namespace UW.Shared.Persis.Collections
         public int vol { get; set; }  //unique key
 
         public List<string> friendOf { get; set; }  //怎麼限制數量?
-        public List<Friend> friends { get; set; }
+        public List<Friend_v1> friends { get; set; }
     }
 
-    public class Friend
+    public class Friend_v1
     {
         public string userId { get; set; }
         public string name { get; set; }
