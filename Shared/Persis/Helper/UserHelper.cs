@@ -52,10 +52,10 @@ namespace UW.Shared.Persis.Helper
         /// <param name="uid"></param>
         /// <param name="jwtHash"></param>
         /// <param name="phoneno"></param>
-        /// <param name="name"></param>
+        /// <param name="realname"></param>
         /// <param name="avatar"></param>
         /// <returns></returns>
-        public async Task<User> Create(Pkuid uid, string jwtHash, string phoneno, string name = "", string avatar = "")
+        public async Task<User> Create(Pkuid uid, string jwtHash, string phoneno, string realname = "", string avatar = "")
         {
             // await client.ClearCollectionAsync(User._URI_COL);
 
@@ -65,9 +65,11 @@ namespace UW.Shared.Persis.Helper
                 pk = uid.PK,
                 jwtHash = jwtHash,
                 phoneno = phoneno,
-                name = name,
+                name = realname,
+                realname = realname,
+                nickname = realname,
                 avatar = avatar,
-                alias = uid.PkIdx + "-" + F.NewShortGuid(),
+                aliasId = uid.PkIdx + "-" + F.NewShortGuid(),
 
                 currencies = DefCurrencies,
             };

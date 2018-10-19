@@ -130,6 +130,11 @@ namespace UW.Controllers.JsonRpc2
             }
         }
 
+        public async Task<IRpcMethodResult> setFriendFavourite(string userId, bool favourite)
+        {
+            return ERROR_ACT_FAILED;
+        }
+
         /// <summary>
         /// 以電話號碼取得使用者列表
         /// </summary>

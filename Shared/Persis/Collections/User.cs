@@ -18,10 +18,11 @@ namespace UW.Shared.Persis.Collections
         public string pk { get; set; }
 
         public long createdTime = DateTime.UtcNow.ToFileTimeUtc();
-        public string alias { get; set; }   //Unique Key in whole collection
-
-        public bool allowDiscover = true;
-        public string name { get; set; }
+        public string aliasId { get; set; }   //Unique Key in whole collection
+        public string name { get; set; }    //deprecated
+        public string realname { get; set; }    //real name
+        public string nickname { get; set; }    //display only
+        public string email { get; set; }
 
         public string phoneno { get; set; }
 
@@ -120,6 +121,7 @@ namespace UW.Shared.Persis.Collections
                 {
                     new UniqueKey { Paths = new Collection<string> { "/alias" }},
                     new UniqueKey { Paths = new Collection<string> { "/phoneno" }},
+                    new UniqueKey { Paths = new Collection<string> { "/email" }},
                 }
             },
             PartitionKey = new PartitionKeyDefinition

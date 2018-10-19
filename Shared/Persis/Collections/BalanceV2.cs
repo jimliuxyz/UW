@@ -13,16 +13,19 @@ namespace UW.Shared.Persis.Collections
         [JsonProperty(PropertyName = "id")]
         public string userId { get; set; }
         public string pk { get; set; }
-        public string currency { get; set; }
-        public decimal balance { get; set; }
+        // public string currency { get; set; }
+        // public decimal balance { get; set; }
+        public Dictionary<string, decimal> balance { get; set; }
         public List<FlowBuf> outBuf = new List<FlowBuf>();
         public List<FlowBuf> inBuf = new List<FlowBuf>();
     }
 
     public class FlowBuf
     {
-        public int order { get; set; }
+        public string currency { get; set; }
+        public long time { get; set; }
         public string txId { get; set; }
+        public string receiptId { get; set; }
         public decimal amount { get; set; }
         public bool confirm { get; set; } = false;
     }

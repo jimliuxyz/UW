@@ -29,7 +29,7 @@ namespace UW
         public static void Main(string[] args)
         {
             ThreadPool.SetMinThreads(150, 150);
-            TestCreateDoc().Wait();
+            TestHelper.QueryTest().Wait();
         }
         // public static void Main(string[] args)
         // {
@@ -68,56 +68,15 @@ namespace UW
             Console.WriteLine(guid2.ToJson());
         }
 
-        public static async Task TestQueryDoc()
-        {
-            var helper = new UserHelper();
-            var guid = UserHelper.IdGen.Parse("t9uQHvb0KRDATEXF-kzcVedRUh5Q0JQq0kw6yMq");
-            // await helper.Create(guid, "test");
-
-            var user = await helper.GetById(guid);
-            Console.WriteLine(user);
-
-            helper.GetPartition();
-        }
         public static async Task TestCreateDoc()
         {
             var taskCount = 20;
             var list = new List<Task>();
             for (var i = 0; i < taskCount; i++)
             {
-                // list.Add(Task.Run(InsertUser));
-                list.Add(Task.Run(InsertDoc));
+                list.Add(Task.Run(InsertUser));
             }
             await Task.WhenAll(list.ToArray());
-        }
-
-        public static async Task InsertDoc()
-        {
-            var helper = new TestHelper();
-            helper.GetPartition();
-
-            var count = 50000;
-            for (var i = 0; i < count; i++)
-            {
-                try
-                {
-                    await helper.Create();
-                    Console.WriteLine($"{i}/{count}");
-                }
-                catch (DocumentClientException e)
-                {
-                    if (e.StatusCode == HttpStatusCode.Conflict)
-                    {
-                        i--;
-                        continue;
-                    }
-
-                    throw;
-                }
-                if (i % 1000 == 0)
-                    helper.GetPartition();
-            }
-            helper.GetPartition();
         }
 
         public static async Task InsertUser()
