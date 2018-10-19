@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -213,17 +214,22 @@ namespace UW.Shared.Persis.Helper
             return (jwtHash == user.jwtHash);
         }
 
-        public async Task UpdateNtfInfo(Pkuid uid, PNS pns, string pnsRegId, string azureRegId)
+        public async Task UpdateField(Pkuid uid, string pnsRegId, string azureRegId)
         {
-            var user = await GetById(uid);
-
-            user.ntfInfo = new NtfInfo
+            var procId = "UpdateField";
+            var sprocBody = File.ReadAllText(@"./sp.js");
+            var sproc = new StoredProcedure
             {
-                pns = pns,
-                pnsRegId = pnsRegId,
-                azureRegId = azureRegId,
+                Id = procId,
+                Body = sprocBody
             };
-            await Update(user);
+
+            var uriSp = UriFactory.CreateStoredProcedureUri(User._DB_NAME, User._COLLECTION_NAME, procId);
+            var opts = new RequestOptions {  EnableScriptLogging = true };
+
+            StoredProcedure createdStoredProcedure = await client.UpsertStoredProcedureAsync(User._URI_COL, sproc);
+
+            StoredProcedureResponse<Document> createdDocument = client.ExecuteStoredProcedureAsync<Document>(uriSp, opts, "", "name", "hello_jim").Result;
         }
 
     }
