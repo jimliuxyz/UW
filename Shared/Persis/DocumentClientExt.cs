@@ -28,12 +28,12 @@ namespace UW.Shared.Persis
             foreach (var partitionKeyRangeStatistics in collection.PartitionKeyRangeStatistics)
             {
                 Console.WriteLine("PartitionKeyRangeId : " + partitionKeyRangeStatistics.PartitionKeyRangeId);
-                Console.WriteLine("DocumentCount : " + partitionKeyRangeStatistics.DocumentCount);
-                Console.WriteLine("SizeInKB : " + partitionKeyRangeStatistics.SizeInKB);
+                Console.WriteLine(" DocumentCount : " + partitionKeyRangeStatistics.DocumentCount);
+                Console.WriteLine(" SizeInKB : " + partitionKeyRangeStatistics.SizeInKB);
 
                 foreach (var partitionKeyStatistics in partitionKeyRangeStatistics.PartitionKeyStatistics)
                 {
-                    Console.WriteLine($" PartitionKey : {partitionKeyStatistics.PartitionKey}  {partitionKeyStatistics.SizeInKB}KB");
+                    Console.WriteLine($"  PartitionKey : {partitionKeyStatistics.PartitionKey}  {partitionKeyStatistics.SizeInKB}KB");
                 }
             }
         }
@@ -69,8 +69,7 @@ namespace UW.Shared.Persis
         /// <returns></returns>
         public static long GetDocsCount(this DocumentClient client, Uri collectionUri)
         {
-            var timer = new Stopwatch();
-            timer.Start();
+
             // SQL
             long count = client.CreateDocumentQuery<long>(
                 collectionUri,
@@ -82,27 +81,15 @@ namespace UW.Shared.Persis
             // count = client.CreateDocumentQuery(collectionUri, DefaultOptions)
             //     .Where(doc => true)
             //     .LongCount();
-            Console.WriteLine("GetDocsCount : " + timer.Elapsed.TotalSeconds);
 
+            // var timer = new Stopwatch();
+            // timer.Start();
+            // var query = client.CreateDocumentQuery<object>(collectionUri, new SqlQuerySpec("SELECT VALUE COUNT(1) FROM c"), DefaultOptions).AsDocumentQuery();
+            // FeedResponse<long> queryResult = query.ExecuteNextAsync<long>().Result;
+            // Console.WriteLine("GetDocsCount2 : " + timer.Elapsed.TotalSeconds);
+            // Console.WriteLine("requestCharge : " + queryResult.RequestCharge);
+            // Console.WriteLine("queryResult : " + queryResult.First());
 
-            var query = client.CreateDocumentQuery<object>(collectionUri, new SqlQuerySpec("SELECT VALUE count(c.id) FROM c"), DefaultOptions).AsDocumentQuery();
-            // FeedResponse<object> queryResult = await query.ExecuteNextAsync<object>();
-            FeedResponse<long> queryResult = query.ExecuteNextAsync<long>().Result;
-            double requestCharge = queryResult.RequestCharge;
-            Console.WriteLine("GetDocsCount2 : " + timer.Elapsed.TotalSeconds);
-            Console.WriteLine("requestCharge : " + requestCharge);
-            Console.WriteLine("queryResult : " + queryResult.First());
-
-
-            // var documentQuery = client.CreateDocumentQuery(collectionUri
-            //                     , new FeedOptions()
-            //                     {
-            //                         MaxItemCount = -1,
-            //                         MaxDegreeOfParallelism = -1,
-            //                         EnableCrossPartitionQuery = true,
-            //             // PartitionKey = new PartitionKey(guid.PK)
-            //         }, "SELECT VALUE COUNT(1) FROM c")
-            //                     .AsDocumentQuery();
 
             return count;
         }
@@ -140,5 +127,28 @@ namespace UW.Shared.Persis
             Console.WriteLine(String.Format("ClearCollectionAsync RU: {0}", ruamount));
         }
 
+        public static async Task CreateListOfStoredProcedureAsync(this DocumentClient client, string dbname, string colname, List<StoredProcedure> list)
+        {
+            var uriCol = UriFactory.CreateDocumentCollectionUri(dbname, colname);
+            foreach (var sproc in list)
+            {
+                try
+                {
+                    StoredProcedure sp = await client.ReadStoredProcedureAsync(UriFactory.CreateStoredProcedureUri(dbname, colname, sproc.Id));
+
+                    if (sp.Body == sproc.Body)
+                        return;
+                    else if (sp != null)
+                    {
+                        //todo : remove DeleteStoredProcedureAsync
+                        await client.DeleteStoredProcedureAsync(UriFactory.CreateStoredProcedureUri(dbname, colname, sproc.Id));
+                    }
+                }
+                catch (System.Exception) { }
+
+                Console.WriteLine(" ... create store procedure `{0}`", sproc.Id);
+                await client.CreateStoredProcedureAsync(uriCol, sproc);
+            }
+        }
     }
 }

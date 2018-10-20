@@ -22,7 +22,7 @@ namespace UW.Shared.Persis.Helper
         public string pk;
         public string payload;
     }
-    public class TestHelper : BaseHelper
+    public class TestHelper : PersisHelper
     {
         private static string DBNAME = R.DB_NAME;
         private static string COLNAME = "Testing";

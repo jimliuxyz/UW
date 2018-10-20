@@ -17,7 +17,7 @@ using User = UW.Shared.Persis.Collections.User;
  */
 namespace UW.Shared.Persis.Helper
 {
-    public class ContactsHelper : BaseHelper
+    public class ContactsHelper : PersisHelper
     {
         private readonly DocumentClient client;
 

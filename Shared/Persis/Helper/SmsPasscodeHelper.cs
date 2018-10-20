@@ -11,7 +11,7 @@ using Microsoft.Azure.Documents;
 namespace UW.Shared.Persis.Helper
 {
     //todo : store procedure
-    public class SmsPasscodeHelper : BaseHelper
+    public class SmsPasscodeHelper : PersisHelper
     {
         private readonly DocumentClient client;
         static SmsPasscodeHelper()
@@ -74,7 +74,7 @@ namespace UW.Shared.Persis.Helper
                             passed = true;
 
                             //刪除sms
-                            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(R.DB_NAME, COL_SMSPCODE, sms.id), reqOpt);
+                            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(R.DB_NAME, SmsPasscode._COLLECTION_NAME, sms.id), reqOpt);
                         }
                         else
                         {
@@ -82,7 +82,7 @@ namespace UW.Shared.Persis.Helper
 
                             //更新sms
                             sms.verifyCount++;
-                            await client.UpsertDocumentAsync(URI_SMSPCODE, sms, reqOpt);
+                            await client.UpsertDocumentAsync(SmsPasscode._URI_COL, sms, reqOpt);
                         }
                     }
                     else

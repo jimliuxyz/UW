@@ -49,6 +49,7 @@ namespace UW.Controllers.JsonRpc2
         {
             try
             {
+                await userHelper.UpdateField(uid, new string[] { "name" }, new string[] { "qwe123" });
                 var user = await userHelper.GetById(uid);
 
                 return Ok(new
@@ -62,7 +63,7 @@ namespace UW.Controllers.JsonRpc2
             }
             catch (System.Exception e)
             {
-                // Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
                 return ERROR_ACT_FAILED;
             }
         }

@@ -16,7 +16,7 @@ using User = UW.Shared.Persis.Collections.User;
 
 namespace UW.Shared.Persis.Helper
 {
-    public class BalanceHelper : BaseHelper
+    public class BalanceHelper : PersisHelper
     {
         private readonly DocumentClient client;
 

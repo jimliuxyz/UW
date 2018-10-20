@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json.Linq;
 using UW.Shared.Misc;
 using UW.Shared.Persis.Collections;
 using User = UW.Shared.Persis.Collections.User;
 
 namespace UW.Shared.Persis.Helper
 {
-    public class UserHelper : BaseHelper
+    public class UserHelper : PersisHelper
     {
         private readonly DocumentClient client;
         // public static readonly PkuidGen IdGen = new PkuidGen("user").SetPkVolume(5);
@@ -47,6 +48,20 @@ namespace UW.Shared.Persis.Helper
             return IdGen.Generate(0);
         }
 
+        private Uri GetDocumentUri(Pkuid uid)
+        {
+            return UriFactory.CreateDocumentUri(User._DB_NAME, User._COLLECTION_NAME, uid.Guid);
+        }
+        private Uri GetDocumentUri(string userId)
+        {
+            return UriFactory.CreateDocumentUri(User._DB_NAME, User._COLLECTION_NAME, userId);
+        }
+
+        public void GetPartition()
+        {
+            client.GetPartitionInfo(User._URI_COL);
+        }
+
         /// <summary>
         /// Create user
         /// </summary>
@@ -58,7 +73,7 @@ namespace UW.Shared.Persis.Helper
         /// <returns></returns>
         public async Task<User> Create(Pkuid uid, string jwtHash, string phoneno, string realname = "", string avatar = "")
         {
-            // await client.ClearCollectionAsync(User._URI_COL);
+            await client.ClearCollectionAsync(User._URI_COL);
 
             var user = new User()
             {
@@ -89,9 +104,8 @@ namespace UW.Shared.Persis.Helper
                     Console.WriteLine("Conflict!! data:{0}", user.ToJson());
                 else
                 {
-                    Console.WriteLine("================");
+                    Console.WriteLine("==CreateDocumentAsync Unknown Exception================");
                     Console.WriteLine(e.Message);
-                    await Task.Delay(10 * 60 * 1000);
                 }
 
                 throw e;
@@ -102,23 +116,20 @@ namespace UW.Shared.Persis.Helper
 
         public async Task Update(User user)
         {
-            var res = await client.ReplaceDocumentAsync(GetDocumentUri(user.userId), user);
-            // return res.StatusCode == HttpStatusCode.OK || res.StatusCode == HttpStatusCode.Created;
+            var watch = new Stopwatch();
+            watch.Start();
+
+            var res = await client.ReplaceDocumentAsync(GetDocumentUri(user.userId), user, new RequestOptions
+            {
+                PartitionKey = new PartitionKey(user.pk),
+                AccessCondition = new AccessCondition { Condition = user.ETag, Type = AccessConditionType.IfMatch },
+            });
+            Console.WriteLine(String.Format("Update / RU: {0} / Elapsed: {1}", res.RequestCharge, watch.Elapsed.TotalSeconds));
+
+            // update the version of current document
+            user.SetPropertyValue("_etag", ((Document)res).ETag);
         }
 
-        private Uri GetDocumentUri(Pkuid uid)
-        {
-            return UriFactory.CreateDocumentUri(User._DB_NAME, User._COLLECTION_NAME, uid.Guid);
-        }
-        private Uri GetDocumentUri(string userId)
-        {
-            return UriFactory.CreateDocumentUri(User._DB_NAME, User._COLLECTION_NAME, userId);
-        }
-
-        public void GetPartition()
-        {
-            client.GetPartitionInfo(User._URI_COL);
-        }
         public async Task<User> GetById(Pkuid uid)
         {
             try
@@ -176,7 +187,8 @@ namespace UW.Shared.Persis.Helper
 
             return result.FirstOrDefault();
         }
-        // todo : improve low performance (考慮反正歸))
+
+        // todo : improve low performance (必須反正規))
         public async Task<List<User>> GetByPhonenos(string[] phonenos)
         {
             var result = await client.CreateDocumentQuery<User>(User._URI_COL,
@@ -214,22 +226,37 @@ namespace UW.Shared.Persis.Helper
             return (jwtHash == user.jwtHash);
         }
 
-        public async Task UpdateField(Pkuid uid, string pnsRegId, string azureRegId)
+        public async Task UpdateNtfInfo(Pkuid uid, PNS pns, string pnsRegId, string azureRegId)
         {
-            var procId = "UpdateField";
-            var sprocBody = File.ReadAllText(@"./sp.js");
-            var sproc = new StoredProcedure
+            var user = await GetById(uid);
+
+            user.ntfInfo = new NtfInfo
             {
-                Id = procId,
-                Body = sprocBody
+                pns = pns,
+                pnsRegId = pnsRegId,
+                azureRegId = azureRegId,
+            };
+            await Update(user);
+        }
+        public async Task UpdateField(Pkuid uid, string[] fields, string[] values)
+        {
+            var watch = new Stopwatch();
+            watch.Start();
+
+            var opts = new RequestOptions
+            {
+                PartitionKey = new PartitionKey(uid.PK),
+                EnableScriptLogging = true,
+                ConsistencyLevel = ConsistencyLevel.Eventual
             };
 
-            var uriSp = UriFactory.CreateStoredProcedureUri(User._DB_NAME, User._COLLECTION_NAME, procId);
-            var opts = new RequestOptions {  EnableScriptLogging = true };
+            var response = await client.ExecuteStoredProcedureAsync<dynamic>(User._URI_UpdateFields, opts, uid.Guid, fields, values);
 
-            StoredProcedure createdStoredProcedure = await client.UpsertStoredProcedureAsync(User._URI_COL, sproc);
+            // Console.WriteLine("log : " + System.Web.HttpUtility.UrlDecode(response.ScriptLog));
+            Console.WriteLine("SProc RU : {0} Elapsed: {1}", response.RequestCharge, watch.Elapsed.TotalSeconds);
 
-            StoredProcedureResponse<Document> createdDocument = client.ExecuteStoredProcedureAsync<Document>(uriSp, opts, "", "name", "hello_jim").Result;
+            var result = response.Response;
+            // Console.WriteLine("result : " + result);
         }
 
     }

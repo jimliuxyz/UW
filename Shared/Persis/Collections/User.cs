@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
@@ -10,7 +11,7 @@ namespace UW.Shared.Persis.Collections
 {
     public enum PNS { gcm, apns }
 
-    public partial class User
+    public partial class User : Resource
     {
         [JsonProperty(PropertyName = "id")]
         public string userId { get; set; }
@@ -54,7 +55,7 @@ namespace UW.Shared.Persis.Collections
         public string azureRegId { get; set; }
     }
 
-    public partial class User
+    public partial class User // for data schema
     {
         public static readonly string _COLLECTION_NAME = "User";
         public static readonly string _PK = "/pk";
@@ -74,35 +75,35 @@ namespace UW.Shared.Persis.Collections
                 IndexingMode = IndexingMode.Consistent,
                 IncludedPaths = new Collection<IncludedPath>{
                     new IncludedPath {
-                        Path = "/pk/*",
+                        Path = "/pk/?",
                         Indexes = new Collection<Index>()
                         {
                             new RangeIndex(DataType.Number) { Precision = -1 }
                         }
                     },
                     new IncludedPath {
-                        Path = "/phoneno/*",
+                        Path = "/phoneno/?",
                         Indexes = new Collection<Index>()
                         {
                             new RangeIndex(DataType.Number) { Precision = -1 }
                         }
                     },
                     new IncludedPath {
-                        Path = "/createdTime/*",
+                        Path = "/createdTime/?",
                         Indexes = new Collection<Index>()
                         {
                             new RangeIndex(DataType.Number) { Precision = -1 }
                         }
                     },
                     new IncludedPath {
-                        Path = "/alias/*",
+                        Path = "/aliasId/?",
                         Indexes = new Collection<Index>()
                         {
                             new HashIndex(DataType.String) { Precision = -1 }
                         }
                     },
                     new IncludedPath {
-                        Path = "/allowDiscover/*",
+                        Path = "/allowDiscover/?",
                         Indexes = new Collection<Index>()
                         {
                             new HashIndex(DataType.String) { Precision = -1 }
@@ -111,7 +112,7 @@ namespace UW.Shared.Persis.Collections
                 },
                 ExcludedPaths = new Collection<ExcludedPath>{
                     new ExcludedPath {
-                        Path = "/"
+                        Path = "/*"
                     }
                 }
             },
@@ -119,7 +120,7 @@ namespace UW.Shared.Persis.Collections
             {
                 UniqueKeys = new Collection<UniqueKey>
                 {
-                    new UniqueKey { Paths = new Collection<string> { "/alias" }},
+                    new UniqueKey { Paths = new Collection<string> { "/aliasId" }},
                     new UniqueKey { Paths = new Collection<string> { "/phoneno" }},
                     new UniqueKey { Paths = new Collection<string> { "/email" }},
                 }
@@ -128,6 +129,21 @@ namespace UW.Shared.Persis.Collections
             {
                 Paths = new Collection<string> { _PK }
             }
+        };
+    }
+
+
+    public partial class User // for StoredProcedure
+    {
+        public static readonly StoredProcedure _SP_UpdateFields = new StoredProcedure
+        {
+            Id = "UpdateFields",
+            Body = File.ReadAllText(@"./Shared/Sproc/User/UpdateField.js")
+        };
+        public static readonly Uri _URI_UpdateFields = UriFactory.CreateStoredProcedureUri(_DB_NAME, _COLLECTION_NAME, _SP_UpdateFields.Id);
+
+        public static readonly List<StoredProcedure> _SPROCs = new List<StoredProcedure>{
+            _SP_UpdateFields
         };
     }
 

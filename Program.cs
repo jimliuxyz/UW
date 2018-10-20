@@ -26,23 +26,20 @@ namespace UW
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             ThreadPool.SetMinThreads(150, 150);
-            TestHelper.QueryTest().Wait();
+            // TestCreateDoc().Wait();
+            // TestPkuid();
+            PersisHelper.BuildDB().Wait();
+
+            // StartQueueDaemon().Wait();
+
+            // StartHttpTestClient();
+
+            CreateWebHostBuilder(args).Build().Run();
         }
-        // public static void Main(string[] args)
-        // {
-        //     ThreadPool.SetMinThreads(150, 150);
-        //     TestCreateDoc().Wait();
-        //     TestPkuid();
-
-        //     StartQueueDaemon().Wait();
-
-        //     // StartHttpTestClient();
-
-        //     CreateWebHostBuilder(args).Build().Run();
-        // }
 
         public static void StartHttpTestClient()
         {
