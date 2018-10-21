@@ -10,7 +10,17 @@ namespace UW.Shared
     {
         public static string ToJson(this object context)
         {
-            return JsonConvert.SerializeObject(context, Formatting.Indented);
+            return JsonConvert.SerializeObject(context, Formatting.Indented,
+            new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
+        }
+
+        public static dynamic ToObject(this string jsonstr)
+        {
+            return JsonConvert.DeserializeObject(jsonstr);
         }
 
         public static T DeepClone<T>(this T source)

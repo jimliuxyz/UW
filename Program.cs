@@ -107,7 +107,13 @@ namespace UW
         }
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
-
+            .ConfigureLogging(builder => builder.AddFile(options =>
+            {
+                options.FileName = "log-";
+                options.LogDirectory = "LogFiles";
+                options.FileSizeLimit = 10 * 1024 * 1024;
+                options.RetainedFileCountLimit = 2;
+            }))
+            .UseStartup<Startup>();
     }
 }

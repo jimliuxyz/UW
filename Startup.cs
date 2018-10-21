@@ -22,6 +22,8 @@ using UW.Shared;
 using UW.Shared.Services;
 
 using Microsoft.AspNetCore.Builder;
+using System.IO;
+using System.IO.Compression;
 
 namespace UW
 {
@@ -93,6 +95,7 @@ namespace UW
 
             app.Map("/api", rpcApp =>
             {
+                rpcApp.Use(LogRequest);
                 rpcApp.UseManualJsonRpc(builder =>
                 {
                     builder.RegisterController<RpcAuth>("auth");
@@ -105,6 +108,59 @@ namespace UW
                     // builder.RegisterController<RpcTest>("test");
                 });
             });
+        }
+        public async Task LogRequest(HttpContext context, Func<Task> next)
+        {
+            ILogger<Startup> logger = context.RequestServices.GetRequiredService<ILogger<Startup>>();
+            using (MemoryStream newRequestStream = new MemoryStream())
+            {
+                // logger.LogInformation(context.Request.Headers.ToArray().ToJson());
+
+                Stream requestStream = context.Request.Body;
+                context.Request.Body.CopyTo(newRequestStream);
+                newRequestStream.Seek(0, SeekOrigin.Begin);
+                string requestBody = new StreamReader(newRequestStream).ReadToEnd();
+
+                newRequestStream.Seek(0, SeekOrigin.Begin);
+                context.Request.Body = newRequestStream;
+
+                string responseBody;
+                using (MemoryStream newBodyStream = new MemoryStream())
+                {
+                    Stream bodyStream = context.Response.Body;
+                    context.Response.Body = newBodyStream;
+
+                    await next();
+
+                    newBodyStream.Seek(0, SeekOrigin.Begin);
+                    if (context.Response.Headers["Content-Encoding"].Contains("gzip"))
+                    {
+                        using (var cs = new GZipStream(newBodyStream, CompressionMode.Decompress, true))
+                        {
+                            responseBody = new StreamReader(cs).ReadToEnd();
+                        }
+                    }
+                    else
+                    {
+                        responseBody = new StreamReader(newBodyStream).ReadToEnd();
+                        logger.LogInformation(context.Response.Headers["Content-Encoding"]);
+                    }
+
+                    newBodyStream.Seek(0, SeekOrigin.Begin);
+                    newBodyStream.CopyTo(bodyStream);
+                    context.Response.Body = bodyStream;
+                }
+
+                var log = new
+                {
+                    IP = context.Connection.RemoteIpAddress.ToString(),
+                    JWT = context.Request.Headers?["Authorization"],
+                    UserId = context.User.FindFirst(c => c.Type == D.CLAIM.USERID)?.Value,
+                    RequestBody = requestBody?.ToObject(),
+                    ResponseBody = responseBody?.ToObject()
+                };
+                logger.LogInformation("\n" + log.ToJson());
+            }
         }
     }
 }

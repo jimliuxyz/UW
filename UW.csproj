@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="1.9.1" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="2.0.0-preview1" />
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.1.0" />
+    <PackageReference Include="NetEscapades.Extensions.Logging.RollingFile" Version="1.0.1" />
   </ItemGroup>
 
 </Project>

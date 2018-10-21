@@ -119,15 +119,25 @@ namespace UW.Shared.Persis.Helper
             var watch = new Stopwatch();
             watch.Start();
 
-            var res = await client.ReplaceDocumentAsync(GetDocumentUri(user.userId), user, new RequestOptions
+            try
             {
-                PartitionKey = new PartitionKey(user.pk),
-                AccessCondition = new AccessCondition { Condition = user.ETag, Type = AccessConditionType.IfMatch },
-            });
-            Console.WriteLine(String.Format("Update / RU: {0} / Elapsed: {1}", res.RequestCharge, watch.Elapsed.TotalSeconds));
+                var res = await client.ReplaceDocumentAsync(GetDocumentUri(user.userId), user, new RequestOptions
+                {
+                    PartitionKey = new PartitionKey(user.pk),
+                    AccessCondition = new AccessCondition { Condition = user.ETag, Type = AccessConditionType.IfMatch },
+                });
+                Console.WriteLine(String.Format("Update / RU: {0} / Elapsed: {1}", res.RequestCharge, watch.Elapsed.TotalSeconds));
 
-            // update the version of current document
-            user.SetPropertyValue("_etag", ((Document)res).ETag);
+                // update the version of current document
+                user.SetPropertyValue("_etag", ((Document)res).ETag);
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == HttpStatusCode.PreconditionFailed)
+                    Console.WriteLine("ReplaceDocumentAsync : doc version expired!(concurrency)");
+
+                throw e;
+            }
         }
 
         public async Task<User> GetById(Pkuid uid)
@@ -148,7 +158,7 @@ namespace UW.Shared.Persis.Helper
                 //return null if not found
                 if (e.StatusCode == HttpStatusCode.NotFound)
                     return null;
-                throw;
+                throw e;
             }
         }
 

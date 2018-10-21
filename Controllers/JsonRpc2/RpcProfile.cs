@@ -19,6 +19,7 @@ using UW.Shared;
 using UW.Shared.Services;
 using UW.Shared.Persis.Helper;
 using UW.Shared.Misc;
+using Microsoft.Extensions.Logging;
 
 namespace UW.Controllers.JsonRpc2
 {
@@ -31,7 +32,7 @@ namespace UW.Controllers.JsonRpc2
         private UserHelper userHelper = new UserHelper();
         private Pkuid uid;
 
-        public RpcProfile(IHttpContextAccessor accessor, Ntfy notifications)
+        public RpcProfile(ILogger<RpcProfile> logger, IHttpContextAccessor accessor, Ntfy notifications)
         {
             this.accessor = accessor;
             this.notifications = notifications;
@@ -49,7 +50,6 @@ namespace UW.Controllers.JsonRpc2
         {
             try
             {
-                await userHelper.UpdateField(uid, new string[] { "name" }, new string[] { "qwe123" });
                 var user = await userHelper.GetById(uid);
 
                 return Ok(new
@@ -97,10 +97,10 @@ namespace UW.Controllers.JsonRpc2
         /// <returns></returns>
         public async Task<IRpcMethodResult> updateProfile(string[] keys, string[] values)
         {
-            var user = await userHelper.GetById(uid);
-
             try
             {
+                var user = await userHelper.GetById(uid);
+
                 for (int i = 0; i < keys.Length; i++)
                 {
                     var key = keys[i];

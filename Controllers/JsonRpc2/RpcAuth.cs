@@ -20,6 +20,7 @@ using UW.Shared.Services;
 using UW.Shared.Persis;
 using UW.Shared.Misc;
 using UW.Shared.Persis.Helper;
+using Microsoft.Extensions.Logging;
 
 namespace UW.Controllers.JsonRpc2
 {
@@ -27,7 +28,7 @@ namespace UW.Controllers.JsonRpc2
     {
         private IHttpContextAccessor accessor;
         private Ntfy notifications;
-        public RpcAuth(IHttpContextAccessor accessor, Ntfy notifications)
+        public RpcAuth(ILogger<RpcAuth> logger, IHttpContextAccessor accessor, Ntfy notifications)
         {
             this.accessor = accessor;
             this.notifications = notifications;
