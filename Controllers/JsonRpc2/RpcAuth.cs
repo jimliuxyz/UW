@@ -10,16 +10,16 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System;
 using UW.Data;
-using UW.Shared.Persis.Collections;
+using UW.Core.Persis.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
-using UW.Shared;
-using UW.Shared.Services;
-using UW.Shared.Persis;
-using UW.Shared.Misc;
-using UW.Shared.Persis.Helper;
+using UW.Core;
+using UW.Core.Services;
+using UW.Core.Persis;
+using UW.Core.Misc;
+using UW.Core.Persis.Helper;
 using Microsoft.Extensions.Logging;
 
 namespace UW.Controllers.JsonRpc2

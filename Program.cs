@@ -15,12 +15,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using UW.Shared;
-using UW.Shared.Misc;
-using UW.Shared.MQueue;
-using UW.Shared.MQueue.Handlers;
-using UW.Shared.Persis;
-using UW.Shared.Persis.Helper;
+using UW.Core;
+using UW.Core.Misc;
+using UW.Core.MQueue;
+using UW.Core.MQueue.Handlers;
+using UW.Core.Persis;
+using UW.Core.Persis.Helper;
 
 namespace UW
 {

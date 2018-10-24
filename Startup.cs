@@ -18,8 +18,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UW.Data;
 using UW.Controllers.JsonRpc2;
-using UW.Shared;
-using UW.Shared.Services;
+using UW.Core;
+using UW.Core.Services;
 
 using Microsoft.AspNetCore.Builder;
 using System.IO;

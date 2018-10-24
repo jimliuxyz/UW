@@ -10,14 +10,14 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System;
 using UW.Data;
-using UW.Shared.Persis.Collections;
+using UW.Core.Persis.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
-using UW.Shared;
-using UW.Shared.Services;
-using UW.Shared.Persis;
-using UW.Shared.Persis.Helper;
+using UW.Core;
+using UW.Core.Services;
+using UW.Core.Persis;
+using UW.Core.Persis.Helper;
 
 namespace UW.Controllers.JsonRpc2
 {

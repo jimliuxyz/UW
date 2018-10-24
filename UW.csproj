@@ -9,7 +9,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shared\Sproc\**\*" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Core\Sproc\**\*" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,20 +10,20 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System;
 using UW.Data;
-using UW.Shared.Persis.Collections;
+using UW.Core.Persis.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
-using UW.Shared.MQueue;
+using UW.Core.MQueue;
 using System.Threading;
-using UW.Shared.Misc;
-using UW.Shared.MQueue.Handlers;
-using UW.Shared;
-using UW.Shared.MQueue.MQException;
-using UW.Shared.Persis;
-using UW.Shared.Persis.Helper;
+using UW.Core.Misc;
+using UW.Core.MQueue.Handlers;
+using UW.Core;
+using UW.Core.MQueue.MQException;
+using UW.Core.Persis;
+using UW.Core.Persis.Helper;
 
 namespace UW.Controllers.JsonRpc
 {

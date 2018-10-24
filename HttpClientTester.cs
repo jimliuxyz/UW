@@ -14,10 +14,10 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using UW.Shared.Misc;
-using UW.Shared.MQueue;
-using UW.Shared.MQueue.Handlers;
-using UW.Shared.Persis;
+using UW.Core.Misc;
+using UW.Core.MQueue;
+using UW.Core.MQueue.Handlers;
+using UW.Core.Persis;
 
 namespace UW
 {
