@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
@@ -16,8 +17,10 @@ namespace UW.Shared.Persis.Collections
         // public string currency { get; set; }
         // public decimal balance { get; set; }
         public Dictionary<string, decimal> balance { get; set; }
-        public List<FlowBuf> outBuf = new List<FlowBuf>();
-        public List<FlowBuf> inBuf = new List<FlowBuf>();
+        public Dictionary<string, FlowBuf> outBuf { get; set; }
+        public Dictionary<string, FlowBuf> inBuf { get; set; }
+        // public List<FlowBuf> outBuf = new List<FlowBuf>();
+        // public List<FlowBuf> inBuf = new List<FlowBuf>();
     }
 
     public class FlowBuf
@@ -67,7 +70,7 @@ namespace UW.Shared.Persis.Collections
                 },
                 ExcludedPaths = new Collection<ExcludedPath>{
                     new ExcludedPath {
-                        Path = "/"
+                        Path = "/*"
                     }
                 }
             },
@@ -83,6 +86,21 @@ namespace UW.Shared.Persis.Collections
                 Paths = new Collection<string> { _PK }
             }
         };
+
     }
 
+
+    public partial class BalanceV2 // for StoredProcedure
+    {
+        public static readonly StoredProcedure _SP_Transaction = new StoredProcedure
+        {
+            Id = "Transaction",
+            Body = File.ReadAllText(@"./Shared/Sproc/Balance/Transaction.js")
+        };
+        public static readonly Uri _URI_Transaction = UriFactory.CreateStoredProcedureUri(_DB_NAME, _COLLECTION_NAME, _SP_Transaction.Id);
+
+        public static readonly List<StoredProcedure> _SPROCs = new List<StoredProcedure>{
+            _SP_Transaction
+        };
+    }
 }

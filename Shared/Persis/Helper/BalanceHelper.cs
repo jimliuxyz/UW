@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -40,12 +41,13 @@ namespace UW.Shared.Persis.Helper
             {
                 userId = uid.Guid,
                 pk = uid.PK,
-                balance = new Dictionary<string, decimal>{
-                    {D.CNY, 0},
-                    {D.USD, 0},
-                    {D.BTC, 0},
-                    {D.ETH, 0},
-                }
+                balance = new Dictionary<string, decimal>(),
+                // balance = new Dictionary<string, decimal>{
+                //     {D.CNY, 0},
+                //     {D.USD, 0},
+                //     {D.BTC, 0},
+                //     {D.ETH, 0},
+                // },
             };
             try
             {
@@ -64,7 +66,7 @@ namespace UW.Shared.Persis.Helper
             }
         }
 
-        private async Task<BalanceV2> Get(Pkuid uid)
+        public async Task<BalanceV2> Get(Pkuid uid)
         {
             var result = await client.CreateDocumentQuery<BalanceV2>(BalanceV2._URI_COL,
                 new FeedOptions { PartitionKey = new PartitionKey(uid.PK) })
@@ -78,6 +80,46 @@ namespace UW.Shared.Persis.Helper
             return result.FirstOrDefault();
         }
 
-        
+        public async Task deposite(string txId, Pkuid payeeId, string currency, decimal amount)
+        {
+            var opts = new RequestOptions
+            {
+                PartitionKey = new PartitionKey(payeeId.PK),
+                EnableScriptLogging = true,
+            };
+
+            try
+            {
+                var response = await client.ExecuteStoredProcedureAsync<dynamic>(BalanceV2._URI_Transaction, opts, "in", txId, 10, payeeId.Guid, currency, amount);
+                Console.WriteLine("log : " + System.Web.HttpUtility.UrlDecode(response.ScriptLog));
+            }
+            catch (System.Exception e)
+            {
+                dynamic exp = ToSPException(e.Message);
+                Console.WriteLine("SPException : " + exp.CustomError.message);
+                throw;
+            }
+        }
+
+        public async Task withdraw(string txId, Pkuid payeeId, string currency, decimal amount)
+        {
+            var opts = new RequestOptions
+            {
+                PartitionKey = new PartitionKey(payeeId.PK),
+                EnableScriptLogging = true,
+            };
+
+            try
+            {
+                var response = await client.ExecuteStoredProcedureAsync<dynamic>(BalanceV2._URI_Transaction, opts, "out", txId, 10, payeeId.Guid, currency, amount);
+                Console.WriteLine("log : " + System.Web.HttpUtility.UrlDecode(response.ScriptLog));
+            }
+            catch (System.Exception e)
+            {
+                dynamic exp = ToSPException(e.Message);
+                Console.WriteLine("SPException : " + exp.CustomError.message);
+                throw;
+            }
+        }
     }
 }

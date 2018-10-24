@@ -257,7 +257,6 @@ namespace UW.Shared.Persis.Helper
             {
                 PartitionKey = new PartitionKey(uid.PK),
                 EnableScriptLogging = true,
-                ConsistencyLevel = ConsistencyLevel.Eventual
             };
 
             var response = await client.ExecuteStoredProcedureAsync<dynamic>(User._URI_UpdateFields, opts, uid.Guid, fields, values);

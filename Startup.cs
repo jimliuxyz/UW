@@ -103,8 +103,8 @@ namespace UW
                     builder.RegisterController<RpcProfile>("profile");
                     // builder.RegisterController<RpcPlatform>("platform");
                     builder.RegisterController<RpcNotification>("notification");
-                    // builder.RegisterController<RpcTrading>("trading");
-                    // builder.RegisterController<RpcExCurrency>("excurrency");
+                    builder.RegisterController<RpcTrading>("trading");
+                    builder.RegisterController<RpcExCurrency>("excurrency");
                     // builder.RegisterController<RpcTest>("test");
                 });
             });

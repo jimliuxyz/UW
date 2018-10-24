@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -60,14 +61,71 @@ namespace UW.Shared.Persis.Helper
 
 
 
-                // await client.CreateDocumentCollectionIfNotExistsAsync(
-                //     TxLocker._URI_DB, TxLocker._SPEC, DEFREQ_OPTS);
+                await client.CreateDocumentCollectionIfNotExistsAsync(
+                    BalanceV2._URI_DB, BalanceV2._SPEC, DEFREQ_OPTS);
+                await client.CreateListOfStoredProcedureAsync(BalanceV2._DB_NAME, BalanceV2._COLLECTION_NAME, BalanceV2._SPROCs);
 
                 await client.CreateDocumentCollectionIfNotExistsAsync(
                     User._URI_DB, User._SPEC, DEFREQ_OPTS);
-
                 await client.CreateListOfStoredProcedureAsync(User._DB_NAME, User._COLLECTION_NAME, User._SPROCs);
 
+            }
+        }
+
+        /// <summary>
+        /// parse exMsg to dynamic object
+        /// </summary>
+        /// <param name="exMsg">stored procedure exception message</param>
+        /// <returns>{Message: "error.", CustomError: {code:-1, message: "error..."}}</returns>
+        public static dynamic ToSPException(string exMsg)
+        {
+            try
+            {
+                //Message: {"Errors":["Encountered exception while executing function. Exception = {\"mydata\":\"123\"}"]}
+                var json = "";
+                var arr = Regex.Split(exMsg, "(\r\n)");
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    var line = arr[i];
+                    if (i == 0) //first line for 'Message'
+                    {
+                        var arr2 = line.Split(":", 2);
+                        if (arr2 != null && arr2.Length == 2)
+                        {
+                            if (arr2[0] == "Message")
+                            {
+                                var obj = arr2[1].ToObject();
+
+                                var arr3 = ((string)obj.Errors[0]).Split(" Exception = ", 2);
+                                if (arr3 != null && arr3.Length == 2)
+                                {
+                                    json += $"\"Message\" : \"{arr3[0]}\"" + ",";
+                                    json += $"\"CustomError\" : {arr3[1]}" + ",";
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        arr = Regex.Split(line, ",");
+                        foreach (var str in arr)
+                        {
+                            var arr2 = str.Split(":", 2);
+                            if (arr2 != null && arr2.Length == 2)
+                            {
+                                json += $"\"{arr2[0].Replace(" ", "")}\" : \"{arr2[1]}\"" + ",";
+                            }
+                        }
+                    }
+                }
+                var res = ("{" + json + "}").ToObject();
+                return res;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new Exception("Can't Convert Stored Proceduce Exception!\n" + exMsg);
             }
         }
 

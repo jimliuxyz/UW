@@ -16,6 +16,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using UW.Shared;
 using UW.Shared.Services;
+using UW.Shared.Persis.Helper;
+using UW.Shared.Misc;
 
 namespace UW.Controllers.JsonRpc2
 {
@@ -26,25 +28,42 @@ namespace UW.Controllers.JsonRpc2
         private Ntfy notifications;
 
         private Persistence db;
+
+        private string userId;
+        private Pkuid uid;
+
+        private BalanceHelper balanceHelper;
         public RpcTrading(IHttpContextAccessor accessor, Ntfy notifications)
         {
             this.accessor = accessor;
             this.notifications = notifications;
+
+            userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID)?.Value;
+            uid = UserHelper.IdGen.Parse(userId);
+
+            balanceHelper = new BalanceHelper();
         }
 
         /// <summary>
         /// 取得balance (snapshot)
         /// </summary>
         /// <returns></returns>
-        public IRpcMethodResult getBalances()
+        public async Task<IRpcMethodResult> getBalances()
         {
-            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
+            string txId = "qwerasdf";
+            await balanceHelper.deposite(txId, uid, "USD", 10);
 
-            var balance = db.getBalance(userId);
+            var balance = await balanceHelper.Get(uid);
             return Ok(new
             {
-                list = balance?.balances
+                balance
             });
+
+            // var balance = db.getBalance(userId);
+            // return Ok(new
+            // {
+            //     list = balance?.balances
+            // });
         }
 
         /// <summary>

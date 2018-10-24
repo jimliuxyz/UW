@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace UW.Shared
 {
@@ -18,6 +19,16 @@ namespace UW.Shared
             });
         }
 
+        public static string ToJson(this JObject context)
+        {
+            return JsonConvert.SerializeObject(context, Formatting.Indented,
+            new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            });
+        }
+        
         public static dynamic ToObject(this string jsonstr)
         {
             return JsonConvert.DeserializeObject(jsonstr);
