@@ -138,6 +138,28 @@ namespace UW.Controllers.JsonRpc
             });
         }
 
+        /// <summary>
+        /// 收款
+        /// </summary>
+        /// <param name="currency"></param>
+        /// <param name="amount"></param>
+        /// <param name="toUserId"></param>
+        /// <param name="message"></param>
+        /// <param name="secureToken"></param>
+        /// <returns></returns>
+        public async Task<IRpcMethodResult> receive(string fromUserId, string currency, decimal amount, string message, string secureToken)
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
+
+            var receiptId = F.NewGuid();
+            var ok = await db.doTransfer(fromUserId, userId, receiptId, currency, amount, message);
+
+            return Ok(new
+            {
+                receiptId = receiptId,
+                statusCode = ok ? 0 : -1
+            });
+        }
         public IRpcMethodResult getReceipts(DateTime fromDatetime)
         {
             var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;

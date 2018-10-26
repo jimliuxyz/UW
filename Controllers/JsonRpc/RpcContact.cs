@@ -99,6 +99,19 @@ namespace UW.Controllers.JsonRpc
         }
 
         /// <summary>
+        /// 刪除好友
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public IRpcMethodResult setFriendFavorite(string friendId, bool favorite)
+        {
+            var userId = this.accessor.HttpContext.User.FindFirst(c => c.Type == D.CLAIM.USERID).Value;
+
+            db.setFriendFavorite(userId, friendId, favorite);
+            return Ok();
+        }
+
+        /// <summary>
         /// 以電話號碼取得使用者列表
         /// </summary>
         /// <param name="list"></param>

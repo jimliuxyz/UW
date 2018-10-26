@@ -346,7 +346,8 @@ namespace UW.Data
                 {
                     userId = u.userId,
                     name = u.name,
-                    avatar = u.avatar
+                    avatar = u.avatar,
+                    favorite = false
                 }
             ).ToList();
 
@@ -385,6 +386,19 @@ namespace UW.Data
 
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
         }
+
+        public void setFriendFavorite(string userId, string friendId, bool favorite)
+        {
+            var contact = getContact(userId);
+            if (contact == null)
+                return;
+
+            var friend = contact.friends.First(u => u.userId==friendId);
+            friend.favorite = favorite;
+
+            var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
+        }
+
         public Balance getBalance(string userId)
         {
             var q = client.CreateDocumentQuery<Balance>(URI_BALANCE);

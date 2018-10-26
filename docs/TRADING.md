@@ -119,8 +119,37 @@ https://uwbackend-dev.azurewebsites.net/api/trading
         "amount": "1000",
         "toUserId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
         "message": "..."
-    }
-    "error": null
+    },
+    "error": null,
+    "id": 99,
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "receiptId": "....",
+        "statusCode": 0
+    },
+    "error": null,
+    "id": 99,
+}
+```
+
+# 收款
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "receive",
+    "params": {
+        "currency": "cny",
+        "amount": "1000",
+        "fromUserId": "bae84936-bbbe-46ca-bf8c-9127f3239fa2",
+        "message": "..."
+        "secureToken": "" //暫時留空
+    },
+    "error": null,
     "id": 99,
 }
 //收

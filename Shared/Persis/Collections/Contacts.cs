@@ -17,5 +17,6 @@ namespace UW.Shared.Persis.Collections
         public string userId { get; set; }
         public string name { get; set; }
         public string avatar { get; set; }
+        public bool favorite { get; set; }
     }
 }
