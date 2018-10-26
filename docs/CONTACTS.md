@@ -23,12 +23,14 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
             {
                 "userId": "tempid-886986123456",
                 "name": "buzz",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png",
+                "favorite", false
             },
             {
                 "userId": "tempid-886986123457",
                 "name": "jessie",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png"
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-jessie.png",
+                "favorite", false
             }
         ]
     },
@@ -69,6 +71,28 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
     }
     "error": null
     "id": 99,
+}
+//收
+{
+    "jsonrpc": "2.0",
+    "result": true,
+    "error": null,
+    "id": 99,
+}
+```
+
+# 設為常用(favorite)連絡人
+
+```js
+//送
+{
+    "jsonrpc": "2.0",
+    "method": "setFriendFavorite",
+    "params": {
+    	"friendId": "tempid-886986123456",
+    	"favorite": false
+    },
+    "id": 99
 }
 //收
 {
@@ -126,7 +150,7 @@ https://uwbackend-dev.azurewebsites.net/api/contacts
             {
                 "userId": "tempid-886986123456",
                 "name": "buzz",
-                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png"
+                "avatar": "https://ionicframework.com/dist/preview-app/www/assets/img/avatar-ts-buzz.png",
             },
             {
                 "userId": "tempid-886986123457",

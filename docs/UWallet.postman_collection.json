@@ -1,11 +1,12 @@
 {
 	"info": {
-		"_postman_id": "39ff9aca-d7eb-4f38-9cb2-2d11f1e814d9",
+		"_postman_id": "3cb0c252-3d79-49ad-a942-03b8f0af2e47",
 		"name": "UWallet",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
+			"_postman_id": "5a7e1dd9-83c5-4698-aa45-d814258ccb27",
 			"name": "auth - login",
 			"request": {
 				"method": "POST",
@@ -36,6 +37,38 @@
 			"response": []
 		},
 		{
+			"_postman_id": "2e292d76-d120-462b-8702-e6ea92086d23",
+			"name": "auth - login Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"login\",\n    \"params\": {\n        \"phoneno\": \"test-jim-999\",\n        \"passcode\": \"88888888\",\n        \"pns\": \"apns\",\n        \"pnsToken\": \"f607a1efa8ec3beb994d810a4b93623b81a257332aff8a9709990ba1611478c1\"\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "5653f905-aec8-4508-9af9-d47ae8ba9d52",
 			"name": "notification - regPnsToken",
 			"request": {
 				"auth": {
@@ -76,6 +109,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "e083bb89-239d-4749-b09b-7e936bdafaee",
 			"name": "auth - isTokenAvailable",
 			"request": {
 				"auth": {
@@ -116,6 +150,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "79d5d3b3-bd5c-4269-bf3d-166cb48b71c0",
 			"name": "profile - getProfile",
 			"request": {
 				"auth": {
@@ -123,7 +158,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoiRk9zSFIyYWgySHZMUlFHdy1GYjZzbjhUOW95WVVpM1hCcUhVOUh3IiwidG9rZW5ybmQiOiJEbVhtd1RPZ0I2OGp0YjROZG9tSFBLIiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.tgE_jZC81W6ZfxjihZdw2wsqqeOCH__e7Bt2b9zuSZM",
 							"type": "string"
 						}
 					]
@@ -137,7 +172,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getProfile\",\n    \"params\": {\n    \t\"keys\": [\"name\"],\n    \t\"values\": [\"Jim2\"]\n    },\n    \"id\": 99\n}"
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"getProfile\",\n    \"params\": {},\n    \"id\": 99\n}"
 				},
 				"url": {
 					"raw": "http://localhost:5000/api/profile",
@@ -156,6 +191,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "1763b57d-6f00-43e5-9b3f-284c5feb72f8",
 			"name": "profile - updateProfile",
 			"request": {
 				"auth": {
@@ -196,6 +232,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "be3b6f24-4fb6-4f4f-8b33-d132090485d1",
 			"name": "profile - updateCurrencySetting",
 			"request": {
 				"auth": {
@@ -203,7 +240,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMy0zIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6InRlc3QtamltLTEyMy0zIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsInVzZXJpZCI6InRlbXBpZC10ZXN0LWppbS0xMjMtMyIsInRva2Vucm5kIjoiRGYzR0l0Y3hIRTZ3VWhQK0toTlRVZz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.FMjDdn8mBDAAoMMk6WQQCvpUI3LMnA7dQj9k6F507OU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiZUZObnd6c0Q4a09FeExpYUtGZVRMdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.C-AUouvgRYIPY6UoZFqqpugyDpt2kmrKmBcrxXRrmog",
 							"type": "string"
 						}
 					]
@@ -236,6 +273,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "58e92f28-1f14-444f-a7cd-8e104833c76c",
 			"name": "contacts - getContacts",
 			"request": {
 				"auth": {
@@ -243,7 +281,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiSlRJc3RvV2Vza2lFNWpyR0x5YS9Ndz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.ic17cOyvzu7VDIR6AzuF-cPvi74JmatrE0Vh-8DM3sI",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTk5OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS05OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTk5OSIsInRva2Vucm5kIjoiV0lXLTdmTlJOMCtIdXRQZ2I5ODVrdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.rozcU0g31oKn9CWltvgpEQcAeTeZosraXl80JGZknJo",
 							"type": "string"
 						}
 					]
@@ -276,6 +314,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "1c16e645-f37b-487e-8070-d9428b36a481",
 			"name": "contacts - addFriends",
 			"request": {
 				"auth": {
@@ -283,7 +322,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiSlRJc3RvV2Vza2lFNWpyR0x5YS9Ndz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.ic17cOyvzu7VDIR6AzuF-cPvi74JmatrE0Vh-8DM3sI",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTk5OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS05OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTk5OSIsInRva2Vucm5kIjoiV0lXLTdmTlJOMCtIdXRQZ2I5ODVrdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.rozcU0g31oKn9CWltvgpEQcAeTeZosraXl80JGZknJo",
 							"type": "string"
 						}
 					]
@@ -316,6 +355,48 @@
 			"response": []
 		},
 		{
+			"_postman_id": "e945618b-0430-4e5b-83ec-fc1ced5990e5",
+			"name": "contacts - setFriendFavorite",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTk5OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS05OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTk5OSIsInRva2Vucm5kIjoiV0lXLTdmTlJOMCtIdXRQZ2I5ODVrdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.rozcU0g31oKn9CWltvgpEQcAeTeZosraXl80JGZknJo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"setFriendFavorite\",\n    \"params\": {\n    \t\"friendId\": \"tempid-886986123456\",\n    \t\"favorite\": false\n    },\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"contacts"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "4ddb96f0-320c-4380-8a33-58436f595a2b",
 			"name": "contacts - delFriends",
 			"request": {
 				"auth": {
@@ -356,6 +437,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "4baa45f4-2ed1-45fc-ad70-589b0509a00b",
 			"name": "contacts - getAllUser",
 			"request": {
 				"auth": {
@@ -363,7 +445,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiSlRJc3RvV2Vza2lFNWpyR0x5YS9Ndz09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.ic17cOyvzu7VDIR6AzuF-cPvi74JmatrE0Vh-8DM3sI",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTk5OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS05OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTk5OSIsInRva2Vucm5kIjoiV0lXLTdmTlJOMCtIdXRQZ2I5ODVrdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.rozcU0g31oKn9CWltvgpEQcAeTeZosraXl80JGZknJo",
 							"type": "string"
 						}
 					]
@@ -395,6 +477,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "cf250d55-6a64-4beb-a8cb-80590f647bc0",
 			"name": "contacts - findUsersByPhone",
 			"request": {
 				"auth": {
@@ -434,6 +517,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "f902ac98-4892-4952-af9a-4a008642bbe6",
 			"name": "platform - info",
 			"request": {
 				"auth": {
@@ -474,6 +558,89 @@
 			"response": []
 		},
 		{
+			"_postman_id": "861163ea-87d1-42cd-a1ea-272392749a73",
+			"name": "test - testQueue",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJ1c2VyaWQiOiJjNmUzY2Q2OS05NzU1LTQ1MDYtOGMzYS00YzY0YjFjYTFlYmYiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.S4YApQjJrvymZJcI1fGHPNheF-uQ2vF4Kf1f6JCnsZw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"testQueue\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "852cee3b-afaa-49e8-8f37-656041229e1d",
+			"name": "test - test",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QxMjMiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdDEyMyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJ1c2VyaWQiOiJjNmUzY2Q2OS05NzU1LTQ1MDYtOGMzYS00YzY0YjFjYTFlYmYiLCJpc3MiOiJ4aW53YW5nIiwiYXVkIjoidXdhbGxldCJ9.S4YApQjJrvymZJcI1fGHPNheF-uQ2vF4Kf1f6JCnsZw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"test\",\n    \"params\": {},\n    \"id\": 99\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"test"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "5497a88a-df47-423c-9572-f80bb3a5e0a0",
 			"name": "trading - getBalances",
 			"request": {
 				"auth": {
@@ -481,7 +648,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoiRk9zSFIyYWgySHZMUlFHdy1GYjZzbjhUOW95WVVpM1hCcUhVOUh3IiwidG9rZW5ybmQiOiJEbVhtd1RPZ0I2OGp0YjROZG9tSFBLIiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.tgE_jZC81W6ZfxjihZdw2wsqqeOCH__e7Bt2b9zuSZM",
 							"type": "string"
 						}
 					]
@@ -514,127 +681,7 @@
 			"response": []
 		},
 		{
-			"name": "trading - deposit",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deposit\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 100\n    },\n    \"id\": 99\n}"
-				},
-				"url": {
-					"raw": "http://localhost:5000/api/trading",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"trading"
-					]
-				},
-				"description": "login"
-			},
-			"response": []
-		},
-		{
-			"name": "trading - deposit Copy",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"deposit\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 100\n    },\n    \"id\": 99\n}"
-				},
-				"url": {
-					"raw": "https://uwbackend-dev.azurewebsites.net/api/trading",
-					"protocol": "https",
-					"host": [
-						"uwbackend-dev",
-						"azurewebsites",
-						"net"
-					],
-					"path": [
-						"api",
-						"trading"
-					]
-				},
-				"description": "login"
-			},
-			"response": []
-		},
-		{
-			"name": "trading - withdraw",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiUzNRV1llOEJ0VTZXaldSdW9pNld6USIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.VrjOZG8rtPff6JFOoIUfZIf5mGooRsbukG05wJ0kKOU",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"withdraw\",\n    \"params\": {\n    \t\"currency\": \"USD\",\n    \t\"amount\": 25\n    },\n    \"id\": 99\n}"
-				},
-				"url": {
-					"raw": "http://localhost:5000/api/trading",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5000",
-					"path": [
-						"api",
-						"trading"
-					]
-				},
-				"description": "login"
-			},
-			"response": []
-		},
-		{
+			"_postman_id": "da1d20d5-425c-49bc-b162-e83b152ea9f5",
 			"name": "trading - transfer",
 			"request": {
 				"auth": {
@@ -675,6 +722,48 @@
 			"response": []
 		},
 		{
+			"_postman_id": "28f9d3e6-eae8-4b60-9fb6-39992cba85a9",
+			"name": "trading - receive",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTk5OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS05OTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTk5OSIsInRva2Vucm5kIjoiV0lXLTdmTlJOMCtIdXRQZ2I5ODVrdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.rozcU0g31oKn9CWltvgpEQcAeTeZosraXl80JGZknJo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"receive\",\n    \"params\": {\n    \t\"fromUserId\": \"tempid-886986123456\",\n    \t\"currency\": \"BTC\",\n    \t\"amount\": \"1\",\n    \t\"secureToken\": \"empty\",\n    \t\"message\": \"hey hey...\"\n    },\n    \"id\": 99\n}\n\n"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/trading",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"trading"
+					]
+				},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "d9449767-cf59-48c5-b11b-d670c8b8f9d4",
 			"name": "trading - getReceipts",
 			"request": {
 				"auth": {
@@ -715,6 +804,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "0c4729da-5c5e-48d1-ad48-02c28508fb65",
 			"name": "trading - getReceipts Copy",
 			"request": {
 				"auth": {
@@ -755,6 +845,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "63cabbb3-e1b2-444c-9b42-852cfca966af",
 			"name": "auth - adminLogin",
 			"request": {
 				"method": "POST",
@@ -785,6 +876,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "d0a188c9-c476-46d4-b64b-da0d48de38a9",
 			"name": "auth - adminGetHello",
 			"request": {
 				"method": "POST",
@@ -815,6 +907,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "93292dd3-2175-473b-8bd4-2b19e9f7b2f5",
 			"name": "excurrency - getExRate",
 			"request": {
 				"auth": {
@@ -855,6 +948,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "f3c90d30-0d77-4f7b-8c18-cf39231ce4ea",
 			"name": "excurrency - estimateExFrom",
 			"request": {
 				"auth": {
@@ -895,6 +989,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "657735fa-609b-444c-a78f-12f333afb113",
 			"name": "excurrency - doExFrom",
 			"request": {
 				"auth": {
@@ -935,6 +1030,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "965c3d96-7193-4daf-b191-ad9a76570315",
 			"name": "funcapp (local) - reqSmsVerify",
 			"request": {
 				"method": "POST",
@@ -964,6 +1060,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "a94fb4f1-ca65-454a-9e5e-ffbfe8ec97a9",
 			"name": "funcapp (local) - reqSmsVerify Copy",
 			"request": {
 				"method": "POST",
@@ -975,13 +1072,13 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"reqSmsVerify\",\n    \"params\": {\n        \"phoneno\": \"test-jim-123\"\n    },\n    \"id\": 99\n}"
+					"raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"reqSmsVerify\",\n    \"params\": {\n        \"phoneno\": \"886978768913x\"\n    },\n    \"id\": 99\n}"
 				},
 				"url": {
-					"raw": "https://uwfuncapp-dev.azurewebsites.net/api/reqSmsVerify",
+					"raw": "https://uwfuncapp-rel.azurewebsites.net/api/reqSmsVerify",
 					"protocol": "https",
 					"host": [
-						"uwfuncapp-dev",
+						"uwfuncapp-rel",
 						"azurewebsites",
 						"net"
 					],
@@ -994,6 +1091,7 @@
 			"response": []
 		},
 		{
+			"_postman_id": "b135def3-93e5-4599-9bff-cde9bacfe4be",
 			"name": "funcapp(local) - uploadAvatar",
 			"request": {
 				"auth": {
@@ -1001,7 +1099,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiTEY4cWNkTGo3ME9JTFpyL0Rpa25FUT09IiwiaXNzIjoieGlud2FuZyIsImF1ZCI6InV3YWxsZXQifQ.nLDg9JWavixhV_YqmxeXbs2uFppQdfPUAoIupMRsJ2o",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6InRlc3QtamltLTEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ0ZXN0LWppbS0xMjMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLXRlc3QtamltLTEyMyIsInRva2Vucm5kIjoiSkJoVTMyVzVYRW14dldnV0t2alF2QSIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.SsmblrQUHQv3GVMvhQQk7T7WUaAlXWxKIlEhhePzPfo",
 							"type": "string"
 						}
 					]
@@ -1018,8 +1116,7 @@
 					"formdata": [
 						{
 							"key": "avatar",
-							"type": "file",
-							"value": ""
+							"type": "file"
 						}
 					]
 				},
@@ -1030,6 +1127,52 @@
 						"localhost"
 					],
 					"port": "7071",
+					"path": [
+						"api",
+						"uploadAvatar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "f8f5de11-0229-4184-9024-dc82fe3655f9",
+			"name": "funcapp(local) - uploadAvatar Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9tb2JpbGVwaG9uZSI6Ijg4Njk3ODc2ODkxMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJZb3UiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwidXNlcmlkIjoidGVtcGlkLTg4Njk3ODc2ODkxMyIsInRva2Vucm5kIjoiRUVBQ2pGc2dpMHk3TXIzZy1aSWRDdyIsImlzcyI6InhpbndhbmciLCJhdWQiOiJ1d2FsbGV0In0.n9hwuXoz85Zur_sqgQV9X7EfXeuu4EkNSj86ni-TQ98",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "avatar",
+							"type": "file"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://uwfuncapp-dev.azurewebsites.net/api/uploadAvatar",
+					"protocol": "https",
+					"host": [
+						"uwfuncapp-dev",
+						"azurewebsites",
+						"net"
+					],
 					"path": [
 						"api",
 						"uploadAvatar"
