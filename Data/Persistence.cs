@@ -459,10 +459,9 @@ namespace UW.Data
             return false;
         }
 
-        public async Task<bool> doWithdraw(string userId, string receiptId, string currency, decimal amount)
+        public async Task<bool> doWithdraw(string userId, string receiptId, string currency, decimal amount, string message)
         {
             var ok = false;
-            var message = "withdraw...";
             var fromUser = getUserByUserId(userId);
             var toUser = getUserByPhone("BANK");
 
@@ -520,10 +519,9 @@ namespace UW.Data
 
             // return sender_rec;
         }
-        public async Task<bool> doDeposit(string userId, string receiptId, string currency, decimal amount)
+        public async Task<bool> doDeposit(string userId, string receiptId, string currency, decimal amount, string message)
         {
             var ok = false;
-            var message = "deposit...";
             var fromUser = getUserByPhone("BANK");
             var toUser = getUserByUserId(userId);
 
@@ -672,7 +670,7 @@ namespace UW.Data
 
             return ok;
         }
-        public async Task<bool> doExchange(string userId, string fromCurrency, string receiptId, string toCurrency, decimal fromAmount, decimal toAmount, string message)
+        public async Task<bool> doExchange(string userId, string receiptId, string fromCurrency, string toCurrency, decimal fromAmount, decimal toAmount, string message)
         {
             var ok = false;
 

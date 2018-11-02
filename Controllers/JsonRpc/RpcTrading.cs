@@ -51,7 +51,7 @@ namespace UW.Controllers.JsonRpc
         /// 存錢
         /// </summary>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> deposit(string currency, decimal amount)
+        public async Task<IRpcMethodResult> deposit(string currency, decimal amount, string message)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
@@ -61,7 +61,7 @@ namespace UW.Controllers.JsonRpc
             var receiptId = F.NewGuid();
 
             int timeout = 1000;
-            var task = db.doDeposit(userId, receiptId, currency, amount);
+            var task = db.doDeposit(userId, receiptId, currency, amount, message);
             if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
             {
                 var ok = task.Result;
@@ -85,7 +85,7 @@ namespace UW.Controllers.JsonRpc
         /// 提錢
         /// </summary>
         /// <returns></returns>
-        public async Task<IRpcMethodResult> withdraw(string currency, decimal amount)
+        public async Task<IRpcMethodResult> withdraw(string currency, decimal amount, string message)
         {
             if (amount <= 0)
                 return ERROR_ACT_FAILED;
@@ -95,7 +95,7 @@ namespace UW.Controllers.JsonRpc
             var receiptId = F.NewGuid();
 
             int timeout = 1000;
-            var task = db.doWithdraw(userId, receiptId, currency, amount);
+            var task = db.doWithdraw(userId, receiptId, currency, amount, message);
             if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
             {
                 var ok = task.Result;
