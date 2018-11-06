@@ -2,6 +2,7 @@
 # 更新內容(181026)
 - 新增 Trading - receive 收款
 - 新增 Contacts - setFriendFavorite 將好友設為(或取消)常用聯絡人
+- 新增 Trading - 存提加上message參數
 
 # 更新內容(180930)
 - 會員預設頭像(avatar)連結改為空字串(empty)

@@ -213,7 +213,8 @@ https://uwbackend-dev.azurewebsites.net/api/trading
     "method": "deposit",
     "params": {
         "currency": "USD",
-        "amount": "1000"
+        "amount": "1000",
+        "message": ""
     }
     "error": null
     "id": 99,
@@ -239,7 +240,8 @@ https://uwbackend-dev.azurewebsites.net/api/trading
     "method": "withdraw",
     "params": {
         "currency": "USD",
-        "amount": "1000"
+        "amount": "1000",
+        "message": ""
     }
     "error": null
     "id": 99,
