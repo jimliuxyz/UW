@@ -74,7 +74,8 @@ https://uwbackend-dev.azurewebsites.net/api/excurrency
     "id": 99,
     "jsonrpc": "2.0",
     "result": {
-        "receiptId": "Lc7fnO73TkyrsAogiMEf8A=="
+        "receiptId": "Lc7fnO73TkyrsAogiMEf8A==",
+        "statusCode" : 0
     },
     "error": null
 }
