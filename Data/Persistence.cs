@@ -86,10 +86,25 @@ namespace UW.Data
                 if (de.StatusCode != HttpStatusCode.NotFound)
                     return;
             }
+            catch (AggregateException e)
+            {
+                foreach (var ee in e.Flatten().InnerExceptions)
+                {
+                    if (ee is DocumentClientException)
+                    {
+                        DocumentClientException de = ee as DocumentClientException;
+                        if (de.StatusCode != HttpStatusCode.NotFound)
+                            return;
+                    }
+                }
+            }
             //create database
-            client.CreateDatabaseIfNotExistsAsync(new Database { Id = R.DB_NAME }).Wait();
+            client.CreateDatabaseIfNotExistsAsync(new Database
+            {
+                Id = R.DB_NAME
+            }).Wait();
 
-            //create collections
+            // create collections
             var defReqOpts = new RequestOptions { OfferThroughput = 400 }; //todo:實際運作400RU可能太小
             client.CreateDocumentCollectionIfNotExistsAsync(URI_DB,
                                 new DocumentCollection { Id = COL_USER }, defReqOpts).Wait();
@@ -393,7 +408,7 @@ namespace UW.Data
             if (contact == null)
                 return;
 
-            var friend = contact.friends.First(u => u.userId==friendId);
+            var friend = contact.friends.First(u => u.userId == friendId);
             friend.favorite = favorite;
 
             var res = client.UpsertDocumentAsync(URI_CONTACT, contact).Result;
@@ -648,15 +663,15 @@ namespace UW.Data
             new Thread(() =>
             {
                 Task.Delay(10).Wait();
-                //notify sender
-                // if (fromUser.ntfInfo != null)
-                //     notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.ToApiResult() } });
+        //notify sender
+        // if (fromUser.ntfInfo != null)
+        //     notifications.sendMessage(fromId, fromUser.ntfInfo.pns, $"transfer out({(ok ? "okay" : "failure")})", D.NTFTYPE.TXRECEIPT, new { list = new List<dynamic>() { sender_rec.ToApiResult() } });
 
-                //notify receiver
-                if (ok && toUser.ntfInfo != null)
+        //notify receiver
+        if (ok && toUser.ntfInfo != null)
                 {
-                    //generate receiver receipt
-                    var receiver_rec = sender_rec.Derivative(sender_rec.currency, toUser.userId, new TxActResult
+            //generate receiver receipt
+            var receiver_rec = sender_rec.Derivative(sender_rec.currency, toUser.userId, new TxActResult
                     {
                         outflow = false,
                         amount = amount,
