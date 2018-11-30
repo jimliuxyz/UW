@@ -86,13 +86,13 @@ namespace UW.Data
                 if (de.StatusCode != HttpStatusCode.NotFound)
                     return;
             }
-            catch (AggregateException e)
+            catch (AggregateException ae)
             {
-                foreach (var ee in e.Flatten().InnerExceptions)
+                foreach (var e in ae.Flatten().InnerExceptions)
                 {
-                    if (ee is DocumentClientException)
+                    if (e is DocumentClientException)
                     {
-                        DocumentClientException de = ee as DocumentClientException;
+                        DocumentClientException de = e as DocumentClientException;
                         if (de.StatusCode != HttpStatusCode.NotFound)
                             return;
                     }
